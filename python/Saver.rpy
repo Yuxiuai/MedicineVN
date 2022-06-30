@@ -1,6 +1,3 @@
-init -10:
-    default persistent.SaverClass = None
-
 init -10 python:
     class Saver:
         if persistent.SaverClass is not None:
@@ -84,6 +81,12 @@ init -10 python:
             if slot['p']==None:
                 renpy.error("存档出现错误！(p equals None.)")
             p = dcp(slot['p'])
+
+            for i in p.unlockedTasks:
+                i.unlocked = True
+
+            for i in p.lockedTasks:
+                i.unlocked = False
 
 
 

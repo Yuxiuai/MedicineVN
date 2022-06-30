@@ -17,11 +17,17 @@ init python:
             if not cls.unlocked:
                 if cls.unlockCond(player) == True:
                     cls.unlocked = True
+                    player.unlockedTasks.add(cls)
                     showNotify(['已解锁日程：%s！' % cls.name])
                 else:
                     showNotify(['未达到日程%s的解锁条件：\n%s' % (cls.name, cls.unlockCond(player))])
             else:
                 showNotify(['该日程：%s已解锁！' % cls.name])
+
+        @classmethod
+        def lockClass(cls, player):
+            cls.unlocked = False
+            player.lockedTasks.add(cls)
 
         @classmethod
         def unlockCond(cls, player):

@@ -1280,8 +1280,8 @@ label halluke_route_9:
 
 label halluke_route_10:
     $rollback_switch()
-    $BadmintonClass.unlocked = False
-    $HallukeTask1.unlocked = False
+    $BadmintonClass.lockClass()
+    $HallukeTask1.lockClass()
     scene ingym with fade
     stop music fadeout 5
     "……"

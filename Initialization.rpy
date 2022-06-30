@@ -41,7 +41,9 @@ init python:
 
     
 
-init -2:
+init -20:
+    
+    default persistent.SaverClass = None
     define config.layers = [ 'master', 'transient', 'screens', 'headimage' ,'overlay']
 
     default persistent.newplayer = True

@@ -88,7 +88,8 @@ init python:
             self.afterSleepEffects = []
             self.items = []
             self.usedMedicines = [MedicineA]
-            self.unlockedTask
+            self.unlockedTasks = []
+            self.lockedTasks = []
             self.plan = [NoTask, NoTask, NoTask]
             self.gymplan = [NoSport, NoSport, NoSport]
             self.unacComm = []
@@ -225,8 +226,8 @@ init python:
             consumption *= self.deteriorateConsumption  # 受睡眠消耗数值影响
             consumption *= self.sev()
             consumption *= self.phyCons() ** 1.5  # 受身体素质和严重度影响
-            if consumption < self.mental * 0.5:
-                consumption = self.mental * 0.5
+            if consumption < self.mental * 0.75:
+                consumption = self.mental * 0.75
             return r2(consumption)
 
         def aggravation(self):
