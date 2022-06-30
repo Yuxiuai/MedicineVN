@@ -1771,10 +1771,13 @@ init python:
         maxStacks = 1
         info = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力和{color=#7CFC00}降低{/color}的严重程度越多。\n若消耗的精神状态低于150则只会获得2层焦虑。'
         info_p = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力和{color=#7CFC00}降低{/color}的严重程度越多。\n若消耗的精神状态低于150则只会获得2层焦虑。'
-        cons = 0
+
+        def __init__(self):
+            Effect.__init__(self)
+            self.cons=0
 
         def enableAction(self, player):
-            type(self).cons = 0
+            self.cons = 0
             type(self).renewInfo()
         
         @classmethod
@@ -1783,8 +1786,8 @@ init python:
             cls.info_p = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力越多。\n若消耗的精神状态低于150则只会获得2层焦虑。\n\n当前已消耗精神状态：'+str(cls.cons)
 
         def timeUpAction(self, player):
-            g = r2(type(self).cons * 0.04 * 0.01)
-            if type(self).cons>=150:
+            g = r2(self.cons * 0.04 * 0.01)
+            if self.cons>=150:
                 player.working += g
                 player.severity -= g
                 Notify.add('由于感悟：《失而复得》，{color=#7CFC00}提升{/color}了%s点工作能力！' % (g*100))
@@ -1802,7 +1805,6 @@ init python:
         maxStacks = 1
         info = '药物的恢复效果{color=#7CFC00}提升{/color}，但过夜消耗的精神状态和工作消耗的精神状态也{color=#FF4500}提升{/color}。'
         info_p = '药物的恢复效果{color=#7CFC00}提升{/color}25%，但过夜消耗的精神状态和工作消耗的精神状态也{color=#FF4500}提升{/color}25%。'
-        cons = 0
 
         def enableAction(self, player):
             player.workConsumption += 0.25

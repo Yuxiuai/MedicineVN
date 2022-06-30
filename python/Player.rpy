@@ -88,6 +88,7 @@ init python:
             self.afterSleepEffects = []
             self.items = []
             self.usedMedicines = [MedicineA]
+            self.unlockedTask
             self.plan = [NoTask, NoTask, NoTask]
             self.gymplan = [NoSport, NoSport, NoSport]
             self.unacComm = []
