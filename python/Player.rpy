@@ -97,6 +97,8 @@ init python:
 
             self.hadAskedForMoney = False
             self.hadAskedForLeave = False
+            self.finalStageDays = 1
+            self.aggra = 0
             self.messages = {'Pathos':[], 'Halluke':[], 'Acolas':[], 'Depline':[]}
 
         def __eq__(self, other):
@@ -218,7 +220,7 @@ init python:
             return scale
 
         def aggravationConsumption(self):
-            consumption = 60
+            consumption = 50
             consumption *= self.deteriorateConsumption  # 受睡眠消耗数值影响
             consumption *= self.sev()
             consumption *= self.phyCons() ** 1.5  # 受身体素质和严重度影响
@@ -230,23 +232,23 @@ init python:
             consumption = self.aggravationConsumption() * f()
             s = 0
 
-            if self.week < 4:
+            if self.week < 3:
                 if rra(self, 50):
                     s = 0.01
                 else:
                     s = 0.02
-            elif self.week < 8:
+            elif self.week < 5:
                 if rra(self, 50):
                     s = 0.02
                 else:
                     s = 0.03
-            elif self.week < 12:
+            elif self.week < 8:
                 s = 0.03
-            elif self.week >= 12:
+            elif self.week >= 8:
                 s = 0.04
 
-            if self.severity-s < 0.75 + 0.05 * self.week:
-                s = 0.75 + 0.05 * self.week - self.severity
+            if self.severity-s < 0.85 + 0.075 * self.week:
+                s = 0.85 + 0.075 * self.week - self.severity
 
             self.severity += r2(s)
 
@@ -258,7 +260,6 @@ init python:
 
             if s > 0:
                 Notify.add('严重度上升了'+r2s(s)+'点！')
-
 
 
         def dateChange(self):
@@ -408,7 +409,7 @@ init python:
                 states2[Sadness] += 15
             if MentPun.has(self):
                 states2[Sadness] += 15
-            if self.severity > 0.75 + 0.075 * self.week:
+            if self.severity > 1 + 0.075 * self.week:
                 states2[Agony] += 10
                 states2[Dread] += 10
             if self.mental > 50:
@@ -538,6 +539,8 @@ init python:
             self.achievedGoal = 0.0
             self.goal = (1.07 ** self.week) * 0.3 + self.working * 0.7
             self.goal = r2(self.goal * ra(self, 800, 1100) * 0.01 * f())
+            if GameMode5.has(self):
+                self.goal = r2(self.goal * 1.15)
             self.money += paid
 
             Notify.add('Boss：“第%s周工资已发放。”' % self.week)
@@ -589,16 +592,18 @@ init python:
 
                 self.price = r2(self.price *(100 + self.priceIncrease) * 0.01)
 
+                
                 if self.money <= self.price * 8:
                     self.priceIncrease = ra(self, 5, 15)
+                    if GameMode3.has(self):
+                        self.priceIncrease *= 2.25
                 
                 else:
                     self.priceIncrease = (self.money * 0.125 / self.price) - 1
                     self.priceIncrease *= 10
 
                     self.priceIncrease = int(self.priceIncrease * f())
-                if GameMode3.has(self):
-                    self.priceIncrease *= 2.25
+                
 
             if self.hal_p == 10 and self.today == 1:
                 Message.new(self, 'Halluke', 'Halluke', '那个，我想说一些事，如果我说错了的话，请不要生气。\n第一次上课的时候老师有清点人数，我对来上课的人也大概有了一点印象，但是你是后来才出现的，最初我把你当成第一节课就没来的学生，但是老师当时点名也没人缺席的样子。后来发现老师点名的时候也没看到你过产生回应。你并不是我们班的对吧？我也调查了一段时间，在年级大群，甚至校园墙上都没有查到和你有关的信息。\n你并不是我们学校的人，对吧？\n不过我主要是想提醒你，下周的周六就是考试了，虽然你并不需要考试，如果你想的话，可以来帮我发球。', '6', '42')

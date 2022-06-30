@@ -273,6 +273,7 @@ layeredimage halluke:
         attribute pajamas
         attribute belly
         attribute pants
+        attribute normalpants
         attribute normalpee
         attribute pantspee
         attribute naked null
@@ -296,6 +297,7 @@ init python:
                 ['睡衣', 'pajamas'],
                 ['露出腹部', 'belly'],
                 ['内裤','pants'],
+                ['上衣和内裤','normalpants'],
                 ['拉下内裤1','normalpee'],
                 ['拉下内裤2','pantspee'],
                 ['裸体','naked']

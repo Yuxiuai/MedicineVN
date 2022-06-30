@@ -30,6 +30,19 @@ screen freeze(time=None): #show screen freeze(5)
         yfill True
         action NullAction()
 
+screen cfreeze(time=None): #call screen freeze(5)
+    modal True
+    zorder 50
+    if persistent.nowaiting == True:
+        $time=0.1
+    timer time:
+        action Return()
+
+    button:
+        xfill True
+        yfill True
+        action NullAction()
+
 
 
 label hide_all_screens:

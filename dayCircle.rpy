@@ -3,8 +3,9 @@ label wakeup:
     $_game_menu_screen = None
     $renpy.block_rollback()
     scene black with fade
-    play music audio.alarm
-    $pause(2)
+    if not persistent.nomedicine:
+        play music audio.alarm
+        $pause(2)
     scene bedroom with dissolve
     $quick_menu = True
 
@@ -15,6 +16,10 @@ label wakeup:
 
 label alarmCircle:
     $renpy.block_rollback()
+    if persistent.nomedicine:
+        stop music
+        show screen screen_dashboard(p)
+        jump beforeCircle
     $pause(2)
     menu:
         "关闭闹钟":

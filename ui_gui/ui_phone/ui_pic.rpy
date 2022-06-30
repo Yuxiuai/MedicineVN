@@ -30,7 +30,7 @@ screen screen_phone_pic_address(player):
                         background None
                         $sol_i = '存有我自己照片的文件夹'
                         $sol_a = '……虽然我倒是偶尔会搞几张自拍给别人看啦。'
-                        imagebutton idle "gui/phone/address/Pathos.png":
+                        imagebutton idle "gui/phone/address/Solitus.png":
                             action [Hide("info"),Hide("screen_phone_pic_address"),Hide("screen_phone_bg"),Show(screen="screen_phone_pic_show",who='solitus', player=player)]
                             hovered Show(screen="info", i=sol_i, a=sol_a)
                             unhovered Hide("info")  

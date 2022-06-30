@@ -185,7 +185,7 @@ screen item_use(player, item, pp, t=None, i1=None, a1=None, i2=None, a2=None, wi
                 xalign 0.5
                 spacing 40
             
-                if BookQuickReadEffect.has(player) and type(item).kind == '书本':
+                if BookQuickReadEffect.has(player) and player.canRead >= 0 and type(item).kind == '书本':
                     textbutton _("{color=#ffff00}{size=-3}速读{/size}{/color}"):
                         action [Hide("item_use"), Function(ui_itemUse, item=item, player=player)]
                         activate_sound audio.cursor

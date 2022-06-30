@@ -936,7 +936,7 @@ screen notify_select():
                 background None
                 ysize 50
                 textbutton _("较短（3秒）") text_style 'white':
-                    action [SetVariable("persistent.notifyDuration", 3),Hide("notify_select")]
+                    action [SetVariable("persistent.notifyDuration", 3),Function(renpy.save_persistent), Hide("notify_select")]
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
@@ -948,7 +948,7 @@ screen notify_select():
                 background None
                 ysize 50
                 textbutton _("正常（5秒）") text_style 'white':
-                    action [SetVariable("persistent.notifyDuration", 5),Hide("notify_select")]
+                    action [SetVariable("persistent.notifyDuration", 5),Function(renpy.save_persistent), Hide("notify_select")]
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
@@ -960,7 +960,7 @@ screen notify_select():
                 background None
                 ysize 50
                 textbutton _("较久（10秒）") text_style 'white':
-                    action [SetVariable("persistent.notifyDuration", 10),Hide("notify_select")]
+                    action [SetVariable("persistent.notifyDuration", 10),Function(renpy.save_persistent), Hide("notify_select")]
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
@@ -968,6 +968,155 @@ screen notify_select():
                     imagebutton idle "gui/phone/right_.png":
                         xalign 0.975
                         yalign 0.5
+
+
+screen challenges_select(player=player):
+    use barrier(screen="challenges_select")
+    style_prefix "info"
+    zorder 400
+    default pp = renpy.get_mouse_pos()
+    $p = pp
+    if p[0] < 1500:
+        $xc = 0.0
+        $trans = trans_toLeft
+    else:
+        $xc = 1.0
+        $trans = trans_toRight
+    $xc = 0.0 if p[0] < 1500 else 1.0
+    $yc = 0.0 if p[1] < 540 else 1.0
+    frame:
+        pos pp
+        padding (15, 15)
+        xanchor xc
+        yanchor yc
+        xsize 300
+        at trans()
+        vbox:
+            frame:
+                background None
+                ysize 50
+
+                $i_gm1 = '偏头痛\n\n小幅度提升药物的回复效果，但每完成一个日程后以百分比随机消耗较大范围内的当前精神状态。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
+
+                textbutton _("偏头痛") text_style 'white':
+                    if player.week < 2:
+                        action [Hide("info"),Show(screen="info_confirm", i=i_gm1,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode1.add, player))]
+                    else:
+                        action [Hide("info"),Show(screen="info_use", i=i_gm1,width=600,pp=renpy.get_mouse_pos())]
+
+                    hovered Show(screen='info', i=i_gm1,width=600)
+                    unhovered Hide('info')
+                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    xfill True
+                    activate_sound audio.cursor
+                if GameMode1.has(player):
+                    imagebutton idle "gui/phone/right_.png":
+                        xalign 0.975
+                        yalign 0.5
+            
+            frame:
+                background None
+                ysize 50
+
+                $i_gm2 = '药价膨胀\n\n药价的自然增长幅度提升至2.5倍。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
+                
+                textbutton _("药价膨胀") text_style 'white':
+                    if player.week < 2:
+                        action [Hide("info"),Show(screen="info_confirm", i=i_gm2,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode2.add, player))]
+                    else:
+                        action [Hide("info"),Show(screen="info_use", i=i_gm2,width=600,pp=renpy.get_mouse_pos())]
+
+                    hovered Show(screen='info', i=i_gm2 ,width=600)
+                    unhovered Hide('info')
+                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    xfill True
+                    activate_sound audio.cursor
+                if GameMode2.has(player):
+                    imagebutton idle "gui/phone/right_.png":
+                        xalign 0.975
+                        yalign 0.5
+                         
+            frame:
+                background None
+                ysize 50
+
+                $i_gm3 = '自卑感\n\n过夜有较低概率失去2%点随机属性，一定概率永久提升1%严重程度。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
+                
+                textbutton _("自卑感") text_style 'white':
+                    if player.week < 3:
+                        action [Hide("info"),Show(screen="info_confirm", i=i_gm3,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode3.add, player))]
+                    else:
+                        action [Hide("info"),Show(screen="info_use", i=i_gm3,width=600,pp=renpy.get_mouse_pos())]
+
+                    hovered Show(screen='info', i=i_gm3 ,width=600)
+                    unhovered Hide('info')
+                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    xfill True
+                    activate_sound audio.cursor
+                if GameMode3.has(player):
+                    imagebutton idle "gui/phone/right_.png":
+                        xalign 0.975
+                        yalign 0.5
+
+            frame:
+                background None
+                ysize 50
+
+                $i_gm4 = '理财不善\n\n过夜有概率失去小部分金钱。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
+                
+                textbutton _("理财不善") text_style 'white':
+                    if player.week < 3:
+                        action [Hide("info"),Show(screen="info_confirm", i=i_gm4,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode4.add, player))]
+                    else:
+                        action [Hide("info"),Show(screen="info_use", i=i_gm4,width=600,pp=renpy.get_mouse_pos())]
+
+                    hovered Show(screen='info', i=i_gm4 ,width=600)
+                    unhovered Hide('info')
+                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    xfill True
+                    activate_sound audio.cursor
+                if GameMode4.has(player):
+                    imagebutton idle "gui/phone/right_.png":
+                        xalign 0.975
+                        yalign 0.5
+
+            frame:
+                background None
+                ysize 50
+
+                $i_gm5 = '效率低下\n\n每周需要完成的工作提升15%。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
+                
+                textbutton _("效率低下") text_style 'white':
+                    if player.week < 3:
+                        action [Hide("info"),Show(screen="info_confirm", i=i_gm5,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode5.add, player))]
+                    else:
+                        action [Hide("info"),Show(screen="info_use", i=i_gm5,width=600,pp=renpy.get_mouse_pos())]
+
+                    hovered Show(screen='info', i=i_gm5 ,width=600)
+                    unhovered Hide('info')
+                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    xfill True
+                    activate_sound audio.cursor
+                if GameMode5.has(player):
+                    imagebutton idle "gui/phone/right_.png":
+                        xalign 0.975
+                        yalign 0.5
+            
+            frame:
+                background None
+                ysize 10
+
+            frame:
+                background None
+                ysize 50
+                textbutton _("确定") text_style 'white':
+                    action Hide("challenges_select")
+                    text_xalign 0.5
+                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    xfill True
+                    activate_sound audio.cursor
+
+    key 'K_ESCAPE' action Hide("info_confirm")
 
 ## 设置界面 ########################################################################
 ##
@@ -1002,100 +1151,53 @@ screen preferences(player=None):
                         textbutton _("极易") text_style 'white':
                             action NullAction()
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
                     if GameDifficulty2.has(player):
                         textbutton _("较易") text_style 'white':
                             action NullAction()
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
                     if GameDifficulty3.has(player):
                         textbutton _("一般") text_style 'white':
                             action NullAction()
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
                     if GameDifficulty4.has(player):
                         textbutton _("较难") text_style 'white':
                             action NullAction()
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
                     if GameDifficulty5.has(player):
                         textbutton _("极难") text_style 'white':
                             action NullAction()
                             xalign 0.975
-                            yalign 0.5
-                
+                            yalign 0.2
 
-                textbutton '{size=-5}挑战模式{/size}' text_style "white":
-                    action NullAction()
-                    xfill True
-                    xalign 1.0
-                    activate_sound audio.cursor
-                    xoffset -5
                 frame:
+                    $challenges = 0
                     background None
                     ysize 50
-
-                    $i_gm1 = '挑战模式：偏头痛\n\n勾选此项后，添加挑战难度：偏头痛。\n\n在此挑战难度下，小幅度提升药物的回复效果，但每完成一个日程后以百分比随机消耗较大范围内的当前精神状态。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
-
-                    textbutton _("偏头痛") text_style 'white':
-                        if player.week < 2:
-                            action [Hide("info"),Show(screen="info_confirm", i=i_gm1,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode1.add, player))]
-                        else:
-                            action [Hide("info"),Show(screen="info_use", i=i_gm1,width=600,pp=renpy.get_mouse_pos())]
-
-                        hovered Show(screen='info', i=i_gm1,width=600)
-                        unhovered Hide('info')
+                    textbutton _("模组管理") text_style 'white':
+                        action [Show(screen='challenges_select',player=player)]
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                         xfill True
                         activate_sound audio.cursor
                     if GameMode1.has(player):
-                        imagebutton idle "gui/phone/right_.png":
-                            xalign 0.975
-                            yalign 0.5
-                
-                frame:
-                    background None
-                    ysize 50
-
-                    $i_gm2 = '挑战模式：资源供给\n\n勾选此项后，立刻获得2000元并添加挑战难度：资源供给。\n\n在此挑战难度下，药价的自然增长幅度将乘上2.25。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
-                    
-                    textbutton _("资源供给") text_style 'white':
-                        if player.week < 2:
-                            action [Hide("info"),Show(screen="info_confirm", i=i_gm2,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode2.add, player))]
-                        else:
-                            action [Hide("info"),Show(screen="info_use", i=i_gm2,width=600,pp=renpy.get_mouse_pos())]
-
-                        hovered Show(screen='info', i=i_gm2 ,width=600)
-                        unhovered Hide('info')
-                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                        xfill True
-                        activate_sound audio.cursor
+                        $challenges+=1
                     if GameMode2.has(player):
-                        imagebutton idle "gui/phone/right_.png":
-                            xalign 0.975
-                            yalign 0.5
-                             
-                frame:
-                    background None
-                    ysize 50
-
-                    $i_gm3 = '挑战模式：优越开局\n\n勾选此项后，立刻获得各15点基础属性并添加挑战难度：优越开局。\n\n在此挑战难度下，过夜有较低概率失去2点随机属性。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
-                    
-                    textbutton _("优越开局") text_style 'white':
-                        if player.week < 3:
-                            action [Hide("info"),Show(screen="info_confirm", i=i_gm3,width=600,pp=renpy.get_mouse_pos(),act=Function(GameMode3.add, player))]
-                        else:
-                            action [Hide("info"),Show(screen="info_use", i=i_gm3,width=600,pp=renpy.get_mouse_pos())]
-
-                        hovered Show(screen='info', i=i_gm3 ,width=600)
-                        unhovered Hide('info')
-                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                        xfill True
-                        activate_sound audio.cursor
+                        $challenges+=1
                     if GameMode3.has(player):
-                        imagebutton idle "gui/phone/right_.png":
-                            xalign 0.975
-                            yalign 0.5
+                        $challenges+=1
+                    if GameMode4.has(player):
+                        $challenges+=1
+                    if GameMode5.has(player):
+                        $challenges+=1
+                    textbutton '已开启模组数：%s' % challenges text_style 'white':
+                        action NullAction()
+                        xalign 0.975
+                        yalign 0.2
+                
+               
 
                         
             textbutton '{size=-5}系统设置{/size}' text_style "white":
@@ -1118,12 +1220,12 @@ screen preferences(player=None):
                         textbutton _("窗口") text_style 'white':
                             action NullAction()
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
                     if preferences.fullscreen:
                         textbutton _("全屏") text_style 'white':
                             action NullAction()
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
 
             
             frame:
@@ -1138,12 +1240,12 @@ screen preferences(player=None):
                     textbutton _("中文") text_style 'white':
                         action NullAction()
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
                 if preferences.language == 'english':
                     textbutton _("English") text_style 'white':
                         action NullAction()
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
 
             frame:
                 background None
@@ -1177,20 +1279,20 @@ screen preferences(player=None):
                 background None
                 ysize 50
                 textbutton _("跳过未读文本") text_style 'white':
-                    action ToggleVariable("preferences.skip_unseen", true_value=True, false_value=False)
+                    action [ToggleVariable("preferences.skip_unseen", true_value=True, false_value=False), Function(renpy.save_persistent)]
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
                 if preferences.skip_unseen:
                     imagebutton idle "gui/phone/right_.png":
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
             
             frame:
                 background None
                 ysize 50
                 textbutton _("数值详细显示") text_style 'white':
-                    action ToggleVariable("persistent.PreciseDisplay", true_value=True, false_value=False)
+                    action [ToggleVariable("persistent.PreciseDisplay", true_value=True, false_value=False), Function(renpy.save_persistent)]
                     hovered Show(screen='info', i='数值详细显示\n\n勾选此项后，游戏内的状态的介绍文字将更详细地描述其效果。\n\n例：\n提升少量精神状态消耗 -> 提升10%精神状态消耗。',width=600)
                     unhovered Hide('info')
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -1199,13 +1301,13 @@ screen preferences(player=None):
                 if persistent.PreciseDisplay:
                     imagebutton idle "gui/phone/right_.png":
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
 
             frame:
                 background None
                 ysize 50
                 textbutton _("显示基础能力数值") text_style 'white':
-                    action ToggleVariable("persistent.PreciseDisplayAbilities", true_value=True, false_value=False)
+                    action [ToggleVariable("persistent.PreciseDisplayAbilities", true_value=True, false_value=False), Function(renpy.save_persistent)]
                     hovered Show(screen='info', i='显示基础能力数值\n\n勾选此项后，显示面板数值的同时也显示基础数值。\n\n例：\n工作能力 1.1 -> 工作能力 1.1(1.05)',width=600)
                     unhovered Hide('info')
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -1214,13 +1316,13 @@ screen preferences(player=None):
                 if persistent.PreciseDisplayAbilities:
                     imagebutton idle "gui/phone/right_.png":
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
 
             frame:
                 background None
                 ysize 50
                 textbutton _("显示具体工作目标") text_style 'white':
-                    action ToggleVariable("persistent.PreciseDisplayGoal", true_value=True, false_value=False)
+                    action [ToggleVariable("persistent.PreciseDisplayGoal", true_value=True, false_value=False), Function(renpy.save_persistent)]
                     hovered Show(screen='info', i='显示具体工作目标\n\n勾选此项后，显示工作目标的格式将以具体的数值显示。\n\n例：\n工作进度 10% -> 工作进度 1.0/10.0(10%)',width=600)
                     unhovered Hide('info')
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -1229,7 +1331,7 @@ screen preferences(player=None):
                 if persistent.PreciseDisplayGoal:
                     imagebutton idle "gui/phone/right_.png":
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
 
             frame:
                 background None
@@ -1243,24 +1345,24 @@ screen preferences(player=None):
                     textbutton _("较短") text_style 'white':
                         action NullAction()
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
                 if persistent.notifyDuration == 5:
                     textbutton _("正常") text_style 'white':
                         action NullAction()
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
                 if persistent.notifyDuration == 10:
                     textbutton _("较久") text_style 'white':
                         action NullAction()
                         xalign 0.975
-                        yalign 0.5
+                        yalign 0.2
 
             if config.developer:
                 frame:
                     background None
                     ysize 50
                     textbutton _("跳过日程等待时间和过场动画（测试）") text_style 'white':
-                        action ToggleVariable("persistent.nowaiting", true_value=True, false_value=False)
+                        action [ToggleVariable("persistent.nowaiting", true_value=True, false_value=False), Function(renpy.save_persistent)]
                         hovered Show(screen='info', i='跳过日程等待时间和过场动画（测试）\n\n勾选此项后，游戏进行日程的等待时间和过场动画的播放时间缩短至0.1秒。',width=600)
                         unhovered Hide('info')
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -1269,13 +1371,13 @@ screen preferences(player=None):
                     if persistent.nowaiting:
                         imagebutton idle "gui/phone/right_.png":
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
 
                 frame:
                     background None
                     ysize 50
                     textbutton _("跳过开场动画（测试）") text_style 'white':
-                        action ToggleVariable("persistent.nosplash", true_value=True, false_value=False)
+                        action [ToggleVariable("persistent.nosplash", true_value=True, false_value=False), Function(renpy.save_persistent)]
                         hovered Show(screen='info', i='跳过开场动画（测试）\n\n勾选此项后，打开游戏不再出现开场动画。',width=600)
                         unhovered Hide('info')
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -1284,13 +1386,13 @@ screen preferences(player=None):
                     if persistent.nosplash:
                         imagebutton idle "gui/phone/right_.png":
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
 
                 frame:
                     background None
                     ysize 50
                     textbutton _("关闭人物剧情（测试）") text_style 'white':
-                        action ToggleVariable("persistent.noplot", true_value=True, false_value=False)
+                        action [ToggleVariable("persistent.noplot", true_value=True, false_value=False), Function(renpy.save_persistent)]
                         hovered Show(screen='info', i='关闭人物剧情（测试）\n\n勾选此项后，进行日程不会触发人物剧情。',width=600)
                         unhovered Hide('info')
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -1299,7 +1401,22 @@ screen preferences(player=None):
                     if persistent.noplot:
                         imagebutton idle "gui/phone/right_.png":
                             xalign 0.975
-                            yalign 0.5
+                            yalign 0.2
+
+                frame:
+                    background None
+                    ysize 50
+                    textbutton _("关闭死亡判定（测试）") text_style 'white':
+                        action [ToggleVariable("persistent.nomedicine", true_value=True, false_value=False), Function(renpy.save_persistent)]
+                        hovered Show(screen='info', i='关闭死亡判定（测试）\n\n勾选此项后，跳过早上的吃药阶段，精神值低于0也不会死亡。',width=600)
+                        unhovered Hide('info')
+                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                        xfill True
+                        activate_sound audio.cursor
+                    if persistent.nomedicine:
+                        imagebutton idle "gui/phone/right_.png":
+                            xalign 0.975
+                            yalign 0.2
     
     #use navigation
 

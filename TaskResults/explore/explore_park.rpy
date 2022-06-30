@@ -142,9 +142,9 @@ label explore_park_6:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
-    $rec = 20 * Task.getRecoScale(p)
+    $rec = r2(20 * Task.getRecoScale(p))
     $p.severity -= 0.02
-    $p.mental += r2(rec)
+    $p.mental += rec
     $Notify.add('恢复了%s点精神状态。' % rec)
     $Notify.add('降低了2点严重程度。')
     $PhysRezB.add(p)
@@ -161,9 +161,9 @@ label explore_park_7:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
-    $rec = 15 * Task.getRecoScale(p)
+    $rec = r2(15 * Task.getRecoScale(p))
     $p.physical += 0.02
-    $p.mental += r2(rec)
+    $p.mental += rec
     $Notify.add('恢复了%s点精神状态。' % rec)
     $Notify.add('提升了2点身体素质。')
     $PhysRezB.add(p)

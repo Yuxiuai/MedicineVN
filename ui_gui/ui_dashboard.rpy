@@ -14,6 +14,8 @@ screen screen_dashboard_calendar(player):
     $ info = '\n消耗倍率：' + num_str(player.deteriorateConsumption, rev = True)
     $ info2 = '\n过夜预计消耗的精神状态约为：' + str(cons)
     $ ad = '时间正在一刻不停地流逝，无可避免的死亡正在前方等待，而悔恨和不甘正在堆积。'
+    if Despair.has(player):
+        $ ad = "即将抵达的死亡。"
 
     vbox:
         xpos 0.02
@@ -34,14 +36,24 @@ screen screen_dashboard_calendar(player):
         else:
             $ poz = '在公司'
         $wea_t = '本日天气为：' + wea_name +'\n预计明日天气为：' + player.newMorningWeather(True).name
-        textbutton _("[player.mon]月[player.day]日  第[player.week]周  [wea_name]\n[weekday]  [showHour]:[showMin]  [poz]")xalign 0.0:
-            at trans_Down(0.2)
-            #action Function(allE, player=player)
-            action [Hide("info3"),Show(screen="info3_use", pp=renpy.get_mouse_pos(), t=wea_t, i1=wea_info, a1=wea_ad, i2=info2+info, a2=ad)]
-            hovered Show(screen="info3",t=wea_t, i1=wea_info, a1=wea_ad, i2=info2+info, a2=ad)
-            unhovered Hide("info3")
-            text_style "gameUI"
-            hover_sound audio.cursor
+        if Despair.has(player):
+            textbutton _("废墟下的第[player.finalStageDays]天")xalign 0.0:
+                at trans_Down(0.2)
+                #action Function(allE, player=player)
+                action [Hide("info3"),Show(screen="info3_use", pp=renpy.get_mouse_pos(), t=wea_t, i1=wea_info, a1=wea_ad, i2=info2+info, a2=ad)]
+                hovered Show(screen="info3",t=wea_t, i1=wea_info, a1=wea_ad, i2=info2+info, a2=ad)
+                unhovered Hide("info3")
+                text_style "gameUI"
+                hover_sound audio.cursor
+        else:
+            textbutton _("[player.mon]月[player.day]日  第[player.week]周  [wea_name]\n[weekday]  [showHour]:[showMin]  [poz]")xalign 0.0:
+                at trans_Down(0.2)
+                #action Function(allE, player=player)
+                action [Hide("info3"),Show(screen="info3_use", pp=renpy.get_mouse_pos(), t=wea_t, i1=wea_info, a1=wea_ad, i2=info2+info, a2=ad)]
+                hovered Show(screen="info3",t=wea_t, i1=wea_info, a1=wea_ad, i2=info2+info, a2=ad)
+                unhovered Hide("info3")
+                text_style "gameUI"
+                hover_sound audio.cursor
 
 
 screen screen_dashboard_medicine(player):

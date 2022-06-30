@@ -36,6 +36,7 @@ define -500 audio.door = "audio/sound/door.mp3"
 define -500 audio.heartbeat = "audio/sound/heartbeat.ogg"
 define -500 audio.pee = "audio/sound/pee.wav"
 define -500 audio.badminton = "audio/sound/badminton.mp3"
+define -500 audio.earthquake = "audio/sound/earthquake.mp3"
 
 define -500 audio.increase = "audio/sound/increase.mp3"
 define -500 audio.decrease = "audio/sound/decrease.mp3"

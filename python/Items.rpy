@@ -290,6 +290,7 @@ init python:
         def useItemAction(self, player):
             DrugHypnoticEffect.add(player)
             player.druguse += 1
+            player.severity += 0.02
 
 
 
@@ -312,6 +313,7 @@ init python:
             else:
                 player.severity += 0.05
             player.druguse += 1
+            player.severity += 0.02
 
 
     class DrugIbuprofen(Item):
@@ -328,6 +330,7 @@ init python:
         def useItemAction(self, player):
             DrugIbuprofenEffect.add(player)
             player.druguse += 1
+            player.severity += 0.01
 
     class DrugVitamin(Item):
         id = 303
@@ -347,6 +350,7 @@ init python:
                 if i.resistance_ < 0:
                     i.resistance_ = 0
             player.druguse += 1
+            player.severity += 0.01
 
     class DrugIndigestion(Item):
         id = 304
@@ -363,6 +367,7 @@ init python:
             if Satiety.has(p):
                 Satiety.subByType(p)
             player.druguse += 1
+            player.severity += 0.01
 
     class DrugStomach(Item):
         id = 305
@@ -372,14 +377,20 @@ init python:
         maxDu = 280
         reuse = False
         isUnique = False
-        info = '提升食物的回复效果。'
+        info = '提升食物的回复效果，当恢复效果无法再提升时没有效果。'
         p=0.2
 
         def useItemAction(self, player):
-            r = ra(player, 6, 10)
+            r = ra(player, 6, 10) + int(player.fooduse / 10)
+            if player.fooduse <= r:
+                r = player.fooduse
             player.fooduse -= r
             player.druguse += 2
-            Notify.add('恢复了%s%s食物的恢复效果！' % (r * 0.3, '%'))
+            if r > 0:
+                Notify.add('恢复了%s%s食物的恢复效果！' % (r * 0.3, '%'))
+            else:
+                Notify.add('没有恢复食物的恢复效果。')
+            player.severity += 0.01
 
 
     class DrugAntibiotic(Item):
@@ -390,13 +401,14 @@ init python:
         maxDu = 280
         reuse = False
         isUnique = False
-        info = '将生病转化为6层过劳，未生病则提升严重程度。'
-        p=0.2
+        info = '将生病转化为6层持续时间为1的过劳，未生病则提升严重程度。'
+        p=0.3
 
         def useItemAction(self, player):
             if PhysPun.has:
                 PhysPun.clearByType(player)
                 PhysProb.add(player, 6)
+                PhysProb.get(player).duration = 1
                 player.severity += 0.02
             else:
                 player.severity += 0.05
@@ -411,13 +423,14 @@ init python:
         maxDu = 280
         reuse = False
         isUnique = False
-        info = '将偏执转化为6层焦虑，未生病则提升严重程度。'
-        p=0.2
+        info = '将偏执转化为6层持续时间为1的焦虑，未生病则提升严重程度。'
+        p=0.3
 
         def useItemAction(self, player):
             if MentPun.has:
                 MentPun.clearByType(player)
                 MentProb.add(player, 6)
+                MentProb.get(player).duration = 1
                 player.severity += 0.02
             else:
                 player.severity += 0.05
@@ -517,7 +530,7 @@ init python:
         maxCd = 14
         maxDu = -1
         isUnique = True
-        info = '当写作素材层数不低于25层时，阅读本书籍获得额外10层写作素材，并使写作技巧大幅提升。'
+        info = '当写作素材层数不低于25层时，阅读本书籍获得额外10层写作素材，并使写作技巧大幅提升。\n\n获得长门的手稿。'
         ad = '“在写作之前，最好先花些时间在笔记本上设计人物，搜集情节，或者记下脑海中曾涌现过的东西，直到动笔的那一刻到来。”'
         bookEffect_ = BookWriEffect
 
@@ -525,6 +538,7 @@ init python:
             if FixedInspiration.getstack(player) >= 25:
                 type(self).bookEffect_.add(player)
                 FixedInspiration.add(player, 10)
+                ManuscriptChangmen.add(p)
 
 
     class BookConc(BookBase):
@@ -566,7 +580,7 @@ init python:
         maxCd = 14
         maxDu = -1
         isUnique = True
-        info = '拥有生病或受伤时，阅读本书籍随机延长对应状态的持续时间。\n提升对应状态的休息恢复效果，在此期间通过休息治愈生病或受伤时，降低10%的严重程度。'
+        info = '拥有生病或受伤时，阅读本书籍随机延长对应状态的持续时间。\n提升对应状态的休息恢复效果，在此期间通过休息治愈生病或受伤时，降低5%的严重程度。'
         ad = '“保证呼吸道通畅，提升呼吸肌功能，促进排痰和痰液引流，以及加强气体交换效率……”'
         bookEffect_ = BookPhysPunEffect
 
@@ -694,13 +708,12 @@ init python:
         maxCd = 14
         maxDu = -1  # 数字
         isUnique = True
-        info = '阅读本书籍后效果持续时间内进行工作类日程时有几率额外提升随机属性，提升5次后结束效果。\n\n获得药剂师的手稿。'
+        info = '阅读本书籍后效果持续时间内进行工作类日程时有几率额外提升随机属性，提升5次后结束效果。\n\n获得'
         ad = '“我看向蔚蓝的天空，仿佛现在还是四五年前，我正趴在大学教室的最后一排桌子上，歪头看着窗户，对着和现在一样蓝的天空做着永远不会实现的白日梦。”'
         bookEffect_ = BookMEDEffect
 
         def useItemAction(self, player):
             type(self).bookEffect_.add(player, 5)
-            ManuscriptPharmacist.add(player)
 
 
     class AMaverickLion(BookBase):
@@ -820,19 +833,20 @@ init python:
             player.achievedGoal += r2(player.goal * 0.1)
 
 
-    class ManuscriptPharmacist(Item):
+    class ManuscriptChangmen(Item):
         id = 452
-        name = '药剂师的手稿'
+        name = '长门的手稿'
         kind = '手稿'
         maxCd = 14
         maxDu = -1  # 数字
         isUnique = False
         reuse = False
-        info = '阅读本手稿后持续时间内药物的恢复效果提升25%，但过夜消耗的精神状态和工作消耗的精神状态也提升25%。'
-        ad = '“请记住，我们曾经存在过。”'
+        info = '阅读本手稿后将灵感的持续时间延长3天，如果没有灵感则没有效果。'
+        ad = '“人生是旷野，不是轨道，我有权拒绝一种生活。”'
 
         def useItemAction(self, player):
-            ManuscriptPharmacistEffect.add(player)
+            if Inspiration.has(p):
+                Inspiration.get(p).duration += 3
 
 
     class ManuscriptPathos(Item):
@@ -1055,8 +1069,8 @@ init python:
             rec = r2(8 * player.useFoodScale())
             Notify.add('恢复了%s点精神状态！' % rec)
             player.mental += rec
-            player.fooduse += 4
-            Notify.add('降低了1.2%食物的恢复效果！')
+            player.fooduse += 3
+            Notify.add('降低了0.9%食物的恢复效果！')
             if rra(player, 50):
                 Satiety.add(player)
             FocusAttention.add(p)
@@ -1278,12 +1292,14 @@ init python:
         maxDu = 3
         reuse = False
         isUnique = False
-        info = '使用后获得2层兴奋和1~2层紧张，0~1层咖啡因刺激。'
+        info = '使用后获得1层兴奋和2层紧张，降低2点严重程度，0~1层咖啡因刺激。'
         ad = '“我不在咖啡馆，就在去咖啡馆的路上。”'
 
         def useItemAction(self, player):
             ConcInc.add(player, 2)
             ConsInc.add(player, ra(player, 1, 2))
+            player.severity -= 0.02
+            Notify.add('降低了2点严重程度！')
             if rra(player, 40):
                 Caffeine.add(player)
 
@@ -1295,14 +1311,14 @@ init python:
         maxDu = 3
         reuse = False
         isUnique = False
-        info = '使用后获得1~3层放松，降低2点严重程度，2层咖啡因刺激。'
+        info = '使用后获得2层放松，降低2点严重程度，3层咖啡因刺激。'
         ad = '让爱恋中的人们了解爱情的甜美和波折，为了告诉我们幸福的简单。'
 
         def useItemAction(self, player):
             player.severity -= 0.02
-            Caffeine.add(player, 2)
+            Caffeine.add(player, 3)
             Notify.add('降低了2点严重程度！')
-            ConsDec.add(player, ra(player, 1, 3))
+            ConsDec.add(player, 2)
 
     class StreetFood8(Item):
         id = 219
@@ -1312,11 +1328,11 @@ init python:
         maxDu = 2
         reuse = False
         isUnique = False
-        info = '使用后获得3层睡意。'
+        info = '使用后获得2层睡意。'
         ad = '在你拜访你最喜欢的朋友的家时，可以分享给他品尝，不过要提前问好几分钟后会不会有人敲门。'
 
         def useItemAction(self, player):
-            ConcDec.add(player, 3)
+            ConcDec.add(player, 2)
 
     class StreetFood9(Item):
         id = 220
@@ -1367,7 +1383,7 @@ init python:
         maxDu = 90
         reuse = False
         isUnique = False
-        info = '使用后消耗50%的精神状态，低于0时固定降低100点，获得3层睡意，3层放松和3层灵感，并提升严重程度。'
+        info = '使用后消耗50%的精神状态，低于0时固定降低100点，获得2层睡意，2层放松和2层灵感，并提升严重程度。'
         ad = '“吾身为火，烧尽那些敢于眷恋我的勇者。”'
 
         def useItemAction(self, player):
@@ -1376,9 +1392,9 @@ init python:
             else:
                 player.mental = r2(0.5 * player.mental)
             player.severity += 0.02
-            ConcDec.add(player, 3)
-            ConsDec.add(player, 3)
-            Inspiration.add(player, 3)
+            ConcDec.add(player, 2)
+            ConsDec.add(player, 2)
+            Inspiration.add(player, 2)
     
     class Cigarette(Item):
         id = 223
@@ -1554,11 +1570,9 @@ init python:
 
         def afterSleepAction(self, player):
             if not self.broken:
-                r = ra(player, 0, 1)
-                if rra(player, 30):
-                    r += 1
-                player.severity -= r * 0.01
-                Notify.add('由于八音盒，降低了%s点严重程度。' % r)
+                if rra(player, 40):
+                    player.severity -= 0.01
+                    Notify.add('由于八音盒，降低了1点严重程度。')
 
 
     class ClockTower(Item):
@@ -1573,7 +1587,7 @@ init python:
 
         def afterSleepAction(self, player):
             if not self.broken:
-                r = ra(player, 5, 15)
+                r = ra(player, 5, 10)
                 Notify.add('由于钟塔摆件，恢复了%s点精神状态。' % r)
                 player.mental += r
 

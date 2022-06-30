@@ -41,7 +41,7 @@ init python:
 
     
 
-init:
+init -2:
     define config.layers = [ 'master', 'transient', 'screens', 'headimage' ,'overlay']
 
     default persistent.newplayer = True
@@ -49,12 +49,13 @@ init:
     default persistent.nowaiting = False
     default persistent.nosplash = False
     default persistent.noplot = True
+    default persistent.nomedicine = False
+
 
     default persistent.PreciseDisplay = False
     default persistent.notifyDuration = 5
     default persistent.PreciseDisplayAbilities = False
     default persistent.PreciseDisplayGoal = False
-
 
 
 
@@ -67,5 +68,7 @@ init:
     default persistent.DeplineEnding = False
     default persistent.ne = False
     default persistent.te = False
+
+    default persistent.t = 0
 
     define replaying = False

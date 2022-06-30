@@ -203,6 +203,7 @@ init python:
 
         def end(self, player):
             Pleasure.add(player)
+            player.mental += r2(player.mental * 0.5)
             self.clear(player)
 
 
@@ -515,7 +516,7 @@ init python:
                 Notify.add('降低了5点严重程度！')
                 Notify.add('提升了5点身体素质！')
                 if BookPhysPunEffect.has(player):
-                    s = r2(player.severity * 0.1)
+                    s = r2(player.severity * 0.05)
                     player.severity -= s
                     Notify.add('由于学习成果：《呼吸训练》，额外降低了%s点严重程度！' % s)
                 player.severity -= 0.05
@@ -645,7 +646,7 @@ init python:
                 Notify.add('提升了5点身体素质！')
                 Notify.add('降低了5点严重程度！')
                 if BookPhysPunEffect.has(player):
-                    s = r2(player.severity * 0.1)
+                    s = r2(player.severity * 0.05)
                     player.severity -= s
                     Notify.add('由于学习成果：《呼吸训练》，额外降低了%s点严重程度！' % s)
                 player.severity -= 0.05
@@ -1515,16 +1516,16 @@ init python:
         maxDuration = 0
         maxStacks = 5
         info = '随层数{color=#7CFC00}降低{/color}睡眠消耗的精神状态和专注度。'
-        info_p = '{color=#7CFC00}降低{/color}5%睡眠消耗的精神状态，除此之外每层都会{color=#7CFC00}降低{/color}5%睡眠消耗的精神状态和20%专注度。'
+        info_p = '{color=#7CFC00}降低{/color}2%睡眠消耗的精神状态，除此之外每层都会{color=#7CFC00}降低{/color}4%睡眠消耗的精神状态和20%专注度。'
 
         def enableAction(self, player):
-            player.deteriorateConsumption -= 0.05
+            player.deteriorateConsumption -= 0.02
 
         def disableAction(self, player):
-            player.deteriorateConsumption += 0.05
+            player.deteriorateConsumption += 0.02
 
         def addStackAction(self, player):
-            player.deteriorateConsumption -= 0.05
+            player.deteriorateConsumption -= 0.04
             player.basicConcentration -= 0.2
             if self.stacks >1:
                 player.severity += 0.01
@@ -1534,7 +1535,7 @@ init python:
                 player.severity += 1000
             
         def subStackAction(self, player):
-            player.deteriorateConsumption += 0.05
+            player.deteriorateConsumption += 0.04
             player.basicConcentration += 0.2
 
 
@@ -1543,9 +1544,9 @@ init python:
         name = '药物作用：头疼药'
         kind = '药物反应'
         maxDuration = 1
-        maxStacks = 3
+        maxStacks = 5
         info = '每完成一个日程随层数{color=#7CFC00}恢复{/color}微量精神状态。'
-        info_p = '完成日程后，每层都会{color=#7CFC00}恢复{/color}5%的当前精神状态。'
+        info_p = '完成日程后，每层都会{color=#7CFC00}恢复{/color}2%的当前精神状态，最大每层恢复5点。\n精神状态低于0时无效。'
 
         def addStackAction(self, player):
             if self.duration == 1 and self.stacks >1:
@@ -1554,9 +1555,14 @@ init python:
                 player.severity += 1000
 
         def afterTaskAction(self, player, task):
-            t = r2(0.05 * player.mental * self.stacks)
-            player.mental += t
-            Notify.add('由于头疼药，恢复了' + str(t) + '点精神状态。')
+            t = r2(0.02 * player.mental)
+            if t > 10:
+                t = 5.0
+            elif t<0:
+                t = 0
+            if t>0:
+                player.mental += t* self.stacks
+                Notify.add('由于头疼药，恢复了' + str(t * self.stacks) + '点精神状态。')
 
 
 
@@ -1663,11 +1669,11 @@ init python:
         maxDuration = 14
         maxStacks = 1
         info = '每天起床时{color=#7CFC00}获得{/color}灵感，同时有小概率结束该效果。'
-        info_p = '每天起床时{color=#7CFC00}获得{/color}灵感，同时有20%的概率结束该效果。'
+        info_p = '每天起床时{color=#7CFC00}获得{/color}灵感，同时有15%的概率结束该效果。'
 
         def afterSleepAction(self, player):
             Inspiration.add(player)
-            if rra(player, 20):
+            if rra(player, 15):
                 self.clear(player)
 
 
@@ -1678,20 +1684,19 @@ init python:
         maxDuration = 14
         maxStacks = 5
         info = '进行运动类日程有概率{color=#7CFC00}提升{/color}身体素质。'
-        info_p = '进行运动类日程随机{color=#7CFC00}提升{/color}0~2点身体素质。'
+        info_p = '进行运动类日程随机{color=#7CFC00}提升{/color}1~2点身体素质。'
 
         def afterTaskAction(self, player, task):  # 日程后
             if task.kind == '运动类':
-                if rra(player, 45):
 
-                    if rra(player, 80):
-                        Notify.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了1点身体素质！')
-                        player.physical += 0.01
-                    else:
-                        Notify.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了2点身体素质！')
-                        player.physical += 0.02
+                if rra(player, 80):
+                    Notify.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了1点身体素质！')
+                    player.physical += 0.01
+                else:
+                    Notify.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了2点身体素质！')
+                    player.physical += 0.02
 
-                    self.sub(player)
+                self.sub(player)
 
 
     class BookWriteEffect(Effect):
@@ -1701,19 +1706,17 @@ init python:
         maxDuration = 14
         maxStacks = 5
         info = '进行写作类日程有概率{color=#7CFC00}提升{/color}写作技巧。'
-        info_p = '进行写作类日程随机{color=#7CFC00}提升{/color}0~2点写作技巧。'
+        info_p = '进行写作类日程随机{color=#7CFC00}提升{/color}1~2点写作技巧。'
 
         def afterTaskAction(self, player, task):  # 日程后
             if task.kind == '写作类':
-                if rra(player, 45):
-
-                    if rra(player, 80):
-                        Notify.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了1点写作技巧！')
-                        player.writing += 0.01
-                    else:
-                        Notify.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了2点写作技巧！')
-                        player.writing += 0.02
-                    self.sub(player)
+                if rra(player, 80):
+                    Notify.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了1点写作技巧！')
+                    player.writing += 0.01
+                else:
+                    Notify.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了2点写作技巧！')
+                    player.writing += 0.02
+                self.sub(player)
 
 
     class BookCMEffect(Effect):
@@ -1723,12 +1726,12 @@ init python:
         maxDuration = 7
         maxStacks = 1
         info = '每天起床时{color=#7CFC00}降低{/color}严重度，同时有小概率结束该效果。'
-        info_p = '每天起床时{color=#7CFC00}降低{/color}1点严重度，同时有10%的概率结束该效果。'
+        info_p = '每天起床时{color=#7CFC00}降低{/color}1点严重度，同时有15%的概率结束该效果。'
 
         def afterSleepAction(self, player):
             Notify.add('由于感悟：《城堡与莫梭提斯》，{color=#7CFC00}降低{/color}1点严重度！')
             player.severity -= 0.01
-            if rra(player, 10):
+            if rra(player, 15):
                 self.clear(player)
 
 
@@ -1744,16 +1747,16 @@ init python:
         def afterTaskAction(self, player, task):  # 日程后
             if task.kind == '工作类':
                 used = False
-                while rra(player, 50):
-                    if rra(player, 20):
+                while rra(player, 75):
+                    if rra(player, 33):
                         Notify.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点身体素质！')
                         player.physical += 0.01
                         used = True
-                    if rra(player, 20):
+                    if rra(player, 33):
                         Notify.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点写作技巧！')
                         player.writing += 0.01
                         used = True
-                    if rra(player, 20):
+                    if rra(player, 33):
                         Notify.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点工作能力！')
                         player.working += 0.01
                         used = True
@@ -1766,8 +1769,8 @@ init python:
         kind = '学识'
         maxDuration = 1
         maxStacks = 1
-        info = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力越多。\n若消耗的精神状态低于150则只会获得2层焦虑。'
-        info_p = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力越多。\n若消耗的精神状态低于150则只会获得2层焦虑。'
+        info = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力和{color=#7CFC00}降低{/color}的严重程度越多。\n若消耗的精神状态低于150则只会获得2层焦虑。'
+        info_p = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力和{color=#7CFC00}降低{/color}的严重程度越多。\n若消耗的精神状态低于150则只会获得2层焦虑。'
         cons = 0
 
         def enableAction(self, player):
@@ -1777,9 +1780,10 @@ init python:
         @classmethod
         def renewInfo(cls):
             cls.info = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力越多。\n若消耗的精神状态低于150则只会获得2层焦虑。\n\n当前已消耗精神状态：'+str(cls.cons)
+            cls.info_p = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力越多。\n若消耗的精神状态低于150则只会获得2层焦虑。\n\n当前已消耗精神状态：'+str(cls.cons)
 
         def timeUpAction(self, player):
-            g = r2(type(self).cons * 0.035 * 0.01)
+            g = r2(type(self).cons * 0.04 * 0.01)
             if type(self).cons>=150:
                 player.working += g
                 player.severity -= g
@@ -1834,6 +1838,18 @@ init python:
             player.basicRecovery -= 0.5
             player.deteriorateConsumption += 0.5
 
+        @classmethod
+        def renew(cls, player):
+            cls.info = '精神状态消耗大幅度{color=#7CFC00}降低{/color}。\n精神状态恢复大幅度{color=#7CFC00}提升{/color}。\n睡眠消耗的精神状态大幅度{color=#7CFC00}降低{/color}。' + '\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+            cls.info_p = '精神状态消耗{color=#7CFC00}降低{/color}50%。\n精神状态恢复{color=#7CFC00}提升{/color}50%。\n睡眠消耗的精神状态{color=#7CFC00}降低{/color}50%。' + '\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+
+
+        def afterSleepAction(self, player):
+            if rra(player, 20):
+                player.severityRegarded += 0.01
+                player.aggra += 1
+                type(self).renew(player)
+
     class GameDifficulty2(Effect):
         id = 601
         name = '病情稳定'
@@ -1858,6 +1874,18 @@ init python:
             player.basicRecovery -= 0.3
             player.deteriorateConsumption += 0.3
 
+        @classmethod
+        def renew(cls, player):
+            cls.info = '精神状态消耗{color=#7CFC00}降低{/color}。\n精神状态恢复{color=#7CFC00}提升{/color}。\n睡眠消耗的精神状态{color=#7CFC00}降低{/color}。' + '\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+            cls.info_p = '精神状态消耗{color=#7CFC00}降低{/color}30%。\n精神状态恢复{color=#7CFC00}提升{/color}30%。\n睡眠消耗的精神状态{color=#7CFC00}降低{/color}30%。' + '\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+
+
+        def afterSleepAction(self, player):
+            if rra(player, 40):
+                player.severityRegarded += 0.01
+                player.aggra += 1
+                type(self).renew(player)
+
     class GameDifficulty3(Effect):
         id = 602
         name = '病情较重'
@@ -1873,6 +1901,18 @@ init python:
             GameDifficulty2.clearByType(player)
             GameDifficulty4.clearByType(player)
             GameDifficulty5.clearByType(player)
+
+        @classmethod
+        def renew(cls, player):
+            cls.info = '额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+            cls.info_p = '额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+
+        
+        def afterSleepAction(self, player):
+            if rra(player, 60):
+                player.severityRegarded += 0.01
+                player.aggra += 1
+                type(self).renew(player)
 
     
     class GameDifficulty4(Effect):
@@ -1896,6 +1936,17 @@ init python:
         def disableAction(self, player):
             player.basicConsumption -= 0.2
             player.deteriorateConsumption -= 0.2
+
+        @classmethod
+        def renew(cls, player):
+            cls.info = '\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+            cls.info_p = '\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+        
+        def afterSleepAction(self, player):
+            if rra(player, 80):
+                player.severityRegarded += 0.01
+                player.aggra += 1
+                type(self).renew(player)
 
     class GameDifficulty5(Effect):
         id = 604
@@ -1921,8 +1972,18 @@ init python:
             player.basicRecovery += 0.4
             player.deteriorateConsumption -= 0.4
 
+        @classmethod
+        def renew(cls, player):
+            cls.info = '精神状态消耗{color=#FF4500}提升{/color}。\n精神状态恢复{color=#FF4500}降低{/color}。\n睡眠消耗的精神状态{color=#FF4500}提升{/color}。'+'\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+            cls.info_p = '精神状态消耗{color=#FF4500}提升{/color}40%。\n精神状态恢复{color=#FF4500}降低{/color}40%。\n睡眠消耗的精神状态{color=#FF4500}提升{/color}40%。'+'\n\n额外提升的严重程度倍率：+%s%s'%(player.aggra, '%')
+        
+        def afterSleepAction(self, player):
+            player.severityRegarded += 0.01
+            player.aggra += 1
+            type(self).renew(player)
+
     class GameMode1(Effect):
-        id = 605
+        id = 650
         name = '偏头痛'
         kind = '伤痕'
         maxDuration = -1
@@ -1943,6 +2004,8 @@ init python:
                 per += ra(player, 0, 20)
             if rra(player, 50):
                 per += ra(player, 0, 10)
+            if player.mental > 150:
+                per = ra(player, 40, 50)
                 
             t = r2(player.mental * per * 0.01)
             if player.mental <0:
@@ -1953,27 +2016,26 @@ init python:
                 Notify.add('由于伤痕：偏头痛，消耗了%s点精神状态！' % t)
 
     class GameMode2(Effect):
-        id = 606
-        name = '资源供给'
+        id = 651
+        name = '药价膨胀'
         kind = '伤痕'
         maxDuration = -1
         maxStacks = 99
         info = '药物的价格自然增长倍率{color=#FF4500}提升{/color}。'
-        info_p = '药物的价格自然增长倍率{color=#FF4500}提升{/color}125%。'
-        ad = '你的口袋里凭空多出来2000块，这到底是好事还是坏事？'
+        info_p = '药物的价格自然增长倍率{color=#FF4500}提升至{/color}2.5倍。'
+        ad = '是的，即将被淹没。'
 
         def enableAction(self, player):
-            player.money += 2000
-            player.priceIncrease *= 2.25
+            player.priceIncrease *= 2.5
 
     class GameMode3(Effect):
-        id = 607
-        name = '优越开局'
+        id = 652
+        name = '自卑感'
         kind = '伤痕'
         maxDuration = -1
         maxStacks = 99
-        info = '过夜后有概率{color=#FF4500}失去{/color}随机基础属性。'
-        info_p = '过夜后工作能力，身体素质，写作技巧各有50%的概率{color=#FF4500}失去{/color}1点。'
+        info = '过夜后有概率{color=#FF4500}失去{/color}随机基础属性，有概率叠加严重程度倍率。'
+        info_p = '过夜后工作能力，身体素质，写作技巧各有30%的概率{color=#FF4500}失去{/color}2%，严重程度有50%的概率永久{color=#FF4500}提升{/color}1%。'
         ad = '也许你就不应该出生在这个世上。'
 
         def enableAction(self, player):
@@ -1983,11 +2045,39 @@ init python:
 
         def afterSleepAction(self, player):
             if rra(player, 30):
-                player.physical -= 0.02
+                player.physical -= r2(0.02 * player.physical)
             if rra(player, 30):
-                player.writing -= 0.02
+                player.writing -= r2(0.02 * player.writing)
             if rra(player, 30):
-                player.working -= 0.02
+                player.working -= r2(0.02 * player.working)
+            if rra(player, 50):
+                player.severityRegarded += 0.01
+
+    class GameMode4(Effect):
+        id = 653
+        name = '理财不善'
+        kind = '伤痕'
+        maxDuration = -1
+        maxStacks = 99
+        info = '过夜后百分比{color=#FF4500}失去{/color}随机数量当前金钱。'
+        info_p = '过夜后{color=#FF4500}失去{/color}10%~20%的当前金钱。'
+        ad = '只是……看到路边有小吃就想尝一尝……'
+
+        def afterSleepAction(self, player):
+            if player.money >= 10:
+                t = r2(player.money*0.01*ra(10,20))
+                player.money -= t
+                Notify.add('由于伤痕：理财不善，不受控制地花掉了%s元！' % t)
+
+    class GameMode5(Effect):
+        id = 654
+        name = '效率低下'
+        kind = '伤痕'
+        maxDuration = -1
+        maxStacks = 99
+        info = '每周需要完成的工作目标{color=#FF4500}提升{/color}。'
+        info_p = '每周需要完成的工作目标{color=#FF4500}提升{/color}15%。'
+        ad = '如果我大学的时候多学一点就好了……'
 
 
     class Despair(Effect):

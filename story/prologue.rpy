@@ -3,8 +3,9 @@ label wakeup_pro:
     $_game_menu_screen = None
     
     scene black with fade
-    play music audio.alarm
-    $pause(2)
+    if not persistent.nomedicine:
+        play music audio.alarm
+        $pause(2)
     scene bedroom with dissolve
     $quick_menu = True
     
@@ -14,7 +15,10 @@ label wakeup_pro:
     jump alarmCircle_pro
 
 label alarmCircle_pro:
-    
+    if persistent.nomedicine:
+        stop music
+        show screen screen_dashboard(p)
+        jump beforeCircle
     $pause(2)
     menu:
         "关闭闹钟":

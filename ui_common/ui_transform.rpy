@@ -166,4 +166,5 @@ transform head_trans:
         ease 0.2 xoffset -100 xzoom 0.0
 
 
-
+transform darken(val=-0.5):
+    matrixcolor BrightnessMatrix(value=val)

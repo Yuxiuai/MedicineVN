@@ -208,13 +208,12 @@ label explore_hospital_brain:
             scene consulting_room with fade
             show pathos at trans_toRight()
             pathos"“啊，是你啊。”"
-            show pathos smile_mouth
+            show pathos smile_mouth with dissolve
             pathos"“就那个叫什么……[p.name]的？”"
             $ss('awkward_eyes sweat')
             s"“……”"
             $sh()
-            show pathos surprised_eyebrow surprised_eyes surprised_mouth
-            with dissolve
+            show pathos surprised_eyebrow surprised_eyes surprised_mouth with dissolve
             pathos"“有什么事吗？”"
             jump pathos_q_hosp
 
@@ -232,18 +231,17 @@ label explore_hospital_end:
 label pathos_q_hosp:
     menu:
         "关于药物使用的疑问":
-            show pathos angry_eyebrow angry_eyes angry_mouth anger no_sweat
-            with dissolve
+            show pathos angry_eyebrow angry_eyes angry_mouth anger no_sweat with dissolve
             pathos"“我就知道你没听我说话，算了，谁让我是你的专属医生呢？”"
-            show pathos angry_eyebrow normal_eyes saying no_anger
+            show pathos angry_eyebrow normal_eyes saying no_anger with dissolve
             pathos"“使用一次药物后，再次使用相同的药物会降低恢复效率到33\%，使用其他的药物会降低恢复效率到50\%。”"
             pathos"“而隔一段时间后（再一次看到菜单界面），再次使用相同的药物会降低恢复效率到66\%，其他种类的药物的使用效率就不会被降低了。”"
             pathos"“再过一段时间，你就可以使用之前的药物了。”"
-            show pathos normal_eyebrow normal_eyes
+            show pathos normal_eyebrow normal_eyes with dissolve
             pathos"“举个例子，早上吃，下午可以再吃；上午吃，睡前可以再吃；如果下午吃了，晚上就只能吃其他种类的药了。”"
             pathos"“不过例外的是，如果你晚上吃药，第二天早上不会受影响。”"
             pathos"“总之自己探索吧，有很多信息可以自己查看，不懂就问问别人？”"
-            show pathos normal_eyebrow awkward_eyes smile_mouth
+            show pathos normal_eyebrow awkward_eyes smile_mouth with dissolve
             pathos"“哦，我差点忘了，似乎全球只有你有这种病。”"
             pathos"“还有什么想问的吗？”"
             jump pathos_q_hosp
@@ -251,49 +249,47 @@ label pathos_q_hosp:
             show pathos angry_eyebrow normal_eyes angry_mouth sweat
             with dissolve
             pathos"“你是刚出生的孩子吗？这都不懂？”"
-            show pathos normal_eyebrow awkward_eyes smile_mouth no_sweat
+            show pathos normal_eyebrow awkward_eyes smile_mouth no_sweat with dissolve
             pathos"“算了，可能吃那种药把你脑子都吃坏了。”"
-            show pathos normal_eyebrow normal_eyes saying
+            show pathos normal_eyebrow normal_eyes saying with dissolve
             pathos"“首先生病的来源有两个，一个是平时工作太多，过劳的层数过多，也就是4层及以上，在第二天就会转化成生病。”"
             pathos"“另一个是阴冷天气，如果身体平时不多运动，很容易着凉感冒。”"
             pathos"“生病会降低基础属性，也会影响精神状态的消耗恢复和专注度等，尽量避免自己不要生病。”"
-            show pathos normal_eyebrow awkward_eyes saying
+            show pathos normal_eyebrow awkward_eyes saying with dissolve
             pathos"“生病了的话，可以自己选择治愈的方式。”"
             pathos"“去医院治疗的话需要花一笔钱，越早越好；另一种方式是靠休息来恢复，以这种方法恢复会获得基础属性，而且不用花钱，缺点是需要消耗状态。”"
             pathos"“消耗良好的运动和良好的睡眠来提高恢复率，阴天也能让恢复率提升。”"
-            show pathos normal_eyebrow normal_eyes saying
+            show pathos normal_eyebrow normal_eyes saying with dissolve
             pathos"“吃感冒药可以延长生病的时间来减缓病情，每天一片，能够按层数来增加休息治疗的概率。”"
             pathos"“受伤也能根据这个方法来恢复，但是偏执不能靠休息恢复。”"
-            show pathos normal_eyebrow normal_eyes normal_mouth
+            show pathos normal_eyebrow normal_eyes normal_mouth with dissolve
             pathos"“还有什么想问的吗？”"
             jump pathos_q_hosp
         "伤痕相关的疑问":
-            show pathos normal_eyebrow normal_eyes opened_mouth sweat
-            with dissolve
+            show pathos normal_eyebrow normal_eyes opened_mouth sweat with dissolve
             pathos"“如果不去管生病的话，病情会恶化直到自愈，但是会给身体留下不可逆的损伤。”"
             pathos"“体弱会百分比降低属性，尽量不要获得。”"
-            show pathos normal_eyebrow awkward_eyes normal_mouth sweat
+            show pathos normal_eyebrow awkward_eyes normal_mouth sweat with dissolve
             pathos"“另外有时候会莫名其妙多出来伤痕，可能是因为灵感过剩和酸痛堆积导致的，要经常关注一下自己的身体状况哦。”"
             pathos"“还有什么想问的吗？”"
             jump pathos_q_hosp
         "实验药物保质期相关的疑问":
-            show pathos awkward_eyebrow awkward_eyes awkward_mouth sweat
+            show pathos awkward_eyebrow awkward_eyes awkward_mouth sweat with dissolve
             with dissolve
             pathos"“为什么保质期只有一周？”"
             pathos"“……这个，以后会告诉你的。”"
-            show pathos normal_eyes
+            show pathos normal_eyes with dissolve
             pathos"“现在你还不需要知道。”"
             pathos"“还有什么想问的吗？”"
             jump pathos_q_hosp
         "普通药物相关的疑问":
-            show pathos normal_eyebrow normal_eyes saying no_sweat
-            with dissolve
+            show pathos normal_eyebrow normal_eyes saying no_sweat with dissolve
             pathos"“普通药物啊……就是普通人也会吃的那些药咯。”"
             pathos"“你所服用的实验药物都是快速见效的那种，正常人吃的药对你来说不仅恢复力弱，见效也慢。”"
             pathos"“反正具体效果自己看说明书吧，要遵循用法用量，一次性吃太多小心第二天下不来床哦。”"
-            show pathos normal_eyebrow awkward_eyes smile_mouth
+            show pathos normal_eyebrow awkward_eyes smile_mouth with dissolve
             pathos"“如果你喜欢就去药房买点，我已经和下面的人说过了，你买什么处方药都不需要医嘱，只是不要买太多就行。”"
-            show pathos normal_eyes
+            show pathos normal_eyes with dissolve
             pathos"“还有什么想问的吗？”"
             jump pathos_q_hosp
         "调情":
@@ -340,14 +336,13 @@ label pathos_q_hosp:
             $ss('sweat')
             s"“好吧。”"
             $sh()
-            show pathos no_sweat
+            show pathos no_sweat with dissolve
             jump pathos_q_hosp
         "没事了":
             $ss('normal2_eyes')
             s"“没什么想问的了。”"
             $sh()
-            show pathos angry_eyebrow angry_eyes angry_mouth
-            with dissolve
+            show pathos angry_eyebrow angry_eyes angry_mouth with dissolve
             pathos"“你该庆幸我这会恰好没有病人，不过也算是和我聊天解解闷了……”"
             $ss('sweat awkward_eyes awkward_eyebrow')
             s"“无语……”"
