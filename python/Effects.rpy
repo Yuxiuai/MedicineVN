@@ -1,4 +1,4 @@
-init python:
+init python early:
 
     class WeatherSunny(Effect):
         id = 100
@@ -18,7 +18,7 @@ init python:
 
         def afterTaskAction(self, player, task):
             if task.name in ('外出散步', '慢跑', '速跑'):
-                Notify.add('由于晴天，提升了2点身体素质！')
+                Notice.add('由于晴天，提升了2点身体素质！')
                 player.physical += 0.01
 
 
@@ -44,7 +44,7 @@ init python:
 
         def afterTaskAction(self, player, task):
             if task.kind in ('休息类', '写作类'):
-                Notify.add('由于雨天，降低了2点严重程度！')
+                Notice.add('由于雨天，降低了2点严重程度！')
                 player.severity -= 0.02
 
 
@@ -167,7 +167,7 @@ init python:
         ad = '“我很想看到渐次泛白的黎明时分的天宇，想喝热气蒸腾的牛奶，想闻树木的清香，想翻晨报的版面。”'
 
         def timeUpAction(self, player):
-            Notify.add('存在感持续时间结束，降低了3点严重程度！')
+            Notice.add('存在感持续时间结束，降低了3点严重程度！')
             player.severity -= 0.03
 
         def afterSleepAction(self, player):
@@ -182,7 +182,7 @@ init python:
                         flag = True
             
             if flag:
-                showNotify(['移除了状态：存在感，将精神状态恢复至60.0'])
+                showNotice(['移除了状态：存在感，将精神状态恢复至60.0'])
                 player.mental = 60.0
                 self.clear(player)
 
@@ -472,17 +472,17 @@ init python:
                 cls.defaultAddEffect(player)
                 effect = cls.get(player)
                 if effect.stacks == 2:
-                    Notify.add('生病层数为2，{color=#FF4500}转化{/color}为伤痕:体弱！')
+                    Notice.add('生病层数为2，{color=#FF4500}转化{/color}为伤痕:体弱！')
                     Debilitated.add(player)
                     effect.clearByType(player)
 
         def timeUpAction(self, player):
-            Notify.add('生病持续时间结束！{color=#FF4500}转化{/color}为伤痕:体弱！')
+            Notice.add('生病持续时间结束！{color=#FF4500}转化{/color}为伤痕:体弱！')
             Debilitated.add(player)
 
         def enableAction(self, player):
-            Notify.add('由于生病，{color=#FF4500}降低{/color}2点工作能力。')
-            Notify.add('由于生病，{color=#FF4500}降低{/color}2点身体素质。')
+            Notice.add('由于生病，{color=#FF4500}降低{/color}2点工作能力。')
+            Notice.add('由于生病，{color=#FF4500}降低{/color}2点身体素质。')
             player.working -= 0.02
             player.physical -= 0.02
             player.basicConcentration -= 10
@@ -509,16 +509,16 @@ init python:
             if PhysRezB.has(player):
                 curePercent += PhysRezB.get(player).stacks * 20
             if rra(player, curePercent):  # 判定成功时，消耗所有的rezA和rezB
-                Notify.add('成功治愈！')
+                Notice.add('成功治愈！')
                 PhysRezA.clearByType(player)
                 PhysRezB.clearByType(player)
                 DrugColdrexEffect.clearByType(player)
-                Notify.add('降低了5点严重程度！')
-                Notify.add('提升了5点身体素质！')
+                Notice.add('降低了5点严重程度！')
+                Notice.add('提升了5点身体素质！')
                 if BookPhysPunEffect.has(player):
                     s = r2(player.severity * 0.05)
                     player.severity -= s
-                    Notify.add('由于学习成果：《呼吸训练》，额外降低了%s点严重程度！' % s)
+                    Notice.add('由于学习成果：《呼吸训练》，额外降低了%s点严重程度！' % s)
                 player.severity -= 0.05
                 player.physical += 0.05
 
@@ -550,17 +550,17 @@ init python:
                 cls.defaultAddEffect(player)
                 effect = cls.get(player)
                 if effect.stacks == 2:
-                    Notify.add('偏执层数为2，{color=#FF4500}转化{/color}为伤痕:精神创伤！')
+                    Notice.add('偏执层数为2，{color=#FF4500}转化{/color}为伤痕:精神创伤！')
                     Decadent.add(player)
                     effect.clearByType(player)
 
         def timeUpAction(self, player):
-            Notify.add('偏执持续时间结束！{color=#FF4500}转化{/color}为伤痕:精神创伤！')
+            Notice.add('偏执持续时间结束！{color=#FF4500}转化{/color}为伤痕:精神创伤！')
             Decadent.add(player)
 
         def enableAction(self, player):
-            Notify.add('由于偏执，{color=#FF4500}降低{/color}2点写作技巧。')
-            Notify.add('由于偏执，{color=#FF4500}降低{/color}2点工作能力。')
+            Notice.add('由于偏执，{color=#FF4500}降低{/color}2点写作技巧。')
+            Notice.add('由于偏执，{color=#FF4500}降低{/color}2点工作能力。')
             player.working -= 0.02
             player.writing -= 0.02
             player.canWrite -= 1
@@ -605,18 +605,18 @@ init python:
                 if Physique.has(player):
                     s = Physique.get(player).stacks
                     if s>=2:
-                        Notify.add('移除2层体魄以抵挡了受伤效果！')
+                        Notice.add('移除2层体魄以抵挡了受伤效果！')
                         Physique.subByType(player, 2)
                         return
                 cls.defaultAddEffect(player)
                 effect = cls.get(player)
                 if effect.stacks == 2:
-                    Notify.add('受伤层数为2，{color=#FF4500}转化{/color}为伤痕:体弱！')
+                    Notice.add('受伤层数为2，{color=#FF4500}转化{/color}为伤痕:体弱！')
                     Debilitated.add(player)
                     effect.clearByType(player)
 
         def timeUpAction(self, player):
-            Notify.add('受伤持续时间结束！{color=#FF4500}转化{/color}为伤痕:体弱！')
+            Notice.add('受伤持续时间结束！{color=#FF4500}转化{/color}为伤痕:体弱！')
             Debilitated.add(player)
 
         def enableAction(self, player):
@@ -640,15 +640,15 @@ init python:
             if PhysRezB.has(player):
                 curePercent += PhysRezB.get(player).stacks * 25
             if rra(player, curePercent):  # 判定成功时，消耗所有的rezA和rezB
-                Notify.add('成功治愈！')
+                Notice.add('成功治愈！')
                 PhysRezA.clearByType(player)
                 PhysRezB.clearByType(player)
-                Notify.add('提升了5点身体素质！')
-                Notify.add('降低了5点严重程度！')
+                Notice.add('提升了5点身体素质！')
+                Notice.add('降低了5点严重程度！')
                 if BookPhysPunEffect.has(player):
                     s = r2(player.severity * 0.05)
                     player.severity -= s
-                    Notify.add('由于学习成果：《呼吸训练》，额外降低了%s点严重程度！' % s)
+                    Notice.add('由于学习成果：《呼吸训练》，额外降低了%s点严重程度！' % s)
                 player.severity -= 0.05
                 player.physical += 0.05
                 self.clear(player)
@@ -668,10 +668,10 @@ init python:
 
         def enableAction(self, player):
             if rra(player, 20):
-                Notify.add('由于过劳，{color=#FF4500}降低{/color}2点身体素质。')
+                Notice.add('由于过劳，{color=#FF4500}降低{/color}2点身体素质。')
                 player.physical -= 0.02
             if rra(player, 20):
-                Notify.add('由于过劳，{color=#FF4500}降低{/color}2点工作能力。')
+                Notice.add('由于过劳，{color=#FF4500}降低{/color}2点工作能力。')
                 player.working -= 0.02
 
         @classmethod
@@ -680,17 +680,17 @@ init python:
                 return
             for i in range(times):
                 if PhysRezA.has(player):
-                    Notify.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:良好的睡眠！' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:良好的睡眠！' % (cls.kind, cls.name))
                     PhysRezA.subByType(player)
                 elif PhysRezB.has(player):
-                    Notify.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:良好的运动！' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:良好的运动！' % (cls.kind, cls.name))
                     PhysRezB.subByType(player)
                 else:
                     cls.defaultAddEffect(player)
 
         def afterSleepAction(self, player):
             if self.stacks >= 4 and not BookConcEffect.has(player):
-                Notify.add('过劳层数大于3，{color=#FF4500}转化{/color}为状态：生病！')
+                Notice.add('过劳层数大于3，{color=#FF4500}转化{/color}为状态：生病！')
                 PhysPun.add(player)
                 self.clear(player)
 
@@ -709,10 +709,10 @@ init python:
 
         def enableAction(self, player):
             if rra(player, 20):
-                Notify.add('由于焦虑，{color=#FF4500}降低{/color}2点写作技巧。')
+                Notice.add('由于焦虑，{color=#FF4500}降低{/color}2点写作技巧。')
                 player.writing -= 0.01
             if rra(player, 20):
-                Notify.add('由于焦虑，{color=#FF4500}降低{/color}2点工作能力。')
+                Notice.add('由于焦虑，{color=#FF4500}降低{/color}2点工作能力。')
                 player.working -= 0.01
 
         @classmethod
@@ -721,17 +721,17 @@ init python:
                 return
             for i in range(times):
                 if MentRezA.has(player):
-                    Notify.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:精神的释放!' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:精神的释放!' % (cls.kind, cls.name))
                     MentRezA.subByType(player)
                 elif MentRezB.has(player):
-                    Notify.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:精神的平复！' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#FF4500}抵消{/color}1层状态:精神的平复！' % (cls.kind, cls.name))
                     MentRezB.subByType(player)
                 else:
                     cls.defaultAddEffect(player)
 
         def afterSleepAction(self, player):
             if self.stacks >= 4 and not BookConcEffect.has(player):
-                Notify.add('焦虑层数大于3，{color=#FF4500}转化{/color}为状态：偏执！')
+                Notice.add('焦虑层数大于3，{color=#FF4500}转化{/color}为状态：偏执！')
                 MentPun.add(player)
                 self.clear(player)
 
@@ -758,7 +758,7 @@ init python:
                 return
             for i in range(times):
                 if PhysProb.has(player):
-                    Notify.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:过劳！' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:过劳！' % (cls.kind, cls.name))
                     PhysProb.subByType(player)
                 else:
                     cls.defaultAddEffect(player)
@@ -786,7 +786,7 @@ init python:
                 return
             for i in range(times):
                 if PhysProb.has(player):
-                    Notify.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:过劳！' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:过劳！' % (cls.kind, cls.name))
                     PhysProb.subByType(player)
                 else:
                     cls.defaultAddEffect(player)
@@ -814,7 +814,7 @@ init python:
                 return
             for i in range(times):
                 if MentProb.has(player):
-                    Notify.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:焦虑！' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:焦虑！' % (cls.kind, cls.name))
                     MentProb.subByType(player)
                 else:
                     cls.defaultAddEffect(player)
@@ -842,7 +842,7 @@ init python:
                 return
             for i in range(times):
                 if MentProb.has(player):
-                    Notify.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:焦虑！' % (cls.kind, cls.name))
+                    Notice.add('添加%s：%s！{color=#7CFC00}抵消{/color}1层状态:焦虑！' % (cls.kind, cls.name))
                     MentProb.subByType(player)
                 else:
                     cls.defaultAddEffect(player)
@@ -869,7 +869,7 @@ init python:
         def afterSleepAction(self, player):
             m = r2(0.5 * self.stacks * f())
             player.mental -= m
-            Notify.add('由于酸痛，额外消耗了%s点精神状态。' % m)
+            Notice.add('由于酸痛，额外消耗了%s点精神状态。' % m)
 
         def timeUpAction(self, player):
             Debilitated.add(player)
@@ -931,25 +931,8 @@ init python:
             if rra(player, 75):
                 self.sub(player)
 
-
-    class Caffeine(Effect):
-        id = 243
-        name = '咖啡因刺激'
-        kind = '状态'
-        maxDuration = 0
-        maxStacks = 99
-        info = '睡眠消耗的精神状态随层数{color=#FF4500}提升{/color}。'
-        info_p = '每层都会{color=#FF4500}提升{/color}7.5%睡眠消耗的精神状态。'
-        ad = '试图干涉生物体生命活动的内在节律性的结果。'
-
-        def addStackAction(self, player):  # 每次添加层数的操作，一般是某些根据层数给予效果的Effect需要设置
-            player.deteriorateConsumption += 0.075
-
-        def subStackAction(self, player):  # 减少层数的操作，前者的反向函数
-            player.deteriorateConsumption -= 0.075
-
     class Anxiety(Effect):
-        id = 244
+        id = 243
         name = '忧虑'
         kind = '状态'
         maxDuration = 6
@@ -960,6 +943,39 @@ init python:
 
         def enableAction(self, player):
             self.duration = ra(player, 4, 6)
+
+
+    class Caffeine(Effect):
+        id = 244
+        name = '失眠'
+        kind = '状态'
+        maxDuration = 0
+        maxStacks = 99
+        info = '睡眠消耗的精神状态随层数{color=#FF4500}提升{/color}。'
+        info_p = '每层都会{color=#FF4500}提升{/color}10%睡眠消耗的精神状态。'
+        ad = '试图干涉生物体生命活动的内在节律性的结果。'
+
+        def addStackAction(self, player):  # 每次添加层数的操作，一般是某些根据层数给予效果的Effect需要设置
+            player.deteriorateConsumption += 0.1
+
+        def subStackAction(self, player):  # 减少层数的操作，前者的反向函数
+            player.deteriorateConsumption -= 0.1
+
+    class Smoking(Effect):
+        id = 245
+        name = '难耐'
+        kind = '状态'
+        maxDuration = 7
+        maxStacks = 99
+        info = '严重程度随层数百分比{color=#FF4500}提升{/color}。'
+        info_p = '每层都会{color=#FF4500}提升{/color}12%的严重程度。'
+        ad = '也许我不该抽烟的。'
+
+        def addStackAction(self, player):
+            player.severityRegarded += 0.12
+
+        def subStackAction(self, player):
+            player.severityRegarded -= 0.12
 
     class SleepReward(Effect):
         id = 310
@@ -1169,31 +1185,6 @@ init python:
             player.physicalRegarded -= 0.1
             player.writingRegarded -= 0.1
     
-    class Smoking(Effect):
-        id = 320
-        name = '尼古丁刺激'
-        kind = '增益'
-        maxDuration = 0
-        maxStacks = 20
-        info = '随层数提升写作技巧，写作专注度，工作专注度和工作速度，暂时降低严重程度。'
-        info_p = '每层都会{color=#7CFC00}提升{/color}2%写作技巧，4%写作专注度，4%工作专注度和3%工作速度，严重程度暂时{color=#7CFC00}降低{/color}3%。'
-        ad = '身心渐渐放松，有种运动过后无法言语的感觉……'
-
-        def addStackAction(self, player):
-            player.writingRegarded += 0.02
-            player.writeConcentration += 4
-            player.workConcentration += 4
-            player.workSpeed += 0.03
-            player.severityRegarded -= 0.03
-
-        def subStackAction(self, player):
-            player.writingRegarded -= 0.02
-            player.writeConcentration -= 4
-            player.workConcentration -= 4
-            player.workSpeed -= 0.03
-            player.severityRegarded += 0.03
-
-
     class WarmupEffect(Effect):
         id = 321
         name = '准备运动'
@@ -1209,6 +1200,35 @@ init python:
 
         def disableAction(self, player):  # 减少层数的操作，前者的反向函数
             player.sportConcentration -= 0.3
+
+    class Entrance(Effect):
+        id = 322
+        name = '清醒'
+        kind = '增益'
+        maxDuration = 0
+        maxStacks = 99
+        info = '获得大量专注度{color=#7CFC00}提升{/color}，同时严重程度随层数百分比{color=#7CFC00}降低{/color}。\n进行日程有大概率消耗该增益，结束时获得难耐。'
+        info_p = '{color=#7CFC00}提升{/color}30%的专注度，同时每层都会{color=#7CFC00}降低{/color}10%的严重程度。\n进行日程有50%的概率消耗该增益，结束时获得难耐。'
+        ad = '烟草让能让痛苦消弭。'
+
+        def enableAction(self, player):
+            player.basicConcentration += 30
+
+        def disableAction(self, player):
+            player.basicConcentration -= 30
+            Smoking.add(player)
+
+        def addStackAction(self, player):
+            player.severityRegarded -= 0.1
+
+        def subStackAction(self, player):
+            player.severityRegarded += 0.1
+
+        def afterTaskAction(self, player, task):
+            if rra(player, 50):
+                self.clear(player)
+
+            
 
 
     class Physique(Effect):
@@ -1230,12 +1250,12 @@ init python:
                 m *= 1.2
 
             player.mental += m
-            Notify.add('由于体魄，恢复了%s点精神状态。' % m)
+            Notice.add('由于体魄，恢复了%s点精神状态。' % m)
 
             g = ra(player, 0, int(self.stacks/2))
                     
             if g!= 0:
-                Notify.add('由于体魄，提升了%s点身体素质。' % g)
+                Notice.add('由于体魄，提升了%s点身体素质。' % g)
                 player.physical += 0.01*g
 
             per = 2.5 * self.stacks
@@ -1244,7 +1264,7 @@ init python:
 
             if rra(player, per):
                 self.sub(player)
-                Notify.add('体魄随时间失去了1层。')
+                Notice.add('体魄随时间失去了1层。')
 
 
 
@@ -1263,7 +1283,7 @@ init python:
         def afterWriting(self, player, scale):
             if scale != 0:  # 当本次写作会返回写作素材时
                 self.stacks = int(self.stacks * scale)
-                Notify.add('获得了%s层写作素材！' % newStacks)
+                Notice.add('获得了%s层写作素材！' % newStacks)
             else:
                 self.clear(player)
 
@@ -1492,9 +1512,9 @@ init python:
 
         def afterTaskAction(self, player, task):
             t = ra(player, 1500, 2500) * 0.01
-            t *= (100 - MedicineC.resistance_) * 0.01
+            t *= (100 - player.resistance['MedicineC']) * 0.01
             t *= Task.getConsScale(player)
-            Notify.add('由于药物{font=arial.ttf}γ{/font}，恢复了' + r2s(t) + '点精神状态。')
+            Notice.add('由于药物{font=arial.ttf}γ{/font}，恢复了' + r2s(t) + '点精神状态。')
             player.mental += r2(t)
 
 
@@ -1516,16 +1536,16 @@ init python:
         maxDuration = 0
         maxStacks = 5
         info = '随层数{color=#7CFC00}降低{/color}睡眠消耗的精神状态和专注度。'
-        info_p = '{color=#7CFC00}降低{/color}2%睡眠消耗的精神状态，除此之外每层都会{color=#7CFC00}降低{/color}4%睡眠消耗的精神状态和20%专注度。'
+        info_p = '{color=#7CFC00}降低{/color}7.5%睡眠消耗的精神状态，除此之外每层都会{color=#7CFC00}降低{/color}5%睡眠消耗的精神状态和20%专注度。'
 
         def enableAction(self, player):
-            player.deteriorateConsumption -= 0.02
+            player.deteriorateConsumption -= 0.075
 
         def disableAction(self, player):
-            player.deteriorateConsumption += 0.02
+            player.deteriorateConsumption += 0.075
 
         def addStackAction(self, player):
-            player.deteriorateConsumption -= 0.04
+            player.deteriorateConsumption -= 0.05
             player.basicConcentration -= 0.2
             if self.stacks >1:
                 player.severity += 0.01
@@ -1535,7 +1555,7 @@ init python:
                 player.severity += 1000
             
         def subStackAction(self, player):
-            player.deteriorateConsumption += 0.04
+            player.deteriorateConsumption += 0.05
             player.basicConcentration += 0.2
 
 
@@ -1546,23 +1566,17 @@ init python:
         maxDuration = 1
         maxStacks = 5
         info = '每完成一个日程随层数{color=#7CFC00}恢复{/color}微量精神状态。'
-        info_p = '完成日程后，每层都会{color=#7CFC00}恢复{/color}2%的当前精神状态，最大每层恢复5点。\n精神状态低于0时无效。'
-
-        def addStackAction(self, player):
-            if self.duration == 1 and self.stacks >1:
-                player.severity += 0.1
-            elif self.duration == 1 and self.stacks >2:
-                player.severity += 1000
+        info_p = '完成日程后，每层都会{color=#7CFC00}恢复{/color}2.5%的当前精神状态，最大每层恢复5点。\n精神状态低于0时无效。'
 
         def afterTaskAction(self, player, task):
-            t = r2(0.02 * player.mental)
+            t = r2(0.025 * player.mental)
             if t > 10:
                 t = 5.0
             elif t<0:
                 t = 0
             if t>0:
                 player.mental += t* self.stacks
-                Notify.add('由于头疼药，恢复了' + str(t * self.stacks) + '点精神状态。')
+                Notice.add('由于头疼药，恢复了' + str(t * self.stacks) + '点精神状态。')
 
 
 
@@ -1584,12 +1598,6 @@ init python:
         def addStackAction(self, player):
             if PhysPun.has(player):
                 PhysPun.get(player).duration += 1
-            if self.duration == 1 and self.stacks >1:
-                player.severity += 0.05
-            elif self.duration == 1 and self.stacks >2:
-                player.severity += 0.1
-            elif self.duration == 1 and self.stacks >3:
-                player.severity += 1000
 
         def disableAction(self, player):
             player.basicConcentration += 10
@@ -1653,13 +1661,13 @@ init python:
         maxDuration = 1
         maxStacks = 10
         info = '按层数{color=#7CFC00}提升{/color}工作速度。'
-        info_p = '每层都会{color=#7CFC00}提升{/color}5%的工作速度。'
+        info_p = '每层都会{color=#7CFC00}提升{/color}7.5%的工作速度。'
 
         def addStackAction(self, player):
-            player.workSpeed += 0.05
+            player.workSpeed += 0.075
 
         def subStackAction(self, player):
-            player.workSpeed -= 0.05
+            player.workSpeed -= 0.075
 
 
     class BookInsEffect(Effect):
@@ -1690,10 +1698,10 @@ init python:
             if task.kind == '运动类':
 
                 if rra(player, 80):
-                    Notify.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了1点身体素质！')
+                    Notice.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了1点身体素质！')
                     player.physical += 0.01
                 else:
-                    Notify.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了2点身体素质！')
+                    Notice.add('由于感悟：《阿斯卡隆之春》，{color=#7CFC00}提升{/color}了2点身体素质！')
                     player.physical += 0.02
 
                 self.sub(player)
@@ -1711,10 +1719,10 @@ init python:
         def afterTaskAction(self, player, task):  # 日程后
             if task.kind == '写作类':
                 if rra(player, 80):
-                    Notify.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了1点写作技巧！')
+                    Notice.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了1点写作技巧！')
                     player.writing += 0.01
                 else:
-                    Notify.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了2点写作技巧！')
+                    Notice.add('由于感悟：《亚斯塔禄之冬》，{color=#7CFC00}提升{/color}了2点写作技巧！')
                     player.writing += 0.02
                 self.sub(player)
 
@@ -1729,7 +1737,7 @@ init python:
         info_p = '每天起床时{color=#7CFC00}降低{/color}1点严重度，同时有15%的概率结束该效果。'
 
         def afterSleepAction(self, player):
-            Notify.add('由于感悟：《城堡与莫梭提斯》，{color=#7CFC00}降低{/color}1点严重度！')
+            Notice.add('由于感悟：《城堡与莫梭提斯》，{color=#7CFC00}降低{/color}1点严重度！')
             player.severity -= 0.01
             if rra(player, 15):
                 self.clear(player)
@@ -1749,15 +1757,15 @@ init python:
                 used = False
                 while rra(player, 75):
                     if rra(player, 33):
-                        Notify.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点身体素质！')
+                        Notice.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点身体素质！')
                         player.physical += 0.01
                         used = True
                     if rra(player, 33):
-                        Notify.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点写作技巧！')
+                        Notice.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点写作技巧！')
                         player.writing += 0.01
                         used = True
                     if rra(player, 33):
-                        Notify.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点工作能力！')
+                        Notice.add('由于感悟：《药：绝望的解决手段》，{color=#7CFC00}提升{/color}了1点工作能力！')
                         player.working += 0.01
                         used = True
                 if used:
@@ -1790,11 +1798,11 @@ init python:
             if self.cons>=150:
                 player.working += g
                 player.severity -= g
-                Notify.add('由于感悟：《失而复得》，{color=#7CFC00}提升{/color}了%s点工作能力！' % (g*100))
-                Notify.add('由于感悟：《失而复得》，{color=#7CFC00}降低{/color}了%s点严重程度！' % (g*100))
+                Notice.add('由于感悟：《失而复得》，{color=#7CFC00}提升{/color}了%s点工作能力！' % (g*100))
+                Notice.add('由于感悟：《失而复得》，{color=#7CFC00}降低{/color}了%s点严重程度！' % (g*100))
             else:
                 MentProb.add(p, 2)
-                Notify.add('由于感悟：《失而复得》，{color=#FF4500}获得{/color}了2层焦虑！')
+                Notice.add('由于感悟：《失而复得》，{color=#FF4500}获得{/color}了2层焦虑！')
             type(self).info = '效果期间内消耗的精神状态越多，效果结束时降低的严重程度越多，{color=#7CFC00}提升{/color}的工作能力越多。\n若消耗的精神状态低于150则只会获得2层偏执。'
 
     class ManuscriptPharmacistEffect(Effect):
@@ -2012,10 +2020,10 @@ init python:
             t = r2(player.mental * per * 0.01)
             if player.mental <0:
                 player.mental += t
-                Notify.add('由于伤痕：偏头痛，消耗了%s点精神状态！' % -t)
+                Notice.add('由于伤痕：偏头痛，消耗了%s点精神状态！' % -t)
             else:
                 player.mental -= t
-                Notify.add('由于伤痕：偏头痛，消耗了%s点精神状态！' % t)
+                Notice.add('由于伤痕：偏头痛，消耗了%s点精神状态！' % t)
 
     class GameMode2(Effect):
         id = 651
@@ -2062,14 +2070,16 @@ init python:
         maxDuration = -1
         maxStacks = 99
         info = '过夜后百分比{color=#FF4500}失去{/color}随机数量当前金钱。'
-        info_p = '过夜后{color=#FF4500}失去{/color}10%~20%的当前金钱。'
+        info_p = '过夜后{color=#FF4500}失去{/color}10%~20%的当前金钱，当钱数低于400元时不会触发。'
         ad = '只是……看到路边有小吃就想尝一尝……'
 
         def afterSleepAction(self, player):
-            if player.money >= 10:
-                t = r2(player.money*0.01*ra(10,20))
+            if player.money >= 400:
+                t = r2(player.money*0.01*ra(player,10,20))
+                if player.money - t < 400:
+                    t = player.money - 400
                 player.money -= t
-                Notify.add('由于伤痕：理财不善，不受控制地花掉了%s元！' % t)
+                Notice.add('由于伤痕：理财不善，不受控制地花掉了%s元！' % t)
 
     class GameMode5(Effect):
         id = 654
@@ -2101,7 +2111,7 @@ init python:
             type(self).add(player, ra(player, self.stacks, self.stacks*3))
             t = r2(self.stacks * 5 * f() * player.basicConsumption)
             player.mental -= t
-            Notify.add('由于状态：绝望，消耗了%s点精神状态！' % t)
+            Notice.add('由于状态：绝望，消耗了%s点精神状态！' % t)
 
         def afterDrug(self, player):
             self.sub(player, self.stacks-1)
@@ -2195,56 +2205,3 @@ init python:
         def subStackAction(self, player):
             player.severityRegarded -= 0.1
 
-
-    class SmokingAddiction(Effect):
-        id = 623
-        name = '烟瘾'
-        kind = '伤痕'
-        maxDuration = 7
-        maxStacks = 99
-        info = '吸烟后获得。\n层数大于1时，随层数{color=#FF4500}降低{/color}写作技巧，写作专注度，工作专注度和工作速度，{color=#FF4500}提升{/color}严重程度。\n吸烟会刷新该伤痕的持续时间，有概率会{color=#FF4500}叠加{/color}层数或{color=#FF4500}减少{/color}最大持续时间。\n持续时间结束时随层数{color=#FF4500}消耗{/color}精神状态和{color=#FF4500}提升{/color}严重程度，同时有小概率移除1层，但无法完全移除。'
-        info_p = '吸烟后获得。\n层数大于1时，每层都会{color=#FF4500}降低{/color}2.5%写作技巧，4.5%写作专注度，4.5%工作专注度和3.5%工作速度，{color=#FF4500}提升{/color}3.5%严重程度。\n吸烟会刷新该伤痕的持续时间，有50%的概率会{color=#FF4500}叠加{/color}层数或{color=#FF4500}减少{/color}最大持续时间。\n持续时间结束时随层数{color=#FF4500}消耗{/color}精神状态和{color=#FF4500}提升{/color}严重程度，同时有25%的概率移除1层，但无法完全移除。'
-        ad = '“贪婪从未饕足，自由却囿于一方。”'
-
-        @classmethod
-        def defaultClass(cls):
-            cls.maxDuration = 7
-
-        def timeUpdate(self, player):
-            if self.duration == 0:
-                if type(self).maxDuration != 0:
-                    Notify.add(type(self).name + '的持续时间为0！')
-                self.timeUpAction(player)
-            elif self.duration > 0:
-                self.duration -= 1
-
-        def timeUpAction(self, player):
-            self.duration = type(self).maxDuration
-            if rra(player, 25):
-                self.stacks = max(1, self.stacks-1)
-                self.subStackAction(player)
-                type(self).maxDuration += 1
-            t = 10 * player.sev() * self.stacks
-            Notify.add('由于烟瘾，精神状态降低了%s点！' % t)
-            Notify.add('由于烟瘾，严重程度提升了5点！')
-            player.mental -= t
-            player.severity += 0.05
-
-        def addStackAction(self, player):
-            if self.stacks > 1:
-                player.writingRegarded -= 0.025
-                player.writeConcentration -= 4.5
-                player.workConcentration -= 4.5
-                player.workSpeed -= 0.035
-                player.severityRegarded += 0.035
-
-            if rra(player, 50):
-                type(self).maxDuration = max(1, type(self).maxDuration-1)
-
-        def subStackAction(self, player):
-            if self.stacks > 1:
-                player.writingRegarded += 0.025
-                player.writeConcentration += 4.5
-                player.workConcentration += 4.5
-                player.workSpeed += 0.035
-                player.severityRegarded -= 0.035

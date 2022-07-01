@@ -1,4 +1,4 @@
-init python:
+init python early:
 
     comm_names = ["设定委托", "同人清水委托", "甜文委托", "感伤委托", "色文委托", "设定背景委托", "人物背景故事委托", "外包游戏剧情文案", "网络游戏游戏世界观背景"]
     comm_informal_names = ["阳台", "窗户", "风", "都市", "眼皮", "愤怒", "入迷", "气泡，旋涡",
@@ -142,13 +142,13 @@ init python:
 
             MentRezA.add(player, int(ins * 0.15))
 
-            Notify.add('已进行一次写作，字数%s，价值%s元，消耗灵感%s层。' % (int(word), r2(reward), ins))
+            Notice.add('已进行一次写作，字数%s，价值%s元，消耗灵感%s层。' % (int(word), r2(reward), ins))
 
             g = int(ins / 15 + player.writingGain)
 
             if g >= 1:
                 player.writing += g * 0.01
-                Notify.add('额外获得%s点写作技巧。' % g)
+                Notice.add('额外获得%s点写作技巧。' % g)
 
             self.content.append([int(word), r2(reward), ins])
             self.writeCounts += 1

@@ -1,4 +1,4 @@
-init python:
+init python early:
 
     class Effect:
         id = None
@@ -19,7 +19,7 @@ init python:
                 return True
             return False
 
-        def getPrefixInfo(self):
+        def getPrefixInfo(self, player):
             if self.duration == -1:
                 dur_info = '持续时间：永久  '
             elif self.duration == 0:
@@ -56,7 +56,7 @@ init python:
         def timeUpdate(self, player):
             if self.duration == 0:
                 if type(self).maxDuration != 0:
-                    Notify.add(type(self).name + '的持续时间为0！效果清除！')
+                    Notice.add(type(self).name + '的持续时间为0！效果清除！')
                 self.timeUpAction(player)
                 self.clear(player)
             if self.duration > 0:
@@ -137,7 +137,7 @@ init python:
         def defaultAddEffect(cls, player):  # 默认的add函数，禁止重写
             if not cls.has(player):
                 if cls.maxDuration != 0:
-                    Notify.add('获得新%s：%s！' % (cls.kind, cls.name))
+                    Notice.add('获得新%s：%s！' % (cls.kind, cls.name))
                 e = cls()
                 player.effects.append(e)
                 e.enableAction(player)
@@ -155,7 +155,7 @@ init python:
         def notResetDurationAddEffect(cls, player):  # 默认的add函数，禁止重写
             if not cls.has(player):
                 if cls.maxDuration != 0:
-                    Notify.add('获得新%s：%s！' % (cls.kind, cls.name))
+                    Notice.add('获得新%s：%s！' % (cls.kind, cls.name))
                 e = cls()
                 player.effects.append(e)
                 e.enableAction(player)
@@ -167,10 +167,6 @@ init python:
                 if temp != e.stacks:
                     e.addStackAction(player)
             sortArr(player.effects)
-
-        @classmethod
-        def defaultClass(cls):
-            pass
 
 
     def effectKindInfo(kind, mode):

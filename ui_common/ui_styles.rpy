@@ -39,6 +39,10 @@ init python:
     style.white.color = "#FFFFFF"
     style.white.hover_color = "#FFFFFF"
 
+    style.grey = Style(style.gameUI)
+    style.grey.color = "#8d8d8d"
+    style.grey.hover_color = "#8d8d8d"
+
     style.food = Style(style.white)
     style.food.color = "#F2C34E"
     style.food.hover_color = "#F2C34E"

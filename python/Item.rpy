@@ -1,4 +1,4 @@
-init python:
+init python early:
     
     class Item:
         id = None
@@ -6,7 +6,6 @@ init python:
         kind = None
         maxCd = 0  # -1 不可使用 0 没有使用cd
         maxDu = -1  # -1 不可损坏 0 已损坏
-        cd = 0
         isUnique = False  # 为True时，最大amount为1
         reuse = True
         info = None
@@ -16,6 +15,7 @@ init python:
             self.amounts = 1
             self.du = type(self).maxDu
             self.broken = False
+            self.star = False
             self.gotWeek = player.week
             self.gotDay = player.today
 
@@ -26,33 +26,43 @@ init python:
                 return False
             return True
 
-        def getPrefixInfo(self):
+        def getPrefixInfo(self, player):
             if not type(self).reuse:
                 reuse_info = '使用后消耗  '
             else:
                 reuse_info = ''
-            if type(self).cd == -1 or self.du == 0 or type(self).maxCd == -1:
+            if type(self).maxCd == -1 or self.du == 0 or type(self).maxCd == -1:
                 cd_info = '不可使用  '
-            elif type(self).cd == 0:
+            elif type(self).__name__ not in player.itemcd:
                 cd_info = '可使用  '
             else:
-                cd_info = '下次可使用时间：'+str(type(self).cd)+'天后  '
+                cd_info = '可使用时间：'+str(player.itemcd[type(self).__name__])+'天后  '
 
             if type(self).maxDu == -1:
                 du_info = ''
-            elif self.du == 0:
-                du_info = '已过期  '
-            else:
-                du_info = '即将过期：'+str(self.du)+'天后  '
+            elif type(self).maxCd==-1:
 
-            return '数量：'+str(self.amounts)+ '\n' +reuse_info+ cd_info + du_info
+                if self.du == 0:
+                    du_info = '已损坏  '
+                else:
+                    du_info = '即将损坏：'+str(self.du)+'天后  '
+            else:
+                if self.du == 0:
+                    du_info = '已过期  '
+                else:
+                    du_info = '即将过期：'+str(self.du)+'天后  '
+
+            return '数量：'+str(self.amounts)+ '\n' +reuse_info+ '\n'+ cd_info + '\n'+du_info
         
         @classmethod
         def getPrincipalInfo(cls):
             type_info = '\n\n' + cls.kind
 
             if cls.isUnique:
-                uni_info = '\n唯一'
+                if not cls.hasByType(p):
+                    uni_info = '\n唯一\n\n{color=#ffff00}未拥有{/color}'
+                else:
+                    uni_info = '\n唯一'
             else:
                 uni_info = ''
 
@@ -61,28 +71,18 @@ init python:
         def getSuffixInfo(self):
             return '\n\n获取日期：第%s周的%s' % (self.gotWeek, weekdayFormat(self.gotDay))
 
-        @classmethod
-        def cdUpdate(cls, player):
-            if cls.cd > 0:
-                cls.cd -= 1
-                if cls.cd == 0:
-                    Notify.add(cls.name + '可以再次使用了！')
-
-
         def timeUpdate(self, player):
             if self.du is not None:
                 if self.du > 0:
                     self.du -= 1
                     if self.du == 0:
-                        Notify.add(type(self).name + '已过期！')
+                        Notice.add(type(self).name + '已过期！')
                         self.broken = True
                         self.timeUpAction(player)
                         self.disableAction(player)
                         if self.kind == '收藏品':
                             Trash.add(player)
                             player.items.remove(self)
-                    if self.du == 1:
-                        Notify.add('%s还有1天过期！' % type(self).name)
             
 
         @classmethod
@@ -150,14 +150,18 @@ init python:
             newItem = cls(player)
 
             if cls.isUnique and cls.hasByType(player):
-                Notify.add('已有%s，无法再次获取！' % cls.name)
+                if cls.maxDu >0:
+                    cls.getByType(player).du = cls.maxDu
+                    Notice.add('已有%s，刷新了损坏期限！' % cls.name)
+                else:
+                    Notice.add('已有%s，无法再次获取！' % cls.name)
             elif not cls.hasByItem(player, newItem):  # 是否存在，如果不存在
-                Notify.add('获得新物品：%s！' % cls.name)
+                Notice.add('获得新物品：%s！' % cls.name)
                 newItem.addStackAction(player)
                 newItem.enableAction(player)
                 player.items.append(newItem)
             else:
-                #Notify.add('获得%s：%s！' % (cls.kind, cls.name))
+                #Notice.add('获得%s：%s！' % (cls.kind, cls.name))
                 oldItem = cls.getByItem(player, newItem)
                 oldItem.addStackAction(player)
                 oldItem.amounts += 1
@@ -171,39 +175,39 @@ init python:
                 return '物品不可被使用！'
             if self.broken:
                 return '物品已过期！不可被使用！'
-            if type(self).cd != 0:
+            if type(self).__name__ not in player.itemcd:
+                return True
+            else:
                 return '物品仍在冷却时间中！'
-            return True
 
 
         def use(self, player):
             if self.checkAvailable(player) != True:
-                Notify.add(self.checkAvailable(player))
+                Notice.add(self.checkAvailable(player))
             else:
-                Notify.add('已使用物品：'+ type(self).name)
-                type(self).cd = type(self).maxCd 
+                Notice.add('已使用物品：'+ type(self).name)
+                if type(self).maxCd>0:
+                    player.itemcd[type(self).__name__] = type(self).maxCd 
                 self.useItemAction(player)
                 if not type(self).reuse:
                     self.sub(player)
-            Notify.show()
+            Notice.show()
 
         def quit(self, player, times=1):
             if times == 0:
                 return
             self.sub(player, times)
-            Notify.add('已丢弃'+ str(times) +'个物品：'+ type(self).name)
-            Notify.show()
+            Notice.add('已丢弃'+ str(times) +'个物品：'+ type(self).name)
+            Notice.show()
 
         @classmethod
         def afterTaskAction(cls, player, task):  # 日程后
             pass
 
-        @classmethod
-        def defaultClass(cls):
-            cls.cd = 0
-
     def itemKindInfo(kind, mode):
         d = {
+            '置顶i':'置顶道具\n\n你可以在物品的详细信息界面将物品置顶以方便使用。',
+            '置顶a':'也算是某种意义上的物品日程表了……今天的矿泉水喝了吗？',
             '实验药物i':'实验药物\n\n药效十分迅速，在吞下药物的瞬间即可止痛，但副作用巨大，而且价格时刻都在飙升，也作为国内稀缺的药物，不过你只需要知道这东西能救你的命就可以。',
             '实验药物a':'为什么只有Pathos医生才有这样的药？话说这些药片里面的具体成分到底是什么，是从哪里来的，为什么一周后就不能吃了……',
             '普通药物i':'普通药物\n\n具有一定的效果，但总体上不如专用的实验药物，妥善使用也许会比实验药物更有帮助。即便副作用不高，但别忘了你只是个普通的人。',
@@ -228,6 +232,12 @@ init python:
     def ui_itemUse(item, player):
         item.use(player)
 
+    def ui_itemStar(item):
+        item.star=True
+
+    def ui_itemUnstar(item):
+        item.star=False
+
     def ui_itemQuit(item, player):
         times = 1
         if item.broken == True:
@@ -236,20 +246,20 @@ init python:
 
     def buy(player, item, nums=1, money=0):
         if player.money < money * nums:
-            Notify.add('你的钱不够。')
+            Notice.add('你的钱不够。')
         else:
             player.money -= money * nums
-            Notify.add('购买成功！花费%s元购买了%s个%s！' % (money* nums, nums, item.name))
+            Notice.add('购买成功！花费%s元购买了%s个%s！' % (money* nums, nums, item.name))
             item.add(player, nums)
-        Notify.show()
+        Notice.show()
 
     def buyAndUse(player, item, nums=1, money=0):
         if player.money < money * nums:
-            Notify.add('你的钱不够。')
-            Notify.show()
+            Notice.add('你的钱不够。')
+            Notice.show()
         else:
             player.money -= money * nums
-            Notify.add('购买成功！花费%s元购买了%s个%s！' % (money* nums, nums, item.name))
+            Notice.add('购买成功！花费%s元购买了%s个%s！' % (money* nums, nums, item.name))
             item.add(player, nums)
             item.getByType(player).use(player)
         

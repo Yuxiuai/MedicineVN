@@ -39,7 +39,7 @@ label call_parents:
                 "……挂断了电话。"
                 $p.hadAskedForMoney = True
                 $p.money += 2000.0
-                $showNotify(['X付宝到账：2000元！'])
+                $showNotice(['X付宝到账：2000元！'])
     jump end_call
 
 label call_Arnel:

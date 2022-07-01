@@ -390,11 +390,11 @@ screen navigation():
         if not main_menu:
 
             textbutton _("标题界面") action Start("to_the_title")
-            if Saver.today['p']!=None:
+            if persistent.SaverClass[0]:
                 textbutton _("回到今天早上") action Start("load_today")
-            if Saver.yesterday['p']!=None:
+            if persistent.SaverClass[1]:
                 textbutton _("回到昨天早上") action Show(screen="confirm",message="是否回到昨天？当前的进度将会丢失。", yes_action=Start("load_yesterday"), no_action=Hide("confirm"))
-            if Saver.lastweek['p']!=None:
+            if persistent.SaverClass[2]:
                 textbutton _("回到上周五早上") action Show(screen="confirm",message="是否回到上一个周五的早晨？当前的进度将会丢失。", yes_action=Start("load_lastweek"), no_action=Hide("confirm"))
 
 style navigation_button is gui_button
@@ -422,19 +422,17 @@ screen main_menu():
     style_prefix "main_menu"
 
     add gui.main_menu_background
-    $Saver.clsLoad()
-    $ hassave = True if Saver.today['p']!=None else False
-    use main_menu_navigation(hassave)
+    use main_menu_navigation()
 
 
-screen main_menu_navigation(hassave):
+screen main_menu_navigation():
     add "gui/logo.png" at trans_mainmenu(0.3)
         
     vbox:
         xcenter 0.182
         ycenter 0.752
         spacing gui.navigation_spacing
-        if hassave:
+        if persistent.SaverClass[0]:
             textbutton _ ("{color=#000000}{alpha=*0.7}{size=+4}    继续{/color}{/size}{/alpha}") at trans_mainmenu(0.35)
             textbutton _("{color=#000000}{alpha=*0.7}{size=+4}从头开始{/color}{/size}{/alpha}") at trans_mainmenu(0.5)
         else:
@@ -457,7 +455,7 @@ screen main_menu_navigation(hassave):
         xcenter 0.18
         ycenter 0.75
         spacing gui.navigation_spacing
-        if hassave:
+        if persistent.SaverClass[0]:
             textbutton _ ("{size=+4}    继续{/size}"):
                 action Start("load_today")
                 at trans_mainmenu(0.35)
@@ -1040,7 +1038,7 @@ screen challenges_select(player=player):
                 background None
                 ysize 50
 
-                $i_gm3 = '自卑感\n\n过夜有较低概率失去2%点随机属性，一定概率永久提升1%严重程度。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
+                $i_gm3 = '自卑感\n\n立刻获得15点全属性，但过夜有较低概率失去2%点随机属性，一定概率永久提升1%严重程度。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
                 
                 textbutton _("自卑感") text_style 'white':
                     if player.week < 3:
@@ -1250,29 +1248,39 @@ screen preferences(player=None):
             frame:
                 background None
                 ysize 50
-                textbutton _("音乐音量          " + str(int(100*preferences.get_volume('music')))) + '%' text_style 'white':
+                textbutton _("音乐音量") text_style 'white':
                     action NullAction()
                     background Frame("gui/style/grey_idle_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
 
                 bar value Preference("music volume"):
-                    xsize 900
-                    xalign 0.95
+                    xsize 1000
+                    xalign 0.975
                     yoffset 4
+
+                textbutton str(int(100*preferences.get_volume('music'))) + '%' text_style 'white':
+                    action NullAction()
+                    xalign 0.18
+                    yalign 0.2
 
             frame:
                 background None
                 ysize 50
-                textbutton _("音效音量          " + str(int(100*preferences.get_volume('sfx')))) + '%' text_style 'white':
+                textbutton _("音效音量") text_style 'white':
                     action NullAction()
                     background Frame("gui/style/grey_idle_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
 
 
                 bar value Preference("sound volume"):
-                    xsize 900
-                    xalign 0.95
+                    xsize 1000
+                    xalign 0.975
                     yoffset 4
+
+                textbutton str(int(100*preferences.get_volume('sfx'))) + '%' text_style 'white':
+                    action NullAction()
+                    xalign 0.18
+                    yalign 0.2
 
             
             frame:
@@ -1287,11 +1295,18 @@ screen preferences(player=None):
                     imagebutton idle "gui/phone/right_.png":
                         xalign 0.975
                         yalign 0.2
+
+            textbutton '{size=-5}游戏设置{/size}' text_style "white":
+                action NullAction()
+                xfill True
+                xalign 1.0
+                activate_sound audio.cursor
+                xoffset -5
             
             frame:
                 background None
                 ysize 50
-                textbutton _("数值详细显示") text_style 'white':
+                textbutton _("精确显示状态效果") text_style 'white':
                     action [ToggleVariable("persistent.PreciseDisplay", true_value=True, false_value=False), Function(renpy.save_persistent)]
                     hovered Show(screen='info', i='数值详细显示\n\n勾选此项后，游戏内的状态的介绍文字将更详细地描述其效果。\n\n例：\n提升少量精神状态消耗 -> 提升10%精神状态消耗。',width=600)
                     unhovered Hide('info')
@@ -1336,6 +1351,21 @@ screen preferences(player=None):
             frame:
                 background None
                 ysize 50
+                textbutton _("关闭起床等待时间") text_style 'white':
+                    action [ToggleVariable("persistent.quickAlarm", true_value=True, false_value=False), Function(renpy.save_persistent)]
+                    hovered Show(screen='info', i='关闭起床等待时间\n\n勾选此项后，使主角更快起床而不用听较久的闹钟。',width=600)
+                    unhovered Hide('info')
+                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    xfill True
+                    activate_sound audio.cursor
+                if persistent.quickAlarm:
+                    imagebutton idle "gui/phone/right_.png":
+                        xalign 0.975
+                        yalign 0.2
+
+            frame:
+                background None
+                ysize 50
                 textbutton _("消息框停留时长") text_style 'white':
                     action [Show(screen='notify_select')]
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -1358,6 +1388,12 @@ screen preferences(player=None):
                         yalign 0.2
 
             if config.developer:
+                textbutton '{size=-5}测试菜单{/size}' text_style "white":
+                    action NullAction()
+                    xfill True
+                    xalign 1.0
+                    activate_sound audio.cursor
+                    xoffset -5
                 frame:
                     background None
                     ysize 50

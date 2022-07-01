@@ -30,10 +30,6 @@ init python:
         _windows_hidden = False
 
     def defaultAllClass():
-        for i in getSubclasses(Effect):
-            i.defaultClass()
-        for i in getSubclasses(Item):
-            i.defaultClass()
         for i in getSubclasses(Task):
             i.defaultClass()
         for i in getSubclasses(GymTask):
@@ -42,8 +38,8 @@ init python:
     
 
 init -20:
-    
-    default persistent.SaverClass = None
+    default persistent.SaverClass = [None, None, None]
+
     define config.layers = [ 'master', 'transient', 'screens', 'headimage' ,'overlay']
 
     default persistent.newplayer = True
@@ -58,6 +54,7 @@ init -20:
     default persistent.notifyDuration = 5
     default persistent.PreciseDisplayAbilities = False
     default persistent.PreciseDisplayGoal = False
+    default persistent.quickAlarm = False
 
 
 

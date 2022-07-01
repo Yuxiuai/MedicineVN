@@ -8,10 +8,10 @@
     $ renpy.block_rollback()
     $_skipping = False
 
-    if persistent.newplayer and not config.developer:
-        "当前版本为测试中的版本，{color=#ffff00}目前还没有实装具体的人物剧情！{/color}\n测试版中的游戏玩法，内容和数值等不代表游戏的最终品质。"
+    if persistent.newplayer:
+        "当前版本为测试中的版本，{color=#ffff00}目前还没有实装除解锁药物的剧情，也没有除人物死亡之外的结局！{/color}\n测试版中的游戏玩法，内容和数值等不代表游戏的最终品质。"
         "{color=#ffff00}请勿外传！{/color}\n如果你在游戏群外获得此版本，请向外传该游戏的玩家提醒这一点。"
-        "如果出现bug，数值不合理，机制错误等等情况，请加官方游戏群744039696，在群文件中的在线文档中反馈或直接私聊群主反馈。"
+        "如果出现bug，数值不合理，机制错误等等情况，请加官方游戏频道，在频道中的bug反馈区或直接私聊群主反馈。"
         "本游戏不适合容易受到干扰，对心理暗示感到不适的玩家。\n游戏内并不存在用于直接恐怖的图片，也没有过于真实的图片。"
         "本游戏包含限制级内容，除此之外还含有同性爱，兽人等。\n如果您未满18岁或者对这些元素感到不适，请退出游戏。"
         "本游戏在电脑平台上的某些效果更好，如果可以请尽量使用电脑游玩。"
@@ -141,7 +141,7 @@ label initplayer:
     #$ persistent.lastweek = None
     #$ persistent.yesterday = None
     $ Saver.clear()
-    $ Notify.clear()
+    $ Notice.clear()
 
     jump day0
 
@@ -195,7 +195,7 @@ label testStart:
     $ p.onOutside = False
 
     $ Saver.clear()
-    $ Notify.clear()
+    $ Notice.clear()
 
     jump wakeup
 

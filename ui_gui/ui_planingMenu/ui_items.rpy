@@ -54,6 +54,7 @@ screen items_show(player, items):
     vbox:
         xsize 640
         default isFold = {
+            '置顶':False,
             '实验药物':False,
             '普通药物':False,
             '书本':False,
@@ -62,6 +63,84 @@ screen items_show(player, items):
             '收藏品':False,
             '文稿':False
         }
+
+        $staritems = list(filter(lambda x: x.star == True, player.items))
+        if len(staritems)>0:
+            $typei = itemKindInfo('置顶', 'i')
+            $typea = itemKindInfo('置顶', 'a')
+
+            
+
+            hbox:
+                if isFold['置顶'] == False:
+                    textbutton '{size=-5}置顶{/size}' text_style "white":
+                        action [SetDict(isFold, '置顶', True),Hide("info")]
+                        hovered Show(screen="info", i=typei+'\n\n单击以折叠该类物品。', a=typea)
+                        unhovered Hide("info")
+                        xfill True
+                        xalign 1.0
+                        xoffset -5
+                        activate_sound audio.cursor
+                        #background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+
+                    imagebutton idle "gui/style/folded.png":
+                        xoffset -85
+                        yoffset 10
+
+                else:
+
+                    textbutton '{size=-5}置顶{/size}' text_style "white":
+                        action [SetDict(isFold, '置顶', False),Hide("info")]
+                        hovered Show(screen="info", i=typei+'\n\n单击以展开该类物品。', a=typea)
+                        unhovered Hide("info")
+                        xfill True
+                        xalign 1.0
+                        xoffset -5
+                        activate_sound audio.cursor
+                        #background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+
+                    imagebutton idle "gui/style/folded.png":
+                        xoffset -85
+                        yoffset 10
+                        at reverse
+                    
+            if isFold['置顶'] == False:
+                vbox:
+
+                    for ite in staritems:
+                        frame:
+                            background None
+                            ysize 60
+                            xfill True
+                            $ite_name = type(ite).name
+                            $ite_pre = ite.getPrefixInfo(player)
+                            $ite_main = ite.getPrincipalInfo()
+                            if type(ite).kind == '实验药物':
+                                $ite_main += type(ite).getBenefit(player)
+                            $ite_suf = ite.getSuffixInfo()
+                            $ite_ad = type(ite).ad if type(ite) not in (FinishedCommission, UnfinishedCommission) else ite.comm.inputs
+                            if ite_ad is None:
+                                $ite_ad = ''
+                            $showstyle = 'grey' if type(ite).__name__ in player.itemcd else "white"
+                            frame:
+                                background None
+                                textbutton ite_name text_style showstyle:
+                                    action [Hide("info3"),Show(screen="item_use", player=player, item=ite, pp=renpy.get_mouse_pos(), t=ite_name, i1=ite_pre, i2='\n'+ite_main+ite_suf, a2=ite_ad)]
+                                    hovered [Show(screen="info3", t=ite_name, i1=ite_pre, i2='\n'+ite_main+ite_suf, a2=ite_ad)]
+                                    unhovered Hide("info3")
+                                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                                    activate_sound audio.cursor
+                                    xfill True
+                                textbutton str(ite.amounts) text_style showstyle:
+                                    xpos 1.0
+                                    xoffset -40
+                                    xanchor 1.0
+
+                        null height 2
+
+                    
+
+
         for i in items:
             $typename = type(i[0]).kind
             $typei = itemKindInfo(typename, 'i')
@@ -101,13 +180,14 @@ screen items_show(player, items):
             if isFold[typename] == False:
                 vbox:
                     #xalign 1.0
+
                     for ite in i:
                         frame:
                             background None
                             ysize 60
                             xfill True
                             $ite_name = type(ite).name
-                            $ite_pre = ite.getPrefixInfo()
+                            $ite_pre = ite.getPrefixInfo(player)
                             $ite_main = ite.getPrincipalInfo()
                             if type(ite).kind == '实验药物':
                                 $ite_main += type(ite).getBenefit(player)
@@ -115,17 +195,17 @@ screen items_show(player, items):
                             $ite_ad = type(ite).ad if type(ite) not in (FinishedCommission, UnfinishedCommission) else ite.comm.inputs
                             if ite_ad is None:
                                 $ite_ad = ''
-
+                            $showstyle = 'grey' if type(ite).__name__ in player.itemcd else "white"
                             frame:
                                 background None
-                                textbutton ite_name text_style "white":
+                                textbutton ite_name text_style showstyle:
                                     action [Hide("info3"),Show(screen="item_use", player=player, item=ite, pp=renpy.get_mouse_pos(), t=ite_name, i1=ite_pre, i2='\n'+ite_main+ite_suf, a2=ite_ad)]
                                     hovered [Show(screen="info3", t=ite_name, i1=ite_pre, i2='\n'+ite_main+ite_suf, a2=ite_ad)]
                                     unhovered Hide("info3")
                                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                     activate_sound audio.cursor
                                     xfill True
-                                textbutton str(ite.amounts) text_style "white":
+                                textbutton str(ite.amounts) text_style showstyle:
                                     xpos 1.0
                                     xoffset -40
                                     xanchor 1.0
@@ -198,6 +278,15 @@ screen item_use(player, item, pp, t=None, i1=None, a1=None, i2=None, a2=None, wi
                     textbutton _("{size=-3}发布到公众平台{/size}"):
                         action [Hide("item_use"), Function(item.uploadToSocial, player=player)]
                         activate_sound audio.cursor
+                if item.star == False:
+                    textbutton _("{size=-3}置顶{/size}"):
+                        action [Hide("item_use"), Function(ui_itemStar, item=item)]
+                        activate_sound audio.cursor
+                else:
+                    textbutton _("{size=-3}取消置顶{/size}"):
+                        action [Hide("item_use"), Function(ui_itemUnstar, item=item)]
+                        activate_sound audio.cursor
+
                 textbutton _("{size=-3}丢弃{/size}"):
                     action [Hide("item_use"), Function(ui_itemQuit, item=item, player=player)]
                     activate_sound audio.cursor

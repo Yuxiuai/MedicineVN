@@ -1,4 +1,4 @@
-init python:
+init python early:
 
     class Player:
         def __init__(self, name='Solitus'):
@@ -90,8 +90,13 @@ init python:
             self.usedMedicines = [MedicineA]
             self.unlockedTasks = []
             self.lockedTasks = []
+            self.starItems = []
             self.plan = [NoTask, NoTask, NoTask]
             self.gymplan = [NoSport, NoSport, NoSport]
+
+            self.resistance = {'MedicineA':0, 'MedicineB':0, 'MedicineC':0}
+            self.itemcd = {}
+
             self.unacComm = []
 
             self.retval = None
@@ -123,7 +128,7 @@ init python:
         def receiveComm(self, comm):
             self.items.append(UnfinishedCommission(p))
             self.items[-1].comm = comm
-            showNotify(['已接取新委托：%s' % self.items[-1].name])
+            showNotice(['已接取新委托：%s' % self.items[-1].name])
             self.unacComm.remove(comm)
 
 
@@ -255,13 +260,13 @@ init python:
             self.severity += r2(s)
 
             if consumption > 0:
-                Notify.add('睡眠消耗了'+r2s(consumption)+'点精神状态！')
+                Notice.add('睡眠消耗了'+r2s(consumption)+'点精神状态！')
                 self.mental -= r2(consumption)
             else:
-                Notify.add('睡眠没有消耗精神状态！')
+                Notice.add('睡眠没有消耗精神状态！')
 
             if s > 0:
-                Notify.add('严重度上升了'+r2s(s)+'点！')
+                Notice.add('严重度上升了'+r2s(s)+'点！')
 
 
         def dateChange(self):
@@ -455,19 +460,30 @@ init python:
                 self.items[i].timeUpdate(self)
                 if self.items[i].kind == '文稿':
                     self.items[i].comm.timeUpdate(self)
-            for i in getSubclasses(Item):
-                i.cdUpdate(self)
+
+            for k in list(self.itemcd.keys()):
+                if self.itemcd[k] > 0:
+                    self.itemcd[k] -= 1
+                if self.itemcd[k] == 0:
+                    del self.itemcd[k]
+                    
+
+            
         
         def updateMedicine(self):
             for i in self.usedMedicines:
+                r = 0
                 if self.week < 5:
-                    r = 1
+                    if rra(self, 50):
+                        r = 1
                 else:
                     if len(self.usedMedicines) == 1:
-                        r = 1
+                        if rra(self, 25):
+                            r = 1
                     else:
-                        r = 2
-                i.resistance_ = max(i.resistance_ - r, 0)
+                        if rra(self, 50):
+                            r = 1
+                self.resistance[i.__name__] = max(self.resistance[i.__name__] - r, 0)
             
         def updateAfterTask(self, task):
             for i in range(len(self.effects) - 1, -1, -1):
@@ -486,7 +502,7 @@ init python:
             if money != 0:
                 if money > self.price*0.75:
                     money = int(self.price *0.75* f())
-                Notify.add('昨日收到由%s位读者打赏给您的共%s元。' % (reader, money))
+                Notice.add('昨日收到由%s位读者打赏给您的共%s元。' % (reader, money))
                 self.money += money
 
         def calWorkPaid(self): 
@@ -539,15 +555,15 @@ init python:
 
             self.wages = wages
             self.achievedGoal = 0.0
-            self.goal = (1.07 ** self.week) * 0.3 + self.working * 0.7
-            self.goal = r2(self.goal * ra(self, 800, 1100) * 0.01 * f())
+            self.goal = (1.08 ** self.week) * 0.3 + self.working * 0.7
+            self.goal = r2(self.goal * ra(self, 750, 1100) * 0.01 * f())
             if GameMode5.has(self):
                 self.goal = r2(self.goal * 1.15)
             self.money += paid
 
-            Notify.add('Boss：“第%s周工资已发放。”' % self.week)
-            Notify.add('X付宝到账：%s元！' % r2(paid))
-            Notify.add('Boss：“本周的工作指标系数为%s。”' % self.goal)
+            Notice.add('Boss：“第%s周工资已发放。”' % self.week)
+            Notice.add('X付宝到账：%s元！' % r2(paid))
+            Notice.add('Boss：“本周的工作指标系数为%s。”' % self.goal)
 
         def plotUpdate(self):
             #if self.sol_p %2 == 0:
@@ -611,4 +627,4 @@ init python:
                 Message.new(self, 'Halluke', 'Halluke', '那个，我想说一些事，如果我说错了的话，请不要生气。\n第一次上课的时候老师有清点人数，我对来上课的人也大概有了一点印象，但是你是后来才出现的，最初我把你当成第一节课就没来的学生，但是老师当时点名也没人缺席的样子。后来发现老师点名的时候也没看到你过产生回应。你并不是我们班的对吧？我也调查了一段时间，在年级大群，甚至校园墙上都没有查到和你有关的信息。\n你并不是我们学校的人，对吧？\n不过我主要是想提醒你，下周的周六就是考试了，虽然你并不需要考试，如果你想的话，可以来帮我发球。', '6', '42')
                 self.hal_p == 11
     
-            Notify.show()
+            Notice.show()

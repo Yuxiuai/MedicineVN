@@ -2,16 +2,17 @@ label wakeup:
     $quick_menu = False
     $_game_menu_screen = None
     $renpy.block_rollback()
-    scene black with fade
+    scene black
     if not persistent.nomedicine:
         play music audio.alarm
-        $pause(2)
-    scene bedroom with dissolve
+        if not persistent.quickAlarm:
+            $pause(2)
+            scene bedroom with dissolve
     $quick_menu = True
 
-    $ Saver.save()
-    $Notify.add('存档已保存！')
-    $Notify.show()
+    $Saver.save(p)
+    $Notice.add('存档已保存！')
+    $Notice.show()
     jump alarmCircle
 
 label alarmCircle:
@@ -20,7 +21,8 @@ label alarmCircle:
         stop music
         show screen screen_dashboard(p)
         jump beforeCircle
-    $pause(2)
+    if not persistent.quickAlarm:
+        $pause(2)
     menu:
         "关闭闹钟":
             stop music
@@ -394,7 +396,7 @@ screen screen_useMed_show(player, items):
                     ysize 60
                     xfill True
                     $ite_name = type(ite).name
-                    $ite_pre = ite.getPrefixInfo()
+                    $ite_pre = ite.getPrefixInfo(player)
                     $ite_main = ite.getPrincipalInfo() + type(ite).getBenefit(player)
                     $ite_suf = ite.getSuffixInfo()
 

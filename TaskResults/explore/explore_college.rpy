@@ -12,8 +12,8 @@ label explore_college_1:
     else:
         scene gym_night with fade
     $p.working += 0.03
-    $Notify.add('升高了3点工作能力。')
-    $Notify.show()
+    $Notice.add('升高了3点工作能力。')
+    $Notice.show()
     "去A市大学旁听了一场工作培训机构办的讲座。"
     "虽然大多数都是关于应届大学生就业的问题，以及简历和面试的一些小东西，但我听一听也好。"
     "说不定我哪天想不开就换工作了呢？"
@@ -27,8 +27,8 @@ label explore_college_2:
     else:
         scene gym_night with fade
     $p.physical += 0.03
-    $Notify.add('升高了3点身体素质。')
-    $Notify.show()
+    $Notice.add('升高了3点身体素质。')
+    $Notice.show()
     "去A市大学旁听了一节和身体锻炼有关的选修课。"
     "讲了很多关于运动前准备和运动后拉伸的问题，稍微听听也能防止我总受伤。"
     "今天回去就试试好了。"
@@ -43,8 +43,8 @@ label explore_college_3:
     else:
         scene gym_night with fade
     $p.writing += 0.03
-    $Notify.add('升高了3点写作技巧。')
-    $Notify.show()
+    $Notice.add('升高了3点写作技巧。')
+    $Notice.show()
     "去A市大学旁听了一场由四个女生和一个男生组建的文学社办的讲座。"
     "现在的大学还会办校园祭吗？我上学的时候怎么就天天都是无聊的讲座……"
     jump GoOutside_result
@@ -58,8 +58,8 @@ label explore_college_4:
     else:
         scene gym_night with fade
     $p.physical += 0.03
-    $Notify.add('升高了3点工作能力。')
-    $Notify.show()
+    $Notice.add('升高了3点工作能力。')
+    $Notice.show()
     "去A市大学旁听了一场由四个女生和一个男生组建的文学社办的讲座。"
     "现在的大学还会办校园祭吗？我上学的时候怎么就天天都是无聊的讲座……"
     jump GoOutside_result
@@ -72,7 +72,7 @@ label explore_college_5:
     "轻轻松松赚到了钱。"
     $temp=r2(1.2 * p.price * f())
     $p.money += temp
-    $showNotify(['获得%s元报酬' % temp])
+    $showNotice(['获得%s元报酬' % temp])
     jump GoOutside_result
 
 
@@ -84,7 +84,7 @@ label explore_college_6:
     $temp=r2(1.8 * p.price * f())
     $p.money += temp
     $p.severity += 0.01
-    $showNotify(['获得%s元报酬' % temp, '提升了1点严重程度。'])
+    $showNotice(['获得%s元报酬' % temp, '提升了1点严重程度。'])
     jump GoOutside_result
 
 label explore_college_7:
@@ -100,5 +100,5 @@ label explore_college_7:
     $p.money += temp
     $p.severity += 0.01
     $p.working += 0.03
-    $showNotify(['获得%s元报酬' % temp, '提升了3点工作能力。','提升了1点严重程度。'])
+    $showNotice(['获得%s元报酬' % temp, '提升了3点工作能力。','提升了1点严重程度。'])
     jump GoOutside_result

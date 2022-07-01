@@ -1,4 +1,4 @@
-init python:
+init python early:
 
     def insertToHis(message):
         global _history_list
@@ -8,7 +8,7 @@ init python:
         h.what = message
         _history_list.append(h)
 
-    def showNotify(messages):
+    def showNotice(messages):
         for i in messages:
             insertToHis(i)
         if renpy.get_screen("screen_notify"):
@@ -17,7 +17,7 @@ init python:
         else:
             renpy.show_screen("screen_notify", messages) 
     
-    class Notify:
+    class Notice:
         messages = []
 
         @classmethod
@@ -30,7 +30,7 @@ init python:
 
         @classmethod
         def show(cls):
-            showNotify(cls.messages)
+            showNotice(cls.messages)
             cls.messages = []
 
         @classmethod

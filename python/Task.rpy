@@ -1,4 +1,4 @@
-init python:
+init python early:
 
     class Task:
         id = None
@@ -17,17 +17,17 @@ init python:
             if not cls.unlocked:
                 if cls.unlockCond(player) == True:
                     cls.unlocked = True
-                    player.unlockedTasks.add(cls)
-                    showNotify(['已解锁日程：%s！' % cls.name])
+                    player.unlockedTasks.append(cls)
+                    showNotice(['已解锁日程：%s！' % cls.name])
                 else:
-                    showNotify(['未达到日程%s的解锁条件：\n%s' % (cls.name, cls.unlockCond(player))])
+                    showNotice(['未达到日程%s的解锁条件：\n%s' % (cls.name, cls.unlockCond(player))])
             else:
-                showNotify(['该日程：%s已解锁！' % cls.name])
+                showNotice(['该日程：%s已解锁！' % cls.name])
 
         @classmethod
         def lockClass(cls, player):
             cls.unlocked = False
-            player.lockedTasks.add(cls)
+            player.lockedTasks.append(cls)
 
         @classmethod
         def unlockCond(cls, player):
@@ -90,7 +90,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)

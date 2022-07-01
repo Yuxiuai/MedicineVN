@@ -13,7 +13,7 @@ label DefaultWork_beginning:
 
 label DefaultWork_result_exce:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "好像一不小心解决了当前项目之前程序员埋下的隐患！"
     "这周的会议我肯定要被表扬了。"
     "嘿嘿，这就是得意的感觉吗！"
@@ -22,7 +22,7 @@ label DefaultWork_result_exce:
 
 label DefaultWork_result_good:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "虽然今天工作很繁重，不过也算是按时完成了。"
     "不愧是我。"
     $p.times+=1
@@ -30,7 +30,7 @@ label DefaultWork_result_good:
 
 label DefaultWork_result_norm:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "今天的代码写得很顺手，完成任务后还有时间摸会鱼。"
     "考虑考虑把之前没补完的番看一看好了。"
     $p.times+=1
@@ -38,7 +38,7 @@ label DefaultWork_result_norm:
 
 label DefaultWork_result_bad:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "……似乎平稳地混过去了，今天似乎没什么比较难的工作的样子。"
     "要是每天都这么轻松就好了……"
     $p.times+=1
@@ -60,14 +60,14 @@ label LoafingWork_beginning:
             $p.retval = 'phy'
         "看会网络小说" if p.canRead >= 0:
             $p.retval = 'wri'
-        "阅读携带的书籍" if p.canRead >= 0 and list(filter(lambda x: type(x).kind == '书本' and type(x).cd == 0, p.items)) != []:
+        "阅读携带的书籍" if p.canRead >= 0 and list(filter(lambda x: type(x).kind == '书本' and type(x).__name__ not in p.itemcd, p.items)) != []:
             $p.retval = 'read'
     $p.times+=1
     $LoafingWork.executeTask(p)
 
 label LoafingWork_result_exce:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "好像一不小心解决了当前项目之前程序员埋下的隐患！"
     "这周的会议我肯定要被表扬了。"
     "嘿嘿，这就是得意的感觉吗！"
@@ -76,7 +76,7 @@ label LoafingWork_result_exce:
 
 label LoafingWork_result_good:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "虽然今天工作很繁重，不过也算是按时完成了。"
     "不愧是我。"
     $p.times+=1
@@ -84,7 +84,7 @@ label LoafingWork_result_good:
 
 label LoafingWork_result_norm:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "今天的代码写得很顺手，完成任务后还有时间摸会鱼。"
     "考虑考虑把之前没补完的番看一看好了。"
     $p.times+=1
@@ -92,7 +92,7 @@ label LoafingWork_result_norm:
 
 label LoafingWork_result_bad:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "……似乎平稳地混过去了，今天似乎没什么比较难的工作的样子。"
     "要是每天都这么轻松就好了……"
     $p.times+=1
@@ -111,7 +111,7 @@ label OvertimeWork_beginning:
 
 label OvertimeWork_result_exce:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "……并没有剩太多很难的任务，还算轻松搞定了。"
     "不过没有主管盯着倒是蛮舒服的……总之该休息了！"
     $p.times+=1
@@ -119,7 +119,7 @@ label OvertimeWork_result_exce:
 
 label OvertimeWork_result_good:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "还不赖，虽然堆到休息时间才做工，不过该完成的都做完了……"
     "我这么勤奋什么时候给我涨工资呢？"
     $p.times+=1
@@ -127,7 +127,7 @@ label OvertimeWork_result_good:
 
 label OvertimeWork_result_norm:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "感觉比在公司里工作还要简单……"
     "毕竟可以躺在床上办公……困了就睡……"
     $p.times+=1
@@ -135,7 +135,7 @@ label OvertimeWork_result_norm:
 
 label OvertimeWork_result_bad:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "……头好疼，好想吐，我不行了……"
     "还是拖到下次上班时候做好了。"
     $p.times+=1
@@ -154,7 +154,7 @@ label SnapWork_beginning:
 
 label SnapWork_result_exce:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "在主管来巡查之前居然奇迹般地自然醒了……"
     "我睡得差不多了，还是假装在努力工作好了……"
     $p.times+=1
@@ -162,7 +162,7 @@ label SnapWork_result_exce:
 
 label SnapWork_result_good:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "用手臂枕着睡觉好难过……"
     "买个颈枕这件事要尽快提上日程了……"
     $p.times+=1
@@ -170,7 +170,7 @@ label SnapWork_result_good:
 
 label SnapWork_result_norm:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "同事敲键盘的声音真是催眠……"
     "主管居然没注意到我睡着了吗？这家伙肯定也在摸鱼打游戏吧——"
     $p.times+=1
@@ -178,7 +178,7 @@ label SnapWork_result_norm:
 
 label SnapWork_result_bad:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     ar"“[p.name]！”"
     "白狼的声音在办公室里回荡着"
     ar"“下次在让我看见你睡觉！我就把你调到流水线去做十二个点的活！”"
@@ -201,7 +201,7 @@ label FocusWork_beginning:
 
 label FocusWork_result_exce:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     s"“你没import那个什么numpy的包，肯定报什么都没找到的错呀……”"
     "这家伙真的是大学毕业来的吗……这还要我教……"
     "看来他弄完他自己负责那段，算了算我们这次工作已经完成平时的两倍进度了，而且也没有让我太头疼……"
@@ -211,7 +211,7 @@ label FocusWork_result_exce:
 
 label FocusWork_result_good:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "我轻车熟路地用快捷键关闭编译器和电脑，把没喝完的咖啡倒进垃圾桶里。"
     "至少这次工作之后应该有一段时间没有密集的工作了。"
     "还好不算太难，至少能在ddl之前做完。"
@@ -220,7 +220,7 @@ label FocusWork_result_good:
 
 label FocusWork_result_norm:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "普通的社畜时光……"
     "头好疼……下班之后我要狠狠地睡他个十小时……"
     $p.times+=1
@@ -228,7 +228,7 @@ label FocusWork_result_norm:
 
 label FocusWork_result_bad:
     scene office with fade
-    $Notify.show()
+    $Notice.show()
     "感觉很不好！麻烦太多了！需求分析那边的到底在干什么啊，出这么多需求是想累死谁！"
     "胃疼……而且头也疼……"
     "我 以 后 再 也 不 想 这 样 工 作 了 ！"
@@ -248,7 +248,7 @@ label MeetingWork_beginning:
 
 label MeetingWork_result_exce:
     scene meeting with fade
-    $Notify.show()
+    $Notice.show()
     "在讲了些每次会议都会说的客套话后，在表扬阶段居然难得地提到了我们！"
     "我们部门上周的工作完成的很好，连天天摸鱼睡觉的我都被表扬了……"
     "好高兴啊，是不是该奖励自己吃一顿火锅？"
@@ -259,7 +259,7 @@ label MeetingWork_result_exce:
 
 label MeetingWork_result_good:
     scene meeting with fade
-    $Notify.show()
+    $Notice.show()
     "这次会议提到的点似乎挺重要的。"
     "得记点笔记，或许之后的工作用得到。"
     $p.times+=1
@@ -267,7 +267,7 @@ label MeetingWork_result_good:
 
 label MeetingWork_result_norm:
     scene meeting with fade
-    $Notify.show()
+    $Notice.show()
     "就只是一周的总结而已，没什么特别的。"
     "看起来本周也没发生什么特殊的事情，下班之后应该做些什么呢……"
     $p.times+=1
@@ -275,7 +275,7 @@ label MeetingWork_result_norm:
 
 label MeetingWork_result_bad:
     scene meeting with fade
-    $Notify.show()
+    $Notice.show()
     "非常无聊的内容……"
     "唉，他怎么又在讲企业创立的故事了……然后就是画大饼……"
     "讲这些有什么用呢，不如给我涨点工资。"

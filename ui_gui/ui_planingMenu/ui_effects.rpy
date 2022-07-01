@@ -104,7 +104,7 @@ screen effects_show(player, effects):
                             ysize 60
                             xfill True
 
-                            $ite_pre = ite.getPrefixInfo()
+                            $ite_pre = ite.getPrefixInfo(player)
                             $ite_main = ite.getPrincipalInfo()
                             $ite_suf = ite.getSuffixInfo()
 

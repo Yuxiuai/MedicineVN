@@ -198,7 +198,7 @@ screen gymtasks_show(player, gymtasks, only_avaiable_gymtask, unlocked_but_can_u
 
                                     $error_info = '无法安排该健身日程！\n' + ite.checkAvailable(player, player.today, player.findNoSport())
 
-                                    textbutton '{color=#b3b3b3}' + ite_name + '{/color}' text_style "white":
+                                    textbutton ite_name text_style "grey":
                                         action [Hide("info3"), Show(screen="gymtask_unlock", player=player, item=ite, pp=renpy.get_mouse_pos(), t=ite_name, i1=ite.info + type_info, a1=ite.ad)]
                                         hovered Show(screen="info3", t=ite_name, i1=ite.info + type_info + red('\n\n' +error_info), a1=ite.ad)
                                         unhovered Hide("info3")

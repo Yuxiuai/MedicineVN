@@ -1,4 +1,4 @@
-init python:
+init python early:
 
     ret_mes = { # 空字符串代表只会已读
         'Pathos': ['', '', '', '别叫'],

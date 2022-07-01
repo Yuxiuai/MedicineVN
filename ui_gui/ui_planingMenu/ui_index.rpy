@@ -12,7 +12,7 @@ screen screen_index(player):
             hovered Show(screen="info", i='打开手机。\n你可以用它来进行不需要消耗回合的事件，打电话给你喜欢的人，中午的时候点个外卖，或是在手机的接稿平台上查看每日更新的委托。', a='“真的有不用手机刷短视频和玩手游的人吗？”……\n没错，就是在下。')
             unhovered Hide("info")
             hover_sound audio.cursor
-        if player.times == 2:
+        if player.times == 2 or GameDifficulty1.has(player):
             imagebutton auto "gui/menu/schedule_%s.png":
                 at trans_Up()
                 action [Show(screen="screen_tasks", player=player), Hide("info")]
@@ -54,7 +54,7 @@ screen screen_index(player):
         if p.hal_p == 11 and player.messages['Halluke'][-1].seen != None:
             imagebutton auto "gui/menu/edit_%s.png":
                 at trans_toLeft()
-                action Function(showNotify, ['还没有给Halluke发消息。'])
+                action Function(showNotice, ['还没有给Halluke发消息。'])
                 hovered Show(screen="info", i='还没有给Halluke发消息。')
                 unhovered Hide("info")
                 activate_sound audio.error
@@ -62,7 +62,7 @@ screen screen_index(player):
         elif NoTask in player.plan:
             imagebutton auto "gui/menu/edit_%s.png":
                 at trans_toLeft()
-                action Function(showNotify, ['还未完成日程的安排！'])
+                action Function(showNotice, ['还未完成日程的安排！'])
                 hovered Show(screen="info", i='尚未安排完本日的日程\n点击左下方第二个图标安排你的本日日程。', a='说真的，就不能给我一点单纯发呆的时间吗？')
                 unhovered Hide("info")
                 activate_sound audio.error
@@ -82,6 +82,6 @@ screen screen_index(player):
     key 'r' action [Show(screen="screen_effects", player=player), Hide("info")]
     
     if NoTask in player.plan:
-        key 'K_SPACE' action Function(showNotify, ['还未完成日程的安排！'])
+        key 'K_SPACE' action Function(showNotice, ['还未完成日程的安排！'])
     else:
         key 'K_SPACE' action [Hide("screen_index"),Return(None),Hide("info")]

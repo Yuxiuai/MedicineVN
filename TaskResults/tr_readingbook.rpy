@@ -3,7 +3,7 @@ screen screen_tr_readingbook(player):
     #tag gamegui
     use barrier(screen="screen_tr_readingbook", mode=0)
 
-    $ items = list(filter(lambda x: type(x).kind=='书本' and type(x).cd==0, player.items))
+    $ items = list(filter(lambda x: type(x).kind=='书本' and type(x).__name__ not in p.itemcd, p.items))
 
     #modal True
     zorder 200
@@ -69,7 +69,7 @@ screen screen_tr_readingbook_show(player, items):
                     ysize 60
                     xfill True
                     $ite_name = type(ite).name
-                    $ite_pre = ite.getPrefixInfo()
+                    $ite_pre = ite.getPrefixInfo(player)
                     $ite_main = ite.getPrincipalInfo()
                     $ite_suf = ite.getSuffixInfo()
 

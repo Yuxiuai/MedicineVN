@@ -99,7 +99,7 @@ label pathos_route_0:
     $rollback_switch()
     if replaying:
         jump afterreplay
-    $showNotify(['已解锁新药物！{color=#7881e8}药物{font=arial.ttf}β{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
+    $showNotice(['已解锁新药物！{color=#7881e8}药物{font=arial.ttf}β{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
     play sound audio.getmedicine
     scene elevator with fade
     jump explore_elevator
@@ -209,7 +209,7 @@ label pathos_route_1:
         $ p.sol_p = 3
     if replaying:
         jump afterreplay
-    $showNotify(['已解锁新药物！{color=#e4f06f}药物{font=arial.ttf}γ{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
+    $showNotice(['已解锁新药物！{color=#e4f06f}药物{font=arial.ttf}γ{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
     play sound audio.getmedicine
     $rollback_switch()
     scene elevator with fade

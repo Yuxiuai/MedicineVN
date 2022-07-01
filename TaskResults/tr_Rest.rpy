@@ -9,28 +9,28 @@ label Sleep_beginning:
 
 label Sleep_result_exce:
     scene bedroom with fade
-    $Notify.show()
+    $Notice.show()
     "睡了一个好觉，做了一个好梦。"
     $p.times+=1
     jump TaskExecuting
 
 label Sleep_result_good:
     scene bedroom with fade
-    $Notify.show()
+    $Notice.show()
     "无梦，就像右键床铺直接跳到下一回合一样舒畅。"
     $p.times+=1
     jump TaskExecuting
 
 label Sleep_result_norm:
     scene bedroom with fade
-    $Notify.show()
+    $Notice.show()
     "至少病痛没有在梦里伴随着我。"
     $p.times+=1
     jump TaskExecuting
 
 label Sleep_result_bad:
     scene bedroom with fade
-    $Notify.show()
+    $Notice.show()
     "做了一个噩梦……但是至少算是休息。"
     $p.times+=1
     jump TaskExecuting
@@ -47,7 +47,7 @@ label ComputerGaming_beginning:
 
 label ComputerGaming_result_exce:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "嗨！我直接进行一个横冲直撞！"
     "至少游戏里的我天下无敌，至少游戏里的我就算死了也能重新复活……"
     $p.times+=1
@@ -55,7 +55,7 @@ label ComputerGaming_result_exce:
 
 label ComputerGaming_result_good:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "哦！在我的努力奋斗下，至少我们把这该死的火狼杀掉了。"
     "要是我的脑袋不痛的话这波该是绝杀。"
     $p.times+=1
@@ -63,7 +63,7 @@ label ComputerGaming_result_good:
 
 label ComputerGaming_result_norm:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "一局普通的游戏罢了。"
     "既不刺激，也不无聊。"
     "也许应该把时间放在其他地方。"
@@ -72,7 +72,7 @@ label ComputerGaming_result_norm:
 
 label ComputerGaming_result_bad:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "该死……这群人都是什么废物。"
     "头疼……这游戏真是一秒都不想玩了。"
     $p.times+=1
@@ -89,7 +89,7 @@ label CleanRoom_beginning:
 
 label CleanRoom_result:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "房间干净了很多诶，这样就算是在家里赶工也能不会感觉很烦躁吧……"
     $p.times+=1
     jump TaskExecuting
@@ -105,7 +105,7 @@ label DoNothing_beginning:
 
 label DoNothing_result:
     scene workarea with fade
-    $Notify.show()
+    $Notice.show()
     "谢谢你，我终于能有机会花时间做我自己真正想做的事。"
     $p.times+=1
     jump TaskExecuting
@@ -121,28 +121,28 @@ label SocialMedia_beginning:
 
 label SocialMedia_result_exce:
     scene agonal with fade
-    $Notify.show()
+    $Notice.show()
     "当前日程尚未完成文案。"
     $p.times+=1
     jump TaskExecuting
 
 label SocialMedia_result_good:
     scene agonal with fade
-    $Notify.show()
+    $Notice.show()
     "当前日程尚未完成文案。"
     $p.times+=1
     jump TaskExecuting
 
 label SocialMedia_result_norm:
     scene agonal with fade
-    $Notify.show()
+    $Notice.show()
     "当前日程尚未完成文案。"
     $p.times+=1
     jump TaskExecuting
 
 label SocialMedia_result_bad:
     scene agonal with fade
-    $Notify.show()
+    $Notice.show()
     "当前日程尚未完成文案。"
     $p.times+=1
     jump TaskExecuting

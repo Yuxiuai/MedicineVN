@@ -1,4 +1,4 @@
-init python:
+init python early:
     class NoTask(Task):
         id = 0
         name = '未安排'
@@ -35,10 +35,10 @@ init python:
             player.working += g
             player.severity -= 0.01
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('降低了1点严重程度。')
-            Notify.add('升高了%s点工作能力。' % (int(g * 100)))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('降低了1点严重程度。')
+            Notice.add('升高了%s点工作能力。' % (int(g * 100)))
 
         @classmethod
         def goodPerf(cls, player):
@@ -49,9 +49,9 @@ init python:
             player.mental -= cons
             player.working += g
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了%s点工作能力。' % (int(g * 100)))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了%s点工作能力。' % (int(g * 100)))
 
         @classmethod
         def normPerf(cls, player):
@@ -66,11 +66,11 @@ init python:
             player.mental -= reco
             player.achievedGoal += a
             player.working += g
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('完成了%s点工作进度。' % a)
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('完成了%s点工作进度。' % a)
             if g >0:
-                Notify.add('升高了%s点工作能力。' % (int(g * 100)))
+                Notice.add('升高了%s点工作能力。' % (int(g * 100)))
 
         @classmethod
         def badPerf(cls, player):
@@ -80,9 +80,9 @@ init python:
             player.mental -= cons
             player.severity -= 0.02
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('降低了2点严重程度。')
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('降低了2点严重程度。')
 
 
     class LoafingWork(WorkTask):
@@ -105,7 +105,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             cls.executeAnotherTask(player, player.retval, perf)
             player.updateAfterTask(cls)
@@ -117,44 +117,44 @@ init python:
             p = 1 if perf < 50 else 2
             if doWith == 'sleep':
                 rec = r2(8 * cls.getRecoScale(player) * player.sleepRecovery * p)
-                Notify.add('在工作的间隙中尝试小睡，恢复了%s点精神状态。' % rec)
+                Notice.add('在工作的间隙中尝试小睡，恢复了%s点精神状态。' % rec)
                 player.mental += rec
                 if ConcDec.has(player):
                     ConcDec.subByType(player, int(ConcDec.get(player).stacks/2))
-                    Notify.add('状态：%s的层数减少了一半！' % ConcDec.name)
+                    Notice.add('状态：%s的层数减少了一半！' % ConcDec.name)
                 if rra(player, 35 * p):
                     PhysRezA.add(player, 1 if rra(player, 50) else 2)
             elif doWith == 'phy' and player.canSport >= 0:
                 rec = r2(3 * cls.getRecoScale(player) * player.sleepRecovery * p)
-                Notify.add('在工作的间隙中尝试做些杂活，恢复了%s点精神状态。' % rec)
+                Notice.add('在工作的间隙中尝试做些杂活，恢复了%s点精神状态。' % rec)
                 if p == 2:
                     player.physical += 0.01
-                    Notify.add('流了些汗，提升了1点身体素质。')
+                    Notice.add('流了些汗，提升了1点身体素质。')
                 else:
                     PhysRezB.add(player)
-                    Notify.add('流了些汗，获得了状态：良好的运动。')
+                    Notice.add('流了些汗，获得了状态：良好的运动。')
             elif doWith == 'wri' and player.canRead >= 0:
                 rec = r2(5 * cls.getRecoScale(player) * player.sleepRecovery * p)
-                Notify.add('在工作的间隙中看了一会网络小说，恢复了%s点精神状态，获得了1层灵感。' % rec)
+                Notice.add('在工作的间隙中看了一会网络小说，恢复了%s点精神状态，获得了1层灵感。' % rec)
                 Inspiration.add(player)
                 if p == 2:
                     player.writing += 0.01
-                    Notify.add('对写作有了更多的想法，提升了1点写作技巧。')
+                    Notice.add('对写作有了更多的想法，提升了1点写作技巧。')
                 else:
-                    Notify.add('对写作有了更多的想法，获得了状态：精神的释放。')
+                    Notice.add('对写作有了更多的想法，获得了状态：精神的释放。')
                     MentRezA.add(player)
             elif doWith == 'read' and player.canRead >= 0:
                 renpy.call_screen(_screen_name="screen_tr_readingbook", player=player)
                 book = player.retval
                 if book is not None:
                     if book.progress == 0:
-                        Notify.add('从头开始阅读书本：%s……' % type(book).name)
+                        Notice.add('从头开始阅读书本：%s……' % type(book).name)
                         book.readBook(player, 1)
-                        Notify.add('完成了一半的进度！')
+                        Notice.add('完成了一半的进度！')
                     elif book.progress == 1:
-                        Notify.add('从上次看过的位置继续阅读书本：%s……' % type(book).name)
+                        Notice.add('从上次看过的位置继续阅读书本：%s……' % type(book).name)
                         book.readBook(player, 1)
-                        Notify.add('完成了整本书的阅读！')
+                        Notice.add('完成了整本书的阅读！')
             else:
                 renpy.say(None, '任务参数错误！')
                 renpy.jump("to_the_title")
@@ -170,9 +170,9 @@ init python:
             player.mental -= cons
             player.working += g
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -184,10 +184,10 @@ init python:
             player.mental -= cons
             player.achievedGoal += a
             player.working += g
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
             if g>0:
-                Notify.add('升高了%s点工作能力。' % int(g * 100))
+                Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def normPerf(cls, player):
@@ -195,8 +195,8 @@ init python:
             a = r2(0.35 * player.workSpeed * player.wor() * f())
             player.mental -= cons
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
 
         @classmethod
         def badPerf(cls, player):
@@ -206,10 +206,10 @@ init python:
             player.achievedGoal += a
             player.severity += 0.01
             player.working -= 0.01
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了1点严重程度。')
-            Notify.add('降低了1点工作能力。')
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了1点严重程度。')
+            Notice.add('降低了1点工作能力。')
 
 
     class OvertimeWork(WorkTask):
@@ -263,7 +263,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -278,10 +278,10 @@ init python:
             player.working += g
             player.severity -= 0.01
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('降低了1点严重程度。')
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('降低了1点严重程度。')
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -291,9 +291,9 @@ init python:
             player.mental -= cons
             player.working += g
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def normPerf(cls, player):
@@ -305,10 +305,10 @@ init python:
             player.mental -= reco
             player.working += g
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def badPerf(cls, player):
@@ -317,9 +317,9 @@ init python:
             player.mental -= cons
             player.severity += 0.01
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了1点严重程度。')
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了1点严重程度。')
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -367,8 +367,8 @@ init python:
             a = r2(0.35 * player.workSpeed * player.wor() * f())
             player.mental += reco
             player.achievedGoal += a
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('完成了%s点工作进度。' % a)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('完成了%s点工作进度。' % a)
 
         @classmethod
         def goodPerf(cls, player):
@@ -377,8 +377,8 @@ init python:
             PhysRezA.add(player)
             player.mental += reco
             player.achievedGoal += a
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('完成了%s点工作进度。' % a)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('完成了%s点工作进度。' % a)
 
         @classmethod
         def normPerf(cls, player):
@@ -388,9 +388,9 @@ init python:
             player.severity -= 0.01
             player.mental += reco
             player.achievedGoal += a
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('降低了1点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('降低了1点严重程度。')
 
         @classmethod
         def badPerf(cls, player):
@@ -399,15 +399,15 @@ init python:
             player.mental -= cons
             player.severity += 0.02
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('提升了2点严重程度。')  # 被叫醒了
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('提升了2点严重程度。')  # 被叫醒了
 
         @classmethod
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
 
             if rra(player, 35 * 1 if perf < 50 else 2):
@@ -462,7 +462,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             cls.afterTaskResult(player)
             player.updateAfterTask(cls)
@@ -477,10 +477,10 @@ init python:
             player.working += g
             player.severity -= 0.02
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('降低了2点严重程度。')
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('降低了2点严重程度。')
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -490,9 +490,9 @@ init python:
             player.mental -= cons
             player.working += g
             player.achievedGoal += a
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def normPerf(cls, player):
@@ -501,9 +501,9 @@ init python:
             player.mental -= cons
             player.achievedGoal += a
             player.severity += 0.02
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了2点严重程度。')
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了2点严重程度。')
 
         @classmethod
         def badPerf(cls, player):
@@ -512,9 +512,9 @@ init python:
             player.mental -= cons
             player.achievedGoal += a
             player.severity += 0.02
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('完成了%s点工作进度。' % a)
-            Notify.add('升高了2点严重程度。')
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s点工作进度。' % a)
+            Notice.add('升高了2点严重程度。')
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -555,8 +555,8 @@ init python:
             g = 0.03 + player.workingGain
             player.mental -= cons
             player.working += g
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -564,8 +564,8 @@ init python:
             g = 0.02 + player.workingGain
             player.mental -= cons
             player.working += g
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def normPerf(cls, player):
@@ -573,8 +573,8 @@ init python:
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.working += g
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def badPerf(cls, player):
@@ -582,8 +582,8 @@ init python:
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.working += g
-            Notify.add('消耗了%s点精神状态。' % cons)
-            Notify.add('升高了%s点工作能力。' % int(g * 100))
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('升高了%s点工作能力。' % int(g * 100))
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -627,9 +627,9 @@ init python:
             g = 0.02 + player.physicalGain
             player.mental += reco + exReco
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
             return "DefaultSport_result_exce"
 
         @classmethod
@@ -640,10 +640,10 @@ init python:
             player.mental += reco + exReco
             player.severity -= 0.01
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('降低了1点严重程度。')
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('降低了1点严重程度。')
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
             return "DefaultSport_result_good"
 
         @classmethod
@@ -652,8 +652,8 @@ init python:
             g = 0.01 + player.physicalGain
             player.mental += reco
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
             return "DefaultSport_result_norm"
 
         @classmethod
@@ -661,8 +661,8 @@ init python:
             reco = r2(10 * cls.getRecoScale(player))
             exReco = r2(10 * cls.getRecoScale(player))
             player.mental += reco + exReco
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
             return "DefaultSport_result_bad"
 
         @classmethod
@@ -722,9 +722,9 @@ init python:
             player.mental += reco
             player.physical += g
             player.severity -= 0.02
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
-            Notify.add('降低了2点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('降低了2点严重程度。')
 
         @classmethod
         def goodPerf(cls, player):
@@ -732,24 +732,24 @@ init python:
             exReco = r2(5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('降低了1点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('降低了1点严重程度。')
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(12.5 * cls.getRecoScale(player))
             player.mental += reco
             player.severity -= 0.02
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('降低了2点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了2点严重程度。')
 
         @classmethod
         def badPerf(cls, player):
             player.severity += 0.01
             Injured.add(player)
-            Notify.add('你在运动中受伤了，没有恢复精神状态。')
-            Notify.add('升高了1点严重程度。')
+            Notice.add('你在运动中受伤了，没有恢复精神状态。')
+            Notice.add('升高了1点严重程度。')
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -810,7 +810,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf, c=30)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -825,8 +825,8 @@ init python:
             player.mental += reco
             player.physical += g
             PhysRezB.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -835,9 +835,9 @@ init python:
             player.mental += reco
             player.physical += g
             player.severity -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
-            Notify.add('降低了1点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('降低了1点严重程度。')
 
         @classmethod
         def normPerf(cls, player):
@@ -846,16 +846,16 @@ init python:
             g = 0.01 + player.physicalGain
             player.physical += g
             player.mental += reco + exReco
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
 
         @classmethod
         def badPerf(cls, player):
             player.severity += 0.01
             Injured.add(player)
-            Notify.add('你在运动中受伤了，没有恢复精神状态。')
-            Notify.add('升高了1点严重程度。')
+            Notice.add('你在运动中受伤了，没有恢复精神状态。')
+            Notice.add('升高了1点严重程度。')
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -921,8 +921,8 @@ init python:
             player.physical += g
             Soreness.add(player)
             PhysRezB.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -930,8 +930,8 @@ init python:
             player.mental += reco
             player.severity -= 0.02
             Soreness.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('降低了2点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了2点严重程度。')
 
         @classmethod
         def normPerf(cls, player):
@@ -939,15 +939,15 @@ init python:
             exReco = r2(12.5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             PhysRezB.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
 
         @classmethod
         def badPerf(cls, player):
             player.severity += 0.02
             Injured.add(player)
-            Notify.add('你在运动中受伤了，没有恢复精神状态。')
-            Notify.add('升高了2点严重程度。')
+            Notice.add('你在运动中受伤了，没有恢复精神状态。')
+            Notice.add('升高了2点严重程度。')
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -995,7 +995,7 @@ init python:
         @classmethod
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf, 75, 50, 25)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -1009,9 +1009,9 @@ init python:
             player.physical += g
             player.severity -= 0.02
             PhysRezB.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
-            Notify.add('降低了2点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('降低了2点严重程度。')
 
         @classmethod
         def goodPerf(cls, player):
@@ -1020,9 +1020,9 @@ init python:
             player.mental += reco
             player.physical += g
             player.severity -= 0.02
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
-            Notify.add('降低了2点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('降低了2点严重程度。')
 
         @classmethod
         def normPerf(cls, player):
@@ -1031,9 +1031,9 @@ init python:
             player.mental += reco
             player.physical += g
             player.severity -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
-            Notify.add('降低了1点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('降低了1点严重程度。')
 
         @classmethod
         def badPerf(cls, player):
@@ -1042,9 +1042,9 @@ init python:
             g = 0.02 + player.physicalGain
             player.mental += reco + exReco
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -1080,7 +1080,7 @@ init python:
             Soreness.add(player)
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -1096,7 +1096,7 @@ init python:
             Soreness.clearByType(player)
             reco = r2(1.5 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def goodPerf(cls, player):
@@ -1108,7 +1108,7 @@ init python:
             Soreness.clearByType(player)
             reco = r2(1.3 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def normPerf(cls, player):
@@ -1120,7 +1120,7 @@ init python:
             Soreness.clearByType(player)
             reco = r2(1.1 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def badPerf(cls, player):
@@ -1132,7 +1132,7 @@ init python:
             Soreness.clearByType(player)
             reco = r2(1 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -1166,9 +1166,9 @@ init python:
             player.mental += reco + exReco
             player.writing += g
             ReadReward.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了%s点写作技巧。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了%s点写作技巧。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -1176,9 +1176,9 @@ init python:
             exReco = r2(5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.02
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('降低了2点严重度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('降低了2点严重度。')
 
         @classmethod
         def normPerf(cls, player):
@@ -1187,9 +1187,9 @@ init python:
             g = 0.01 + player.writingGain
             player.mental += reco + exReco
             player.writing += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了%s点写作技巧。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了%s点写作技巧。' % int(g * 100))
 
         @classmethod
         def badPerf(cls, player):
@@ -1197,8 +1197,8 @@ init python:
             exReco = r2(15 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
 
 
     class SentimentalRead(WriteTask):
@@ -1238,8 +1238,8 @@ init python:
             player.writing -= 0.02
             ReadReward.add(player)
             Inspiration.add(player, 2)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('降低了2点写作技巧。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了2点写作技巧。')
 
         @classmethod
         def goodPerf(cls, player):
@@ -1249,24 +1249,24 @@ init python:
             player.severity -= 0.01
             ReadReward.add(player)
             Inspiration.add(player, 1)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('降低了1点严重度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('降低了1点严重度。')
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(7.5 * cls.getRecoScale(player))
             player.mental += reco
             Inspiration.add(player, 1)
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(7.5 * cls.getRecoScale(player))
             player.mental += reco
             player.writing -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('降低了1点写作技巧。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了1点写作技巧。')
 
 
     class TraditionalRead(WriteTask):
@@ -1307,9 +1307,9 @@ init python:
             player.writing += g
             player.severity += 0.01
             ReadReward.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了1点严重度。')
-            Notify.add('升高了%s点写作技巧。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了1点严重度。')
+            Notice.add('升高了%s点写作技巧。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -1319,9 +1319,9 @@ init python:
             player.mental += reco + exReco
             player.writing += g
             ReadReward.add(player)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了%s点写作技巧。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了%s点写作技巧。' % int(g * 100))
 
         @classmethod
         def normPerf(cls, player):
@@ -1330,17 +1330,17 @@ init python:
             player.mental += reco
             player.severity -= 0.02
             player.writing += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('降低了2点严重度。')
-            Notify.add('升高了%s点写作技巧。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了2点严重度。')
+            Notice.add('升高了%s点写作技巧。' % int(g * 100))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(7.5 * cls.getRecoScale(player))
             player.mental += reco
             player.severity -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了1点严重度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了1点严重度。')
 
 
     class FreewheelingWriting(WriteTask):
@@ -1375,7 +1375,7 @@ init python:
             Inspiration.add(player, s)
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             informalEssay = Comm(player)
             informalEssay.name = rca(player, comm_informal_names)
@@ -1401,8 +1401,8 @@ init python:
             reco = r2(17.5 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def goodPerf(cls, player):
@@ -1410,8 +1410,8 @@ init python:
             s = 0.012 * player.week if player.week <= 7 else 0.1
             player.mental += reco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def normPerf(cls, player):
@@ -1420,17 +1420,17 @@ init python:
             s = 0.01 * player.week if player.week <= 7 else 0.08
             player.mental += reco + exReco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(17.5 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += 0.02
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了2点严重度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了2点严重度。')
 
 
     class NormalWriting(WriteTask):
@@ -1457,7 +1457,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             unf = player.retval
             unf.write(player)
@@ -1472,8 +1472,8 @@ init python:
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def goodPerf(cls, player):
@@ -1481,8 +1481,8 @@ init python:
             s = 0.012 * player.week if player.week <= 7 else 0.1
             player.mental += reco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def normPerf(cls, player):
@@ -1491,17 +1491,17 @@ init python:
             s = 0.01 * player.week if player.week <= 7 else 0.08
             player.mental += reco + exReco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += 0.02
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了2点严重度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了2点严重度。')
 
 
     class FocusWriting(WriteTask):
@@ -1540,7 +1540,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
 
             player.writingRegarded += 0.25
@@ -1553,7 +1553,7 @@ init python:
             player.writingRegarded -= 0.25
             player.updateAfterTask(cls)
             player.writing += 0.01
-            Notify.add('额外提升了1点写作技巧。')
+            Notice.add('额外提升了1点写作技巧。')
             renpy.jump(resultLabel)
 
         @classmethod
@@ -1562,8 +1562,8 @@ init python:
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def goodPerf(cls, player):
@@ -1571,8 +1571,8 @@ init python:
             s = 0.012 * player.week if player.week <= 7 else 0.1
             player.mental += reco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def normPerf(cls, player):
@@ -1581,17 +1581,17 @@ init python:
             s = 0.01 * player.week if player.week <= 7 else 0.08
             player.mental += reco + exReco
             player.severity += r2(s)
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('提升了%s点严重度。' % r2(s))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('提升了%s点严重度。' % r2(s))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += 0.02
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('提升了2点严重度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('提升了2点严重度。')
 
 
     class ReadingBook(WriteTask):
@@ -1605,7 +1605,7 @@ init python:
         def checkAvailable(cls, player, day, time):
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
-            if list(filter(lambda x: type(x).kind == '书本' and type(x).cd == 0, player.items)) == []:
+            if list(filter(lambda x: type(x).kind == '书本' and type(x).__name__ not in player.itemcd, player.items)) == []:
                 return '你暂时并没有可以读的书籍。'
             if Anxiety.has(player):
                 return '你由于十分担心自己能否有稳定经济来源而没有阅读的欲望。'
@@ -1643,7 +1643,7 @@ init python:
             Inspiration.add(player)
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)
             renpy.jump(resultLabel)
@@ -1658,7 +1658,7 @@ init python:
             Inspiration.clearByType(player)
             reco = r2(0.9 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def goodPerf(cls, player):
@@ -1670,7 +1670,7 @@ init python:
             Inspiration.clearByType(player)
             reco = r2(0.85 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def normPerf(cls, player):
@@ -1682,7 +1682,7 @@ init python:
             Inspiration.clearByType(player)
             reco = r2(0.8 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def badPerf(cls, player):
@@ -1694,7 +1694,7 @@ init python:
             Inspiration.clearByType(player)
             reco = r2(0.65 * stacks)
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
 
 
     class Sleep(RestTask):
@@ -1725,7 +1725,7 @@ init python:
         def executeTask(cls, player):
             perf = ra(player, 1, 100)
             perf += cls.getConcScale(player)
-            #Notify.add('Perf: %s' % perf)
+            #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
 
             PhysRezA.add(player)
@@ -1762,9 +1762,9 @@ init python:
             g = 0.01 + player.physicalGain
             player.mental += reco + exReco
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
 
         @classmethod
         def goodPerf(cls, player):
@@ -1772,25 +1772,25 @@ init python:
             exReco = r2(5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('降低了1点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('降低了1点严重程度。')
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(35 * cls.getRecoScale(player))
             player.mental += reco
             player.severity -= 0.01
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('降低了1点严重程度。')
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了1点严重程度。')
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(35 * cls.getRecoScale(player))
             exReco = r2(7.5 * cls.getRecoScale(player))
             player.mental += reco + exReco
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
 
 
     class ComputerGaming(RestTask):
@@ -1812,8 +1812,8 @@ init python:
             reco = r2(10 * cls.getConsScale(player))
             exReco = r2(15 * cls.getRecoScale(player))
             player.mental += -reco + exReco
-            Notify.add('消耗了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('消耗了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
 
         @classmethod
         def goodPerf(cls, player):
@@ -1821,9 +1821,9 @@ init python:
             exReco = r2(7.5 * cls.getRecoScale(player))
             player.mental += -reco + exReco
             player.severity += 0.01
-            Notify.add('消耗了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了1点严重程度。')
+            Notice.add('消耗了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了1点严重程度。')
 
         @classmethod
         def normPerf(cls, player):
@@ -1831,16 +1831,16 @@ init python:
             exReco = r2(5 * cls.getRecoScale(player))
             player.mental += -reco + exReco
             player.severity += 0.02
-            Notify.add('消耗了%s点精神状态。' % reco)
-            Notify.add('额外恢复了%s点精神状态。' % exReco)
-            Notify.add('升高了2点严重程度。')
+            Notice.add('消耗了%s点精神状态。' % reco)
+            Notice.add('额外恢复了%s点精神状态。' % exReco)
+            Notice.add('升高了2点严重程度。')
             
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(10 * cls.getConsScale(player))
             player.mental -= reco
-            Notify.add('消耗了%s点精神状态。' % reco)
+            Notice.add('消耗了%s点精神状态。' % reco)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -1880,7 +1880,7 @@ init python:
         def executeTask(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
             renpy.jump("CleanRoom_result")
@@ -1919,7 +1919,7 @@ init python:
         def executeTask(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
             resultLabel = cls.getResultLabel(player, rd(1,100))
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -2021,7 +2021,7 @@ init python:
         def executeTask(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
             PhysRezB.add(player, 2)
             MentRezB.add(player, 2)
             player.updateAfterTask(cls)
@@ -2065,6 +2065,6 @@ init python:
         def executeTask(cls, player):
             reco = r2(30 * cls.getRecoScale(player))
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
             player.updateAfterTask(cls)
             renpy.jump("HallukeTask2_result")

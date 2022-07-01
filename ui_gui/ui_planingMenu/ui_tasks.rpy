@@ -209,7 +209,7 @@ screen tasks_show(player, tasks, only_avaiable_task, unlocked_but_can_unlock):
 
                                     $error_info = '无法安排该日程！\n' + ite.checkAvailable(player, player.today, player.findNoTask())
 
-                                    textbutton '{color=#b3b3b3}' + ite_name + '{/color}' text_style "white":
+                                    textbutton ite_name  text_style "grey":
                                         action [Hide("info3"), Show(screen="task_unlock", player=player, item=ite, pp=renpy.get_mouse_pos(), t=ite_name, i1=ite.info + type_info + plot_info + red('\n\n' +error_info), a1=ite.ad)]
                                         hovered Show(screen="info3", t=ite_name, i1=ite.info + type_info + plot_info + red('\n\n' +error_info), a1=ite.ad)
                                         unhovered Hide("info3")

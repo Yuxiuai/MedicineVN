@@ -279,8 +279,8 @@ screen screen_phone_food(player):
                     xfill True
                     background None
                     imagebutton idle "gui/phone/food/cig.png":
-                        action [Hide("info"), Show(screen="food_use", player=player, item=Cigarette, money=30, pp=renpy.get_mouse_pos(), a=Cigarette.ad)]
-                        hovered Show(screen="info", i="香烟"+'\n'+'价格：'+str(30)+'\n\n'+Cigarette.info, a=Cigarette.ad)
+                        action [Hide("info"), Show(screen="food_use", player=player, item=Cigarette, money=20, pp=renpy.get_mouse_pos(), a=Cigarette.ad)]
+                        hovered Show(screen="info", i="香烟"+'\n'+'价格：'+str(20)+'\n\n'+Cigarette.info, a=Cigarette.ad)
                         unhovered Hide("info")
                         background Frame("gui/style/musicplayer_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                         activate_sound audio.cursor
@@ -291,7 +291,7 @@ screen screen_phone_food(player):
                         hover_sound audio.cursor
                         text_style "white"
                         yalign 0.5
-                    textbutton _("￥30"):
+                    textbutton _("￥20"):
                         xpos 0.8
                         hover_sound audio.cursor
                         text_style "white"
@@ -370,12 +370,12 @@ screen food_use(player, item, money, a=None, width=400, pp=renpy.get_mouse_pos()
                 textbutton _("{size=-3}购买{/size}"):
                     action [Hide("food_use"), Function(buy, player=player, item=item, money=money)]
                     activate_sound audio.cursor
-                if item.cd == 0:
+                if item.__name__ not in player.itemcd:
                     textbutton _("{size=-3}购买并使用{/size}"):
                         action [Hide("food_use"), Function(buyAndUse, player=player, item=item, money=money)]
                         activate_sound audio.cursor
                 else:
-                    textbutton _("{size=-3}{color=#b3b3b3}购买并使用{/color}{/size}"):
+                    textbutton _("{size=-3}购买并使用{/size}") text_style "grey":
                         action NullAction()
                         activate_sound audio.error
                 textbutton _("{size=-3}取消{/size}"):

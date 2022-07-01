@@ -460,7 +460,7 @@ screen screen_dashboard_effects(player):
                                 for k in range(min(col, l-j*col)):
                                     $eff = i[j*col+k]
 
-                                    $ite_pre = eff.getPrefixInfo()
+                                    $ite_pre = eff.getPrefixInfo(player)
                                     $ite_main = eff.getPrincipalInfo()
                                     $ite_suf = eff.getSuffixInfo()
                                     $stackinfo = '' if eff.stacks in (0,1) else '*' +str(eff.stacks)

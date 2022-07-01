@@ -28,7 +28,7 @@ label explore_shop_1_catch:
                 "啊…！娃娃从出口出来了！不可思议！"
                 $PathosDoll.add(p)
                 $p.severity -= 0.06
-                $showNotify(['降低了6点严重程度。'])
+                $showNotice(['降低了6点严重程度。'])
                 scene arcade with fade
                 "心满意足了，该回去了。"
                 jump GoOutside_result
@@ -40,7 +40,7 @@ label explore_shop_1_catch:
                 "马上要抓到了！……"
                 "啊…！娃娃掉在了出口边上，就差一点点！"
                 $p.severity += 0.02
-                $showNotify(['提升了2点严重程度。'])
+                $showNotice(['提升了2点严重程度。'])
                 pass
             elif temp==4 or temp==5:
                 "你看着夹子缓缓下落，张开爪子，抓住那只黑色的有点像你认识的那个医生一样的娃娃。"
@@ -49,7 +49,7 @@ label explore_shop_1_catch:
                 "夹子马上就要靠近出口了……！"
                 "啊…！娃娃离开了夹子，掉下去了，就差一点！"
                 $p.severity += 0.01
-                $showNotify(['提升了1点严重程度。'])
+                $showNotice(['提升了1点严重程度。'])
                 pass
             elif temp==6 or temp==7:
                 "你看着夹子缓缓下落，张开爪子，抓住那只黑色的有点像你认识的那个医生一样的娃娃。"

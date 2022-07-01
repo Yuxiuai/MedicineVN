@@ -2,16 +2,17 @@ label wakeup_pro:
     $quick_menu = False
     $_game_menu_screen = None
     
-    scene black with fade
+    scene black
     if not persistent.nomedicine:
         play music audio.alarm
-        $pause(2)
-    scene bedroom with dissolve
+        if not persistent.quickAlarm:
+            $pause(2)
+            scene bedroom with dissolve
     $quick_menu = True
     
-    $ Saver.save()
-    $Notify.add('存档已保存！')
-    $Notify.show()
+    $ Saver.save(p)
+    $Notice.add('存档已保存！')
+    $Notice.show()
     jump alarmCircle_pro
 
 label alarmCircle_pro:
@@ -19,7 +20,8 @@ label alarmCircle_pro:
         stop music
         show screen screen_dashboard(p)
         jump beforeCircle
-    $pause(2)
+    if not persistent.quickAlarm:
+        $pause(2)
     menu:
         "关闭闹钟":
             stop music
@@ -318,7 +320,7 @@ label solitus_route_0:
     if replaying:
         $rollback_switch()
         jump afterreplay
-    $showNotify(['已解锁新药物！{color=#fe6363}药物{font=arial.ttf}α{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
+    $showNotice(['已解锁新药物！{color=#fe6363}药物{font=arial.ttf}α{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
     play sound audio.getmedicine
     show pathos normal_eyebrow normal_eyes normal_mouth
     with dissolve

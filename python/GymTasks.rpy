@@ -1,4 +1,4 @@
-init python:
+init python early:
     class NoSport(GymTask):
         id = 0
         name = '未安排健身日程'
@@ -31,7 +31,7 @@ init python:
         def executeTask(cls, player):
             reco = r2(5 * cls.getRecoScale(player))
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
             WarmupEffect.add(player)
 
 
@@ -53,8 +53,8 @@ init python:
             player.mental += reco
             g = ra(player, 0, 1) * 0.01
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
             Soreness.add(player, 2)
             PhysRezB.add(player)
             cls.setInjured(player, 20)
@@ -79,8 +79,8 @@ init python:
             player.mental += reco
             g = ra(player, 1, 2) * 0.01
             player.severity -= g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('降低了%s点严重程度。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了%s点严重程度。' % int(g * 100))
             Soreness.add(player, 3)
             cls.setInjured(player, 20)
 
@@ -115,8 +115,8 @@ init python:
             player.mental += reco
             g = 0.01 + player.physicalGain
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
             Soreness.add(player, 2)
             cls.setInjured(player, 50)
 
@@ -184,8 +184,8 @@ init python:
             player.mental += reco
             g = ra(player, 1, 2) * 0.01 + player.physicalGain
             player.physical += g
-            Notify.add('恢复了%s点精神状态。' % reco)
-            Notify.add('升高了%s点身体素质。' % int(g * 100))
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('升高了%s点身体素质。' % int(g * 100))
             Soreness.add(player, 3)
             PhysRezB.add(player)
             cls.setInjured(player, 80)
@@ -219,7 +219,7 @@ init python:
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
             Soreness.add(player, 6)
             PhysRezB.add(player)
             cls.setInjured(player, 80)
@@ -253,7 +253,7 @@ init python:
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
             player.mental += reco
-            Notify.add('恢复了%s点精神状态。' % reco)
+            Notice.add('恢复了%s点精神状态。' % reco)
             Physique.add(player)
             Soreness.add(player, 6)
             PhysRezB.add(player)

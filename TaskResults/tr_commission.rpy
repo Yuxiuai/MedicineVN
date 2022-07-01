@@ -73,7 +73,7 @@ screen screen_tr_commission_show(player, items):
                         if ite.comm.checkWritable(player)!=True:
                             $error_info = '无法写作！\n' + ite.comm.checkWritable(player)
                             textbutton '{color=#b3b3b3}' +ite_name+'{/color}' text_style "white":
-                                action [Function(showNotify, [error_info]),NullAction()]
+                                action [Function(showNotice, [error_info]),NullAction()]
                                 hovered [Show(screen="info3", t=ite_name, i1=ite_main+ite_suf, a2=type(ite).ad)]
                                 unhovered Hide("info3")
                                 background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)

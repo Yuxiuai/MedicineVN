@@ -31,7 +31,7 @@ label HallukeTask1_beginning:
 
 label HallukeTask1_result:
     scene court with fade
-    $Notify.show()
+    $Notice.show()
     jump halluke_plot_judge_2
 
 
@@ -39,5 +39,5 @@ label HallukeTask2_beginning:
     $HallukeTask1.executeTask(p)
 
 label HallukeTask2_result:
-    $Notify.show()
+    $Notice.show()
     jump halluke_route_11

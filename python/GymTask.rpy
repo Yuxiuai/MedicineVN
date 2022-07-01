@@ -1,4 +1,4 @@
-init python:
+init python early:
     class GymTask:
         id = None
         name = None
@@ -12,9 +12,9 @@ init python:
             if not cls.unlocked:
                 if cls.unlockCond(player) == True:
                     cls.unlocked = True
-                    showNotify(['已解锁日程：%s！' % cls.name])
+                    showNotice(['已解锁日程：%s！' % cls.name])
                 else:
-                    showNotify(['未达到日程%s的解锁条件：\n%s' % (cls.name, cls.unlockCond(player))])
+                    showNotice(['未达到日程%s的解锁条件：\n%s' % (cls.name, cls.unlockCond(player))])
 
         @classmethod
         def unlockCond(cls, player):
@@ -58,7 +58,7 @@ init python:
             perf = ra(player, 1, 100) + cls.getConcScale(player)
             if perf < per:
                 Injured.add(player)
-                Notify.add('你在运动中受伤了。')
+                Notice.add('你在运动中受伤了。')
 
 
 
@@ -75,5 +75,5 @@ init python:
                     renpy.jump("gym_injured")
                 else:
                     i.executeTask(player)
-            Notify.show()
+            Notice.show()
             renpy.jump("gym_result")
