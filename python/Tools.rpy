@@ -1,4 +1,4 @@
-init -505 python:
+init -505 python early:
     
     def rd(a, b):  # 单纯的随机数
         import random
@@ -84,38 +84,29 @@ init -505 python:
     def f():
         return rd(9500, 10500) * 0.0001
 
-    def sortArr(domain):
-        domain.sort(key=lambda x: type(x).id)
+    def sortByID(arr): # 根据id排序
+        arr.sort(key=lambda x: x.id)
 
-
-    def rsortArr(domain):
-        return sorted(domain, key=lambda x: type(x).id)
-
-    def sliceArr(d):
-        val = [list(filter(lambda x: type(x).kind == i, d)) for i in list(set([type(i).kind for i in d]))]
-        val.sort(key=lambda x: type(x[0]).id)
-        return val
-
-    def sliceTypeArr(d):
-        val = [list(filter(lambda x: x.kind == i, d)) for i in list(set([i.kind for i in d]))]
+    def sliceArr(arr): # 将类或对象根据kind切片为[ [kind1obj1, kind1obj2], [kind2obj1, kind2obj2] ]的形式
+        val = [list(filter(lambda x: x.kind == i, arr)) for i in list(set([i.kind for i in arr]))]
         val.sort(key=lambda x: x[0].id)
         return val
 
     
     def getSubclasses(supercls):
-        l = list(globals())
-        v = [globals()[i] for i in l]
-        def getSubclsNoChild(subcls): # 是否为类，是否为参数超类的子类 自己是否有子类
-            import types
-            if not isinstance(subcls, (type, types.ClassType)):
-                return False
-            if not issubclass(subcls, supercls):
-                return False
-            if bool(subcls.__subclasses__()):
-                return False
-            return True
-        fl = list(filter(getSubclsNoChild,v))
-        return fl
+        classes = []
+
+        def findSubclasses(subcls): # 递归
+            next = subcls.__subclasses__()
+            if not bool(next):
+                classes.append(subcls)
+                return
+            for _cls in next:
+                findSubclasses(_cls)
+            
+
+        findSubclasses(supercls)
+        return classes
 
     def allE(player):
         for i in getSubclasses(Effect):
@@ -146,9 +137,6 @@ init -505 python:
             output += rcd(gt)
         output += "{/font}"
         return output
-
-    def nega(list, index):
-        list[index] = not list[index]
 
     def sign(n):
         if n>=0:
@@ -244,12 +232,13 @@ init -505 python:
             renpy.music.play(i)
         renpy.music.play(before)
 
-    def rollback_switch():
+    def start_plot():
         renpy.block_rollback()
-        if config.rollback_enabled == False:
-            config.rollback_enabled = True
-        else:
-            config.rollback_enabled = False
+        config.rollback_enabled = True
+    
+    def end_plot():
+        config.rollback_enabled = False
+        renpy.block_rollback()
 
     def setfold(i, v):
         i[1]=v
@@ -259,13 +248,101 @@ init -505 python:
         atl =[]
         if not renpy.showing('solitus',layer='headimage'):
             atl = [head_trans]
-            
-        if str!=None:
-            renpy.show('solitus '+str, at_list=atl, zorder=1000, layer='headimage')
-        else:
+
+        if not str:
             renpy.show('solitus', at_list=atl, zorder=1000, layer='headimage')
+        else:
+            renpy.show('solitus '+str, at_list=atl, zorder=1000, layer='headimage')
+
         renpy.transition(None)
 
     def sh():
         renpy.transition(Dissolve(0.2), layer='headimage')
         renpy.hide('solitus', layer='headimage')
+
+    def countdown(player):
+        if player.cured < 42:
+            return "距离第三次手术还有%s天。" % (42-player.cured)
+
+        if player.cured < 63:
+            return "还有%s天进行第四次手术。" % (63-player.cured)
+
+        if player.cured < 84:
+            return "还有%s天。" % (84-player.cured)
+        
+        if player.cured < 105:
+            return "%s。" % (105-player.cured)
+
+        if player.cured == 105:
+            return "0。"
+    
+    def routineMusic(player):
+        def playmusic(pm):
+            if renpy.music.get_playing() != pm:
+                renpy.music.play(pm, channel='music', loop=True, fadeout=3, fadein=3)
+
+        if Despair.has(player):
+            if player.mental <= 0:
+                playmusic(audio.impendingdeath)
+            else:
+                playmusic(audio.drownedindespair)
+
+        elif p.cured > 0:
+            if p.onVacation:
+                if p.cured<21:
+                    playmusic(audio.rareleisure)
+                elif p.cured<42:
+                    playmusic(audio.rl1)
+                elif p.cured<63:
+                    playmusic(audio.rl2)
+            else:
+                if p.cured<21:
+                    playmusic(audio.survivingdawn)
+                elif p.cured<42:
+                    playmusic(audio.sd1)
+                elif p.cured<63:
+                    playmusic(audio.sd2)
+
+        else:
+            if player.mental <= 10:
+                playmusic(audio.enjoysuffering)
+                    
+            else:
+                if p.onVacation:
+                    playmusic(audio.rareleisure)
+                else:
+                    playmusic(audio.survivingdawn)
+        blackmask(player)
+    
+    def blackmask(player):
+        if player.mental <= 10:
+            renpy.transition(Dissolve(0.5, alpha=True))
+            renpy.show('blackmask', layer='mask')
+                
+        else:
+            renpy.transition(Dissolve(0.5, alpha=True))
+            renpy.hide('blackmask', layer='mask')
+        
+    '''
+
+    def replaceKeywords(s):
+        if persistent.noinfohightlight:
+            return s
+        def addColor(s, color, seq):
+            for name in seq:
+                if '？' in name:
+                    continue
+                r = '{color=%s}{u}%s{/color}{/u}'%(color, name)
+                s = s.replace(name, r)
+            return s
+
+        s = addColor(s, '#fbd26a', [i.name for i in getSubclasses(Task)])
+        s = addColor(s, '#ADD8E6', [i.name for i in getSubclasses(Effect)])
+        s = addColor(s, '#ff38ee', [i.name for i in getSubclasses(Item)])
+        s = addColor(s, '#2c80ff', ['工作类日程','运动类日程','写作类日程','休息类日程','特殊类日程'])
+        s = addColor(s, '#ff2b59', ['严重程度','工作能力','身体素质','写作技巧'])
+        s = addColor(s, '#eeff57', ['专注度','工作速度'])
+        s = addColor(s, '#4be63d', ['精神状态'])
+
+        return s
+    '''

@@ -226,8 +226,10 @@ layeredimage acolas:
         attribute pants
         attribute naked null
         attribute shorts
+        attribute shorts2
         attribute lagshorts
         attribute vest
+        attribute vest2
 
     group eyebrow:
         attribute normal_eyebrow default
@@ -235,6 +237,8 @@ layeredimage acolas:
         attribute smile_eyebrow
         attribute awkward_eyebrow
         attribute surprised_eyebrow
+        attribute frown_eyebrow
+        attribute sad_eyebrow
 
     group eyes:
         attribute normal_eyes default:
@@ -250,6 +254,7 @@ layeredimage acolas:
             "acolas_eyes_surprised"
         attribute smile_eyes:
             "acolas_eyes_smile"
+        attribute sad_eyes
         attribute closed_eyes
 
     group mouth:
@@ -258,6 +263,9 @@ layeredimage acolas:
         attribute awkward_mouth
         attribute surprised_mouth
         attribute smile_mouth
+        attribute smile2_mouth
+        attribute laugh_mouth
+        attribute sad_mouth
 
     group blush:
         attribute no_blush null default
@@ -266,6 +274,10 @@ layeredimage acolas:
     group anger:
         attribute no_anger null default
         attribute anger
+
+    group tear:
+        attribute no_tear null default
+        attribute tear
 
     group sweat:
         attribute no_sweat null default
@@ -296,7 +308,9 @@ init python:
             '外观', False, [
                 ['平常', 'normal'],
                 ['运动装','vest'],
+                ['运动装2','vest2'],
                 ['短裤','shorts'],
+                ['短裤2','shorts2'],
                 ['拉下短裤','lagshorts'],
                 ['内裤','pants'],
                 ['裸体','naked']
@@ -316,7 +330,9 @@ init python:
                 ['微笑', 'smile_eyebrow'],
                 ['生气', 'angry_eyebrow'],
                 ['尴尬', 'awkward_eyebrow'],
-                ['惊讶', 'surprised_eyebrow']
+                ['惊讶', 'surprised_eyebrow'],
+                ['皱眉', 'frown_eyebrow'],
+                ['悲伤', 'sad_eyebrow'],
             ]
         ],
 
@@ -329,6 +345,7 @@ init python:
                 ['生气', 'angry_eyes'],
                 ['尴尬', 'awkward_eyes'],
                 ['惊讶', 'surprised_eyes'],
+                ['悲伤', 'sad_eyes'],
                 ['闭眼', 'closed_eyes'],
             ]
         ],
@@ -337,11 +354,43 @@ init python:
             '嘴', False, [
                 ['平常', 'normal_mouth'],
                 ['微笑', 'smile_mouth'],
+                ['微笑2', 'smile2_mouth'],
+                ['咧嘴笑', 'laugh_mouth'],
                 ['生气', 'angry_mouth'],
                 ['尴尬', 'awkward_mouth'],
-                ['惊讶', 'surprised_mouth']
+                ['惊讶', 'surprised_mouth'],
+                ['悲伤', 'sad_mouth'],
             ]
         ],
+
+        [
+            '汗液', False, [
+                ['无', 'no_sweat'],
+                ['有', 'sweat']
+            ]
+        ],
+
+        [
+            '生气', False, [
+                ['无', 'no_anger'],
+                ['有', 'anger']
+            ]
+        ],
+
+        [
+            '眼泪', False, [
+                ['无', 'no_tear'],
+                ['有', 'tear']
+            ]
+        ],
+
+        [
+            '脸红', False, [
+                ['无', 'no_blush'],
+                ['有', 'blush']
+            ]
+        ],
+
         
         [
             '耳机', False, [
@@ -370,34 +419,6 @@ init python:
                 ['无', 'no_glasses'],
                 ['佩戴', 'glasses']
             ]
-        ],
-
-        [
-            '手机', False, [
-                ['无', 'no_phone'],
-                ['开机', 'phoneon'],
-                ['关机', 'phoneoff']
-            ]
-        ],
-
-        [
-            '汗液', False, [
-                ['无', 'no_sweat'],
-                ['有', 'sweat']
-            ]
-        ],
-
-        [
-            '生气', False, [
-                ['无', 'no_anger'],
-                ['有', 'anger']
-            ]
-        ],
-
-        [
-            '脸红', False, [
-                ['无', 'no_blush'],
-                ['有', 'blush']
-            ]
         ]
+
     ]

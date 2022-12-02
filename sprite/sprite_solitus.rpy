@@ -1,3 +1,12 @@
+image solitus_g0 = "images/sprite/Solitus/glitched/0.png"
+
+image solitus_g:
+    "images/sprite/Solitus/glitched/1.png"
+    0.1
+    "images/sprite/Solitus/glitched/2.png"
+    0.1
+    repeat
+
 image solitus_eyes_normal:
     "images/sprite/Solitus/eyes/Solitus_eyes_normal_eyes_blink1.png"
     choice:
@@ -148,6 +157,22 @@ image solitus_eyes_surprised:
     pause 0.05  
     repeat
 
+image solitus_eyes_chaos:
+    choice:
+        "images/sprite/Solitus/eyes/Solitus_eyes_chaos_eyes_1.png"
+    choice:
+        "images/sprite/Solitus/eyes/Solitus_eyes_chaos_eyes_2.png"
+    choice:
+        "images/sprite/Solitus/eyes/Solitus_eyes_chaos_eyes_3.png"
+    choice:
+        "images/sprite/Solitus/eyes/Solitus_eyes_chaos_eyes_4.png"
+    choice:
+        "images/sprite/Solitus/eyes/Solitus_eyes_chaos_eyes_5.png"
+    choice:
+        "images/sprite/Solitus/eyes/Solitus_eyes_chaos_eyes_6.png"
+    0.05
+    repeat
+
 image solitus_eyes_angry:
     "images/sprite/Solitus/eyes/Solitus_eyes_angry_eyes_blink1.png"
     choice:
@@ -226,6 +251,7 @@ layeredimage solitus:
         attribute normal default
         attribute naked
         attribute white
+        attribute dirty
 
     group hat:
         attribute hat default
@@ -260,6 +286,10 @@ layeredimage solitus:
         attribute agony_eyes
         attribute scared_eyes
         attribute smile_eyes
+
+        attribute bleak_eyes
+        attribute chaos_eyes:
+            "solitus_eyes_chaos"
 
         attribute closed_eyes
 
@@ -302,6 +332,10 @@ layeredimage solitus:
         attribute happy:
             "solitus_happy"
         attribute no_happy null default
+    
+    group tear:
+        attribute tear
+        attribute no_tear null default
 
     group em:
         attribute no_em null default
@@ -316,7 +350,8 @@ init python:
         [
             '外观', False, [
                 ['黑短袖', 'normal'],
-                ['白短袖','white'],
+                ['白衬衫','white'],
+                ['脏的白衬衫','dirty'],
                 ['裸体','naked']
             ]
         ],
@@ -353,6 +388,8 @@ init python:
                 ['害怕', 'scared_eyes'],
                 ['惊喜', 'surprised_eyes'],
                 ['微笑', 'smile_eyes'],
+                ['黯淡', 'bleak_eyes'],
+                ['混乱', 'chaos_eyes'],
                 ['闭眼', 'closed_eyes']
             ]
         ],
@@ -410,6 +447,13 @@ init python:
             '小情绪', False, [
                 ['无', 'no_mood'],
                 ['有', 'mood']
+            ]
+        ],
+
+        [
+            '眼泪', False, [
+                ['无', 'no_tear'],
+                ['有', 'tear']
             ]
         ],
 

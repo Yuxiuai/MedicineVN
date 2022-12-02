@@ -1,5 +1,5 @@
 label pathos_route_0:
-    $rollback_switch()
+    $start_plot()
     scene consulting_room with fade
     play music audio.solitus
     show pathos at trans_toRight()
@@ -96,7 +96,7 @@ label pathos_route_0:
     stop music fadeout 4
     if p.sol_p == 0:
         $p.sol_p = 1
-    $rollback_switch()
+    $end_plot()
     if replaying:
         jump afterreplay
     $showNotice(['已解锁新药物！{color=#7881e8}药物{font=arial.ttf}β{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
@@ -106,7 +106,7 @@ label pathos_route_0:
 
 
 label pathos_route_1:
-    $rollback_switch()
+    $start_plot()
     scene consulting_room with fade
     play music audio.solitus
     show pathos at trans_toRight()
@@ -151,7 +151,7 @@ label pathos_route_1:
     show pathos normal_eyebrow normal_eyes normal_mouth
     with dissolve
     pathos"“是的，我们打算再过一阵子，大概第15周的时候，计划为你做手术。”"
-    pathos"“费用并不高，只有几千元。”"
+    pathos"“费用并不高，只有几十万块的样子。”"
     $ss('mood')
     s"“这还叫不高……”"
     $sh()
@@ -165,7 +165,7 @@ label pathos_route_1:
     with dissolve
     pathos"“别死掉了。”"
     $ss('smile_eyebrow smile_eyes smile_mouth')
-    s"“我就当你在安慰我好了……”"
+    s"“我就当你在安慰我好了……我哪里付得起这么多钱啊……”"
     $ss('normal2_eyebrow normal2_eyes normal2_mouth')
     s"“那么，还有什么其他事情吗？”"
     $sh()
@@ -211,6 +211,6 @@ label pathos_route_1:
         jump afterreplay
     $showNotice(['已解锁新药物！{color=#e4f06f}药物{font=arial.ttf}γ{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
     play sound audio.getmedicine
-    $rollback_switch()
+    $end_plot()
     scene elevator with fade
     jump explore_elevator

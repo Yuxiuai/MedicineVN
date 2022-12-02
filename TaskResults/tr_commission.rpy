@@ -24,7 +24,7 @@ screen screen_tr_commission(player):
                         yoffset -5
                         action NullAction()
 
-                    imagebutton auto "gui/icons/task_icon/exit_%s.png":
+                    imagebutton auto "gui/exit_%s.png":
                         xalign 1.0
                         action Show(screen="screen_tr_commission_confirm",player=player)
 
@@ -74,17 +74,17 @@ screen screen_tr_commission_show(player, items):
                             $error_info = '无法写作！\n' + ite.comm.checkWritable(player)
                             textbutton '{color=#b3b3b3}' +ite_name+'{/color}' text_style "white":
                                 action [Function(showNotice, [error_info]),NullAction()]
-                                hovered [Show(screen="info3", t=ite_name, i1=ite_main+ite_suf, a2=type(ite).ad)]
-                                unhovered Hide("info3")
+                                hovered [Show(screen="info", t=ite_name, i=ite_main+ite_suf, a=type(ite).ad)]
+                                unhovered Hide("info")
                                 background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                 activate_sound audio.cursor
                                 xfill True
 
                         else:
                             textbutton ite_name text_style "white":
-                                action [Hide("info3"),Show(screen="screen_tr_commission_use", player=player, book=ite, pp=renpy.get_mouse_pos(), t=ite_name, i2=ite_main+ite_suf, a2=type(ite).ad)]
-                                hovered [Show(screen="info3", t=ite_name, i1=ite_main+ite_suf, a2=type(ite).ad)]
-                                unhovered Hide("info3")
+                                action [Hide("info"),Show(screen="info_confirm",text='选择', act=[Function(player.rtn, ite), Return()], pp=renpy.get_mouse_pos(), t=ite_name, i=ite_main+ite_suf, a=type(ite).ad)]
+                                hovered [Show(screen="info", t=ite_name, i=ite_main+ite_suf, a=type(ite).ad)]
+                                unhovered Hide("info")
                                 background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                 activate_sound audio.cursor
                                 xfill True
@@ -99,62 +99,6 @@ screen screen_tr_commission_show(player, items):
         null height 30
         textbutton ''
 
-screen screen_tr_commission_use(player, book, pp, t=None, i1=None, a1=None, i2=None, a2=None, width=400):
-    style_prefix "info"
-    use barrier(screen="screen_tr_commission_use", mode=0)
-    zorder 3000
-    $p = pp
-    $yc = 0.0 if p[1] < 540 else 1.0
-    if p[0] < 1500:
-        $xc = 0.0
-        $trans = trans_toLeft
-    else:
-        $xc = 1.0
-        $trans = trans_toRight
-    frame:
-        pos p
-        padding (15, 15)
-        xanchor xc
-        yanchor yc
-        at trans()
-        vbox:
-            align p
-            if t is not None:
-                label t+'\n':
-                    text_style "info_text"
-                    xsize width
-            if i1 is not None:
-                null height -8
-                label '{size=-2}'+i1+'{/size}':
-                    text_style "info_text"
-                    xsize width
-            if a1 is not None:
-                $a1 = '{i}' + a1 + '{/i}'
-                null height 13
-                label a1:
-                    text_style "admonition_text"
-                    xsize width
-            if i2 is not None:
-                null height -6
-                label '{size=-2}'+i2+'{/size}':
-                    text_style "info_text"
-                    xsize width
-            if a2 is not None:
-                $a2 = '{i}' + a2 + '{/i}'
-                null height 13
-                label a2:
-                    text_style "admonition_text"
-                    xsize width
-            null height 30
-            hbox:
-                xalign 0.5
-                spacing 40
-                textbutton _("{size=-3}选择{/size}"):
-                    action [Hide("screen_tr_commission_use"), Function(player.rtn, book), Return()]
-                    activate_sound audio.cursor
-                textbutton _("{size=-3}取消{/size}"):
-                    action Hide("screen_tr_commission_use")
-                    activate_sound audio.cursor
 
 
 screen screen_tr_commission_confirm(player, i="确定不写委托吗？这将会导致本日程直接结束。", width=400, pp=renpy.get_mouse_pos()):
@@ -179,7 +123,7 @@ screen screen_tr_commission_confirm(player, i="确定不写委托吗？这将会
         vbox:
             align pp
             if i is not None:
-                label _(i):
+                label i:
                     text_style "info_text"
                     xsize width
             null height 30
@@ -192,12 +136,6 @@ screen screen_tr_commission_confirm(player, i="确定不写委托吗？这将会
                 textbutton _("{size=-3}返回{/size}"):
                     action Hide("screen_tr_commission_confirm")
                     activate_sound audio.cursor
-
-
-
-
-
-
 
 
 screen screen_tr_commission_inputs(player):
@@ -228,9 +166,9 @@ screen screen_tr_commission_inputs(player):
                             yalign 1.0
                             action NullAction()
 
-                    imagebutton auto "gui/icons/task_icon/exit_%s.png":
+                    imagebutton auto "gui/exit_%s.png":
                         xalign 1.0
-                        action Hide(screen="screen_tr_commission_inputs")
+                        action [Function(player.rtn1, inputwords),Return()]
 
                     frame:
                         background None
@@ -244,6 +182,7 @@ screen screen_tr_commission_inputs(player):
                             xalign 0.0
                             yalign 0.0
                             length 1000
+                            exclude "\"\'[]{}%$@?!#^&*\(\)"
 
 
 

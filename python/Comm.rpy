@@ -16,12 +16,14 @@ init python early:
                 return r2(ra(p, 75, 105) * 0.01 * player.wri())
 
             def genePrice():
-                if WriterProof.hasByType(player):
-                    pr = 0.9
-                    pr += (player.wri() - 1) / 3
-                    f = ((player.wri() - 1) / 3.5) + 1
+                if WriterProof.has(player):
+                    pr = 0.8
+                    pr += (player.wri() - 1) / 4
+                    f = ((player.wri() - 1) / 4) + 1
                     while rra(player, 60):
-                        pr += ra(player, 15 * f, 40 * f) * 0.01
+                        pr += ra(player, 10 * f, 30 * f) * 0.01
+                    if pr > 1.75:
+                        return 1.75
                 else:
                     pr = 0.75
                     pr += (player.wri() - 1) / 4
@@ -29,6 +31,9 @@ init python early:
                     r = 0
                     while rra(player, 60):
                         pr += ra(player, 5 * f, 25 * f) * 0.01
+                    if pr > 2.5:
+                        return 2.5
+                
                 return r2(pr)
 
             self.name = rca(player, comm_names)
@@ -49,6 +54,7 @@ init python early:
             self.inputs = None
             self.remarks = []
             self.broken = False
+            self.freewheeling = False
 
         def __eq__(self, other):
             if type(other) == type(
@@ -108,8 +114,12 @@ init python early:
                 self.inputs = player.retval1
                 player.retval1 = None
 
-            price = -0.052 * player.wri() ** 2 + 0.746 * player.wri() - 0.12 if player.wri() < 8 else 2.5
-            price *= 180
+            price = -0.05 * player.wri() ** 2 + 0.75 * player.wri() - 0.1 if player.wri() < 8 else 2.5
+            price *= 150
+            if EffectGameModule2_2.has(player):
+                price *= 1.3
+                EffectGameModule2_2.clearByType(player)
+                
             word = int(player.wri() ** 2 * 1000 * f())
 
             ins = 1
@@ -120,16 +130,16 @@ init python early:
                 ins += FixedInspiration.get(player).stacks
                 FixedInspiration.get(player).clear(player)
 
-            value = ins * 0.1 * price * self.priceFluctuation * player.writeValuable
+            value = ins * 0.125 * price * self.priceFluctuation * player.writeValuable
 
             if self.needInspiration != -1:
                 value *= 1.1
 
             if self.du != -1:
-                value *= 1.05
+                value *= 1.1
 
             if self.needWord != -1:
-                value *= 1.05
+                value *= 1.1
                 if word > self.needWord:
                     reward = value * self.needWord
                 else:

@@ -60,7 +60,7 @@ label LoafingWork_beginning:
             $p.retval = 'phy'
         "看会网络小说" if p.canRead >= 0:
             $p.retval = 'wri'
-        "阅读携带的书籍" if p.canRead >= 0 and list(filter(lambda x: type(x).kind == '书本' and type(x).__name__ not in p.itemcd, p.items)) != []:
+        "阅读携带的书籍" if p.canRead >= 0 and list(filter(lambda x: type(x).kind == '书本' and type(x) not in p.itemcd, p.items)) != []:
             $p.retval = 'read'
     $p.times+=1
     $LoafingWork.executeTask(p)
@@ -180,7 +180,7 @@ label SnapWork_result_bad:
     scene office with fade
     $Notice.show()
     ar"“[p.name]！”"
-    "白狼的声音在办公室里回荡着"
+    "白狼的声音在办公室里回荡着。"
     ar"“下次在让我看见你睡觉！我就把你调到流水线去做十二个点的活！”"
     ar"“现在！给我工作！”"
     ar"“其他人也是！”"
@@ -202,8 +202,10 @@ label FocusWork_beginning:
 label FocusWork_result_exce:
     scene office with fade
     $Notice.show()
-    s"“你没import那个什么numpy的包，肯定报什么都没找到的错呀……”"
-    "这家伙真的是大学毕业来的吗……这还要我教……"
+    $ss('glasses sweat mood white no_hat')
+    s"“哎呀，你忘了给程序连接数据库了，这还能忘啊……”"
+    $sh()
+    "这家伙真的是大学毕业来的吗……"
     "看来他弄完他自己负责那段，算了算我们这次工作已经完成平时的两倍进度了，而且也没有让我太头疼……"
     "周末去外面转转买点好吃的犒劳一下自己吧——"
     $p.times+=1
@@ -252,8 +254,6 @@ label MeetingWork_result_exce:
     "在讲了些每次会议都会说的客套话后，在表扬阶段居然难得地提到了我们！"
     "我们部门上周的工作完成的很好，连天天摸鱼睡觉的我都被表扬了……"
     "好高兴啊，是不是该奖励自己吃一顿火锅？"
-    if p.aco_p > 0:
-        "或许应该叫上Acolas。"
     $p.times+=1
     jump acolas_plot_judge
 

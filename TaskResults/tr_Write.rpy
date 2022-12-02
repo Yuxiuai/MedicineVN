@@ -136,6 +136,8 @@ label TraditionalRead_result_bad:
 
 
 label FreewheelingWriting_beginning:
+    if TraditionalRead in p.plan and p.week >= 2 and p.writing >= 1.3 and not p.s5:
+        jump solitus_route_5
     scene workarea with fade
     "超降噪耳机准备完毕——"
     "白噪音歌单就绪——"
@@ -168,7 +170,7 @@ label FreewheelingWriting_result_norm:
     scene workarea with fade
     $Notice.show()
     "一次随笔，或许大概是记录日常生活的那种？"
-    "总之不是很重要的内容罢了，随便写一写"
+    "总之不是很重要的内容罢了，随便写一写。"
     $p.times+=1
     jump TaskExecuting
 

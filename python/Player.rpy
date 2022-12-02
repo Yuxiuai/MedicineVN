@@ -5,6 +5,8 @@ init python early:
             self.name = name
             self.seed = rd(-1000000, 1000000)
             self.safe = 0.0
+            self.route = None
+            self.p2 = None
 
             self.mental = 80.0
             self.severity = 1.0
@@ -34,8 +36,16 @@ init python early:
             self.aco_p = 0
             self.sol_p = 0
 
+            self.s4 = False
+            self.s5 = False
+            self.s6 = False
+            self.s7 = False
+            self.s8 = False
+
             self.onVacation = True
             self.onOutside = True
+
+            self.cured = -1
 
             # basic- 基础提升，默认为1.0
             self.basicConsumption = 1.0
@@ -60,6 +70,7 @@ init python early:
             self.canWrite = 0  # 能否完成委托
             self.canRead = 0  # 能否读小说
             self.canSport = 0  # 能否运动类
+            self.canExplore = 0  # 能否外出
 
             self.sportConsumption = 1.0 # 运动消耗率
             self.sportRecovery = 1.0  # 运动恢复率
@@ -80,21 +91,24 @@ init python early:
 
             self.writeValuable = 1.0  # 写作价值率
             self.workSpeed = 1.0  # 工作进度提升
+            self.foodPrice = 1.0  # 外卖价格修正
 
             self.fooduse = 0
-            self.druguse = 0
+
+            self.savetime = None
 
             self.effects = []
-            self.afterSleepEffects = []
             self.items = []
-            self.usedMedicines = [MedicineA]
-            self.unlockedTasks = []
-            self.lockedTasks = []
+            
+            self.unlockedTasks = set()
+            self.lockedTasks = set()
             self.starItems = []
             self.plan = [NoTask, NoTask, NoTask]
             self.gymplan = [NoSport, NoSport, NoSport]
+            
+            #self.medinfo = {MedicineA: MedInfo(MedicineA)}
+            self.medinfo = {}
 
-            self.resistance = {'MedicineA':0, 'MedicineB':0, 'MedicineC':0}
             self.itemcd = {}
 
             self.unacComm = []
@@ -104,9 +118,15 @@ init python early:
 
             self.hadAskedForMoney = False
             self.hadAskedForLeave = False
-            self.finalStageDays = 1
+            self.finalStageDays = -1
+            self.color = 1.0
+
             self.aggra = 0
             self.messages = {'Pathos':[], 'Halluke':[], 'Acolas':[], 'Depline':[]}
+            self.LocalStatistics = {}
+
+            self.visitedStore = set()
+            self.version = config.version
 
         def __eq__(self, other):
             return id(other) == id(self)
@@ -187,52 +207,55 @@ init python early:
             return r2(self.writing * self.writingRegarded)
 
         def sev(self):  # 单调递减
+            if self.severity <= 0:
+                return 0.001
+            if self.cured >= 0:
+                return r2(self.severity * self.severityRegarded)
+            if self.severity < 0.65 + 0.05 * self.week:
+                self.severity = 0.65 + 0.05 * self.week
+                return r2(self.severity ** 1.5 * self.severityRegarded)
             return r2(self.severity ** 1.5 * self.severityRegarded)
 
         def phyCons(self):  # 单调递减
-            if self.phy()<4:
-                return 0.127 * self.phy() ** 2 - 0.87 * self.phy() + 1.85
+            if self.phy()<3:
+                return 0.12 * self.phy() ** 2 - 0.72 * self.phy() + 1.7
             else:
-                return 0.4
+                return 0.55
 
         def phyReco(self):  # 单调递增
-            if self.phy()<4:
-                return -0.177 * self.phy() ** 2 + 1.621 * self.phy() - 0.54
+            if self.phy()<3:
+                return -0.19 * self.phy() ** 2 + 1.14 * self.phy() - 0.1
             else:
-                return 2
+                return 1.7
 
         def wriConc(self):
-            if self.wri()<4:
-                return -3.333 * self.wri() ** 2 + 34.381 * self.wri() -39.071
+            if self.wri()<3:
+                return -4 * self.wri() ** 2 + 35 * self.wri() -40
             else:
-                return 45
+                return 35
             
 
         def useFoodScale(self):
             scale = 1200 * self.foodRecovery / self.sev()
-            scale *= 1-(self.fooduse* 0.003)
+            scale *= 1-(self.fooduse* 0.005)
             scale *= (self.basicRecovery + 1) / 2
             scale *= 0.001
             scale = max(0.2, scale)
             return scale
 
         def useDrugScale(self):
-            scale = 1200 * self.drugRecovery / self.sev()
-            scale *= 1-(self.druguse* 0.002)
-            scale *= (self.basicRecovery + 1) / 2
+            scale = 1000 * self.drugRecovery / self.sev()
             scale *= 0.001
-            if scale < 0.3:
-                return 0.3
             scale = max(0.2, scale)
             return scale
 
         def aggravationConsumption(self):
-            consumption = 50
+            consumption = 60
             consumption *= self.deteriorateConsumption  # 受睡眠消耗数值影响
             consumption *= self.sev()
             consumption *= self.phyCons() ** 1.5  # 受身体素质和严重度影响
-            if consumption < self.mental * 0.75:
-                consumption = self.mental * 0.75
+            if consumption < self.mental * 0.5:
+                consumption = self.mental * 0.5
             return r2(consumption)
 
         def aggravation(self):
@@ -254,8 +277,10 @@ init python early:
             elif self.week >= 8:
                 s = 0.04
 
-            if self.severity-s < 0.85 + 0.075 * self.week:
-                s = 0.85 + 0.075 * self.week - self.severity
+
+            if self.cured > -1:
+                self.cured += 1
+                self.color -= 0.01
 
             self.severity += r2(s)
 
@@ -352,35 +377,40 @@ init python early:
 
         def meds(self):
             meds = 0
-            if MedicineA.hasByType(self):
-                meds += MedicineA.getByType(self).amounts
-            if MedicineB.hasByType(self):
-                meds += MedicineB.getByType(self).amounts
-            if MedicineC.hasByType(self):
-                meds += MedicineC.getByType(self).amounts
+            for i in (MedicineA, MedicineB, MedicineC):
+                if i.has(self):
+                    if not i.get(self).broken:
+                        meds += i.get(self).amounts
             return meds
 
-        def addAfterSleep(self):
-            for i in self.afterSleepEffects:
-                i.add(self)
-            self.afterSleepEffects = []
-
         def newMorningWeather(self, b=False):
+            if self.cured > -1:
+                return WeatherUnknown
+
             if self.week == 0:
                 return WeatherSunny
-                
-            weathers = [WeatherSunny, WeatherRainy, WeatherCloudy]
-
-            if self.week >4:
-                weathers += [WeatherWet, WeatherHot, WeatherThunder, WeatherWindy]
 
             if Despair.has(self):
                 return WeatherNone
 
+            if WeatherTornado.has(self):
+                if WeatherTornado.get(self).duration != 0:
+                    return WeatherTornado
+                
+            weathers = [WeatherSunny, WeatherRainy, WeatherCloudy]
+
+            if 4 < self.week <= 10:
+                if self.today not in (3, 4, 5) and rra(self, 3):
+                    return WeatherTornado
+
+                weathers += [WeatherWet, WeatherHot, WeatherThunder, WeatherWindy]
+        
             if b:
                 import random
+                       
                 seed = rs(self, -1000000, 1000000)
                 random.seed(seed)
+                
                 return random.choice(weathers)
 
             return rcs(self, weathers)
@@ -390,9 +420,10 @@ init python early:
             
 
         def newMorningEffects(self):  # 每天早上调用以添加随机状态及反应
-            self.newMorningWeather().add(self)
+            if not list(filter(lambda x: type(x).kind=='天气', self.effects)):
+                self.newMorningWeather().add(self)
 
-            if self.week == 0 or Despair.has(self):
+            if self.week == 0 or Despair.has(self) or self.cured > -1:
                 return
 
             states2 = {
@@ -402,7 +433,8 @@ init python early:
                 Desire: 5,
                 Sadness: 5,
                 Agony: 5,
-                Dread: 5
+                Dread: 5,
+                Relaxation: 5
             }
 
 
@@ -421,7 +453,7 @@ init python early:
                 states2[Dread] += 10
             if self.mental > 50:
                 states2[Dread] += 20
-            if GameMode3.has(self):
+            if GameModule1.has(self):
                 states2[Dread] += 10
             if Novice.has(self):
                 states2[Dread] = 0
@@ -442,12 +474,11 @@ init python early:
             for i in states2:
                 if rra(self, states2[i]):
                     i.add(self)
-
-            for i in self.usedMedicines:
-                if rra(self, 20+2*self.week):
+            for i in self.medinfo:
+                if rra(self, 20+3*self.week):
                     i.d_.add(self)
+                    break
 
-            self.addAfterSleep()  # 添加第二日必定获得的状态
 
         def updateAfterSleep(self):  # 夜晚进行的更新工作
             for i in range(len(self.effects) - 1, -1, -1):
@@ -467,23 +498,9 @@ init python early:
                 if self.itemcd[k] == 0:
                     del self.itemcd[k]
                     
-
-            
-        
         def updateMedicine(self):
-            for i in self.usedMedicines:
-                r = 0
-                if self.week < 5:
-                    if rra(self, 50):
-                        r = 1
-                else:
-                    if len(self.usedMedicines) == 1:
-                        if rra(self, 25):
-                            r = 1
-                    else:
-                        if rra(self, 50):
-                            r = 1
-                self.resistance[i.__name__] = max(self.resistance[i.__name__] - r, 0)
+            for i in self.medinfo:
+                self.medinfo[i].afterSleepAction(self)
             
         def updateAfterTask(self, task):
             for i in range(len(self.effects) - 1, -1, -1):
@@ -542,11 +559,12 @@ init python early:
             paid, wages = self.calWorkPaid()
 
             if completedPercent > 120:
-                WorkReward.add(self)
+                if self.cured < 0:
+                    WorkReward.add(self)
                 paid += ra(self, 50, 200)
                 
             elif completedPercent >= 100:
-                if rra(self, 75):
+                if rra(self, 75) and self.cured < 0:
                     WorkReward.add(self)
                 paid += ra(self, 0, 50)
             
@@ -555,15 +573,15 @@ init python early:
 
             self.wages = wages
             self.achievedGoal = 0.0
-            self.goal = (1.08 ** self.week) * 0.3 + self.working * 0.7
+            self.goal = (1.075 ** self.week) * 0.3 + self.working * 0.7
             self.goal = r2(self.goal * ra(self, 750, 1100) * 0.01 * f())
-            if GameMode5.has(self):
-                self.goal = r2(self.goal * 1.15)
+            if GameModule1.has(self):
+                self.goal = r2(self.goal * (1 + (0.03 * self.week)))
             self.money += paid
-
-            Notice.add('Boss：“第%s周工资已发放。”' % self.week)
-            Notice.add('X付宝到账：%s元！' % r2(paid))
-            Notice.add('Boss：“本周的工作指标系数为%s。”' % self.goal)
+            if self.cured < 0 and not Despair.has(self):
+                Notice.add('Boss：“第%s周工资已发放。”' % self.week)
+                Notice.add('X付宝到账：%s元！' % r2(paid))
+                Notice.add('Boss：“本周的工作指标系数为%s。”' % self.goal)
 
         def plotUpdate(self):
             #if self.sol_p %2 == 0:
@@ -579,28 +597,36 @@ init python early:
 
         def newDay(self):
             # 睡觉后
+            if self.p2:
+                self.p2.newDay()
             global _history_list
-            self.aggravation()
+            if not persistent.nomedicine:
+                self.aggravation()
             self.updateAfterSleep()
             self.updateMedicine()
-            self.refreshUnacComm()
+            if self.cured < 0 and not Despair.has(self):
+                self.refreshUnacComm()
             self.newSeed()
             _history_list = []
             
             # 起床后
             self.dateChange()
-            self.newMorningEffects()
-            if rra(self, 10):
-                PhysRezA.add(self)
             
-            sortArr(self.effects)
-            sortArr(self.items)
+            self.newMorningEffects()
+            if self.cured == -1 and not Despair.has(self):
+                if rra(self, 10):
+                    PhysRezA.add(self)
+            
+            sortByID(self.effects)
+            sortByID(self.items)
 
         def beforeSchedule(self):
-            self.calPlatformReward()
+            if self.cured < 0 and not Despair.has(self):
+                self.calPlatformReward()
             self.checkTask()
             if self.today == 5:
-                self.getWorkPaid()
+                if not Despair.has(self):
+                    self.getWorkPaid()
                 self.plotUpdate()
                 self.hadAskedForLeave = False
                 if self.sol_p == 1:
@@ -612,9 +638,9 @@ init python early:
 
                 
                 if self.money <= self.price * 8:
-                    self.priceIncrease = ra(self, 5, 15)
-                    if GameMode3.has(self):
-                        self.priceIncrease *= 2.25
+                    self.priceIncrease = ra(self, 15, 25)
+                    if GameModule1.has(self):
+                        self.priceIncrease *= 1.5
                 
                 else:
                     self.priceIncrease = (self.money * 0.125 / self.price) - 1
@@ -624,7 +650,7 @@ init python early:
                 
 
             if self.hal_p == 10 and self.today == 1:
-                Message.new(self, 'Halluke', 'Halluke', '那个，我想说一些事，如果我说错了的话，请不要生气。\n第一次上课的时候老师有清点人数，我对来上课的人也大概有了一点印象，但是你是后来才出现的，最初我把你当成第一节课就没来的学生，但是老师当时点名也没人缺席的样子。后来发现老师点名的时候也没看到你过产生回应。你并不是我们班的对吧？我也调查了一段时间，在年级大群，甚至校园墙上都没有查到和你有关的信息。\n你并不是我们学校的人，对吧？\n不过我主要是想提醒你，下周的周六就是考试了，虽然你并不需要考试，如果你想的话，可以来帮我发球。', '6', '42')
-                self.hal_p == 11
+                Message.new(self, 'Halluke', 'Halluke', '那个，我想说一些事，如果我说错了的话，请不要生气。\n第一次上课的时候老师有清点人数，我对来上课的人也大概有了一点印象，但是你是后来才出现的，最初我把你当成第一节课就没来的学生，但是老师当时点名也没人缺席的样子。后来发现老师点名的时候也没看到你过产生回应。我也调查了一段时间，在年级大群，甚至校园墙上都没有查到和你有关的信息。\n你并不是我们学校的人，对吧？\n不过我主要是想提醒你，下周的周六就是考试了，虽然你并不需要考试，如果你想的话，可以来帮我发球。', '6', '42')
+                self.hal_p = 11
     
             Notice.show()

@@ -7,12 +7,9 @@ label wakeup_pro:
         play music audio.alarm
         if not persistent.quickAlarm:
             $pause(2)
-            scene bedroom with dissolve
+        scene bedroom with dissolve
     $quick_menu = True
-    
-    $ Saver.save(p)
-    $Notice.add('存档已保存！')
-    $Notice.show()
+
     jump alarmCircle_pro
 
 label alarmCircle_pro:
@@ -38,7 +35,7 @@ label alarmCircle_pro:
 label medicineTake_pro:
     menu:
         "吃药":
-            if p.meds >0:
+            if p.meds() >0:
                 $temp = p.mental
                 call screen screen_useMed(p)
                 if p.mental != temp:
@@ -98,11 +95,11 @@ label day0:
 
 
 label solitus_route_0:
-    
-    $rollback_switch()
+    $start_plot()
     play music audio.concretejungle
     scene city with fade
-    show screen screen_dashboard_calendar(p)
+    if not replaying:
+        show screen screen_dashboard_calendar(p)
     with dissolve
     "星期五。"
     "A市的街上总是没有什么太多的行人，大概是因为原来只是座港口小城的它突然被某人投资了大量的经费。"
@@ -124,13 +121,13 @@ label solitus_route_0:
     "想着就让人难受。"
     "我抬头。"
     $p.stime(56)
-    "自世界之外的天地存在一颗不知能燃烧多久的火球，不停朝着我所在的位置投射光明与热量。"
+    "世界之外存在着一颗不知能燃烧多久的火球，不停朝着我所在的位置投射光明与热量。"
     "我的梦想，也许就是做太阳。"
     "用自己的能力——就算是燃烧自己，只要能做出好的游戏，写出好的文章，让别人看了开心，玩了觉得有趣，那就算是成功了。"
     "“看，他就是我们的太阳。”"
     "如果大家也都来羡慕我就好了…"
     "嘿嘿。"
-    "我突然意识到自己正在大街上傻笑出声，于是赶紧换上冷漠的表情装作无事发生。"
+    "我突然意识到自己正在大街上傻笑出声，于是赶紧换上平淡的表情装作无事发生。"
     "星期五的下午总是让人觉得意外地安逸，但我并不只是在出门乱走。"
     "如果可以，我其实可以一直躺在床上吹空调来度过这个下午。"
     "但我需要做一些事。"
@@ -148,18 +145,35 @@ label solitus_route_0:
     "同样地，我也没有再断过药。"
     "我家里摆着四五个闹钟，分散在出租房里的不同位置，确保我每天能按时起床，其中两个放在最显眼的桌边。"
     "而装着药的瓶子则矗立在两个闹钟中间，像一座纪念碑。"
-    "…"
-    $p.stime(58)
-    "自从那次忘记吃药的经历已经过去几年了。"
     "就连医生也不知道，如果我吃药的间隔超过30个小时以上，我的身体会发生什么。"
     "而且普通的止疼药并没有效果，只有这种药效更加强力的处方药可以抑制。"
     "我甚至还被医院开了证明，否则带着这些白色的粉片连地铁都坐不了。"
     "但毕竟药也是毒。"
     "如果药一直保护我免受头疼，那么它就一定会{b}夺去{/b}属于我的某种东西。"
     "…"
-    $p.stime(16,0)
+    scene street with dissolve
+    $p.stime(58)
+    "所以我准备去医院，即便医院现在还没法治好我，但他们会在每周五售卖我需要的药物。"
+    "但是为什么是每周五？或者为什么其他时候不卖，我一概不知，也没有兴趣知道为什么。"
+    "可能这就是我只能处于这个社会底层的原因吧。"
+    "另外，我不知道我这种个性算不算自律，但我很喜欢在一天开始的时候计划自己接下来要做的事情。"
+    "而且我很不喜欢被搅乱行程。"
+    "我喜欢把我能做的事情分为一块一块的名为【日程】的东西，这样我就可以更方便地分配自己上午，下午和晚上要做的工作或者事。"
+    "所以你应该也知道了，这周五的晚上我需要做的日程就是【外出】，然后去医院。"
+    $p.times = 4
+    $plantemp = p.plan
+    $p.plan = [DefaultWork, MeetingWork, GoOutside]
+    "但这并不代表我晚上就只用来去医院，我在剩下的其他时间可以做一些其他的事，也许这就是我不能称我自己为完全自律的人。"
+    show screen tutorial_screen_tasks(p)
+    "这是我的日程表，不过它并不是“真实存在的”，这只是我脑中的一个想象。\n如日程表所示，每周五，我需要找个时间【外出】去医院买药，除非我今天请假，否则上午和下午我应该都在公司，我只能在下班之后的晚上才能买药。"
+    "平时的我在工作日的时候，喜欢提前几分钟去公司，在工位上计划。而放假的话，则在我起床洗漱后开始。"
+    hide screen tutorial_screen_tasks with dissolve
+    $p.plan = plantemp
+    $del plantemp
+    "关于我的日程就说到这里好了……"
     scene hospital with dissolve
-    "所以我来到了这里。"
+    $p.stime(16,0)
+    "我来到了这里。"
     "A市市立医院。"
     "习惯性地对着门卫抬手而后便放下，因为我每周五都要取新的药，所以他已经对我的到来见怪不怪了。"
     "我不认识的生命们站立在医院门前的广场上。"
@@ -318,7 +332,6 @@ label solitus_route_0:
     "我不清楚我是不是都记下了，但我确实有在听。"
     "但我应该记下来，这就是游戏规则，教我如何苟活在这个世界上的游戏规则。"
     if replaying:
-        $rollback_switch()
         jump afterreplay
     $showNotice(['已解锁新药物！{color=#fe6363}药物{font=arial.ttf}α{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
     play sound audio.getmedicine
@@ -379,20 +392,24 @@ label solitus_route_0:
     "……"
     $p.stime(17,0)
     "难得的假期，在床上趴到晚上好了。"
-    $rollback_switch()
+    $end_plot()
     scene black with dissolve
-    call loading from _call_loading_4 
     $p.newDay()
+    $Save.save(p)
+    $Notice.add('存档已保存！')
+    $Notice.show()
+    call loading from _call_loading_4 
     jump wakeup_pro
 
 label solitus_route_1:
-    
-    $rollback_switch()
-    $p.times = 2
-    $p.stime(13,4)
-    $p.onOutside = True
+    $start_plot()
+    if not replaying:
+        $p.times = 2
+        $p.stime(13,4)
+        $p.onOutside = True
     scene street with fade
-    show screen screen_dashboard(p)
+    if not replaying:
+        show screen screen_dashboard(p)
     play music audio.concretejungle
     "星期六。"
     "虽然我并不是一个会说话的日历，但我其实挺喜欢在脑海里重复今天是放假的日子来着。"
@@ -459,21 +476,25 @@ label solitus_route_1:
     "我继续翻滚，把自己丢到床边，一点一点滚到地上，再翻滚着到门口。"
     "起身关灯。"
     "晚安。"
-    $rollback_switch()
+    $end_plot()
     if replaying:
         jump afterreplay
-    call loading from _call_loading_5 
     $p.newDay()
+    $Save.save(p)
+    $Notice.add('存档已保存！')
+    $Notice.show()
+    call loading from _call_loading_5 
     jump wakeup_pro
 
 label solitus_route_2:
-    
-    $rollback_switch()
-    $p.times = 2
-    $p.stime(13,10)
-    $p.onOutside = True
+    $start_plot()
+    if not replaying:
+        $p.times = 2
+        $p.stime(13,10)
+        $p.onOutside = True
     scene gym with fade
-    show screen screen_dashboard(p)
+    if not replaying:
+        show screen screen_dashboard(p)
     "于是我来到了这里。"
     "A大学的学费并不高，所以学校也不算富裕，从它仍然保持着几十年前的教学楼建筑风格和看着稍微有些破旧的宿舍楼就能看出。"
     "标志性的高层建筑还租给校外人员作写字楼，整个学校的大部分开阔空间也变成了停车位，用来收几块钱的停车费。"
@@ -564,7 +585,8 @@ label solitus_route_2:
     "…"
     play sound audio.button
     $p.stime(17,33)
-    $p.onOutside = False
+    if not replaying:
+        $p.onOutside = False
     scene livingroom
     "到家了。"
     "虽然现在还不是晚上，但我应该留给自己一点可供浪费的时间。"
@@ -599,11 +621,14 @@ label solitus_route_2:
     "明天就是工作日了，早点休息好了。"
     "我关上电脑，简单冲了个热水澡后上了床。"
     "不，谁会这么早睡觉？只是单纯想趴在床上浪费时间而已——"
-    $rollback_switch()
+    $end_plot()
     if replaying:
         jump afterreplay
-    call loading from _call_loading_6 
     $p.newDay()
+    $Save.save(p)
+    $Notice.add('存档已保存！')
+    $Notice.show()
+    call loading from _call_loading_6 
     jump wakeup_pro
 
 label beforeDay:

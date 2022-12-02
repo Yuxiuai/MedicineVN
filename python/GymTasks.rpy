@@ -24,10 +24,6 @@ init python early:
         ad = '“有备而无患。”'
 
         @classmethod
-        def checkAvailable(cls, player, day, time):
-            return True
-
-        @classmethod
         def executeTask(cls, player):
             reco = r2(5 * cls.getRecoScale(player))
             player.mental += reco
@@ -43,9 +39,6 @@ init python early:
         info = '基础恢复：5.5\n有概率提升身体素质，获得2层酸痛和1层良好的运动。\n\n偶尔会在运动中受伤。'
         ad = '墨丘利说：“黑夜是多么的美丽，令人昏昏欲睡，我给你讲个故事吧。”'
 
-        @classmethod
-        def checkAvailable(cls, player, day, time):
-            return True
 
         @classmethod
         def executeTask(cls, player):
@@ -54,7 +47,8 @@ init python early:
             g = ra(player, 0, 1) * 0.01
             player.physical += g
             Notice.add('恢复了%s点精神状态。' % reco)
-            Notice.add('升高了%s点身体素质。' % int(g * 100))
+            if g>0:
+                Notice.add('升高了%s点身体素质。' % int(g * 100))
             Soreness.add(player, 2)
             PhysRezB.add(player)
             cls.setInjured(player, 20)
@@ -66,22 +60,18 @@ init python early:
         name = '动感单车'
         kind = '低难度'
         unlocked = True
-        info = '基础恢复：4\n降低严重程度，获得3层酸痛。\n\n偶尔会在运动中受伤。'
+        info = '基础恢复：4\n降低0~2点严重程度，获得2层酸痛。\n\n偶尔会在运动中受伤。'
         ad = '“他是来自外太空的人，我们要带他去他的宇宙飞船。”'
-
-        @classmethod
-        def checkAvailable(cls, player, day, time):
-            return True
 
         @classmethod
         def executeTask(cls, player):
             reco = r2(5.5 * cls.getRecoScale(player))
             player.mental += reco
-            g = ra(player, 1, 2) * 0.01
+            g = ra(player, 0, 2) * 0.01
             player.severity -= g
             Notice.add('恢复了%s点精神状态。' % reco)
             Notice.add('降低了%s点严重程度。' % int(g * 100))
-            Soreness.add(player, 3)
+            Soreness.add(player, 2)
             cls.setInjured(player, 20)
 
 
@@ -90,12 +80,12 @@ init python early:
         name = '哑铃训练'
         kind = '中难度'
         unlocked = False
-        info = '基础恢复：6\n获得1点身体素质，获得2层酸痛。\n\n有概率会在运动中受伤。\n\n解锁条件 1.3身体素质解锁。'
+        info = '基础恢复：3\n获得1点身体素质，获得2层酸痛。\n\n有概率会在运动中受伤。\n\n解锁条件 1.3身体素质解锁。'
         ad = '其实这枚哑铃的材质是木棍和棉花糖。'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '日程未解锁！'
             return True
 
@@ -105,13 +95,10 @@ init python early:
                 return '基础身体素质尚未达到要求，需要至少等于1.3'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
-            reco = r2(5.5 * cls.getRecoScale(player))
+            reco = r2(3 * cls.getRecoScale(player))
             player.mental += reco
             g = 0.01 + player.physicalGain
             player.physical += g
@@ -131,7 +118,7 @@ init python early:
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '日程未解锁！'
             return True
 
@@ -141,13 +128,10 @@ init python early:
                 return '基础身体素质尚未达到要求，需要至少等于1.3'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
-            if Soreness.has:
+            if Soreness.has(player):
                 if Soreness.get(player).stacks >= 15:
                     Soreness.subByType(player, 15)
                     Physique.add(player, 2)
@@ -159,12 +143,12 @@ init python early:
         name = '臂力训练'
         kind = '高难度'
         unlocked = False
-        info = '基础恢复：3.5\n获得1~2点身体素质，获得3层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
+        info = '基础恢复：3.5\n获得2~3点身体素质，获得3层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
         ad = '“火麒麟犹如千斤热油的血喷洒到他的左臂上，就像要将他的手臂炸熟一样。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '日程未解锁！'
             return True
 
@@ -174,15 +158,12 @@ init python early:
                 return '基础身体素质尚未达到要求，需要至少等于1.4'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
             reco = r2(3.5 * cls.getRecoScale(player))
             player.mental += reco
-            g = ra(player, 1, 2) * 0.01 + player.physicalGain
+            g = ra(player, 2, 3) * 0.01 + player.physicalGain
             player.physical += g
             Notice.add('恢复了%s点精神状态。' % reco)
             Notice.add('升高了%s点身体素质。' % int(g * 100))
@@ -196,12 +177,12 @@ init python early:
         name = '深蹲训练'
         kind = '高难度'
         unlocked = False
-        info = '基础恢复：3\n获得6层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
+        info = '基础恢复：3\n获得4层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
         ad = '“世间泰坦仅允我喘息，深陷其足下泥泞。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '日程未解锁！'
             return True
 
@@ -211,16 +192,13 @@ init python early:
                 return '基础身体素质尚未达到要求，需要至少等于1.4'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
-            Soreness.add(player, 6)
+            Soreness.add(player, 4)
             PhysRezB.add(player)
             cls.setInjured(player, 80)
 
@@ -235,7 +213,7 @@ init python early:
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '日程未解锁！'
             return True
 
@@ -245,9 +223,6 @@ init python early:
                 return '基础身体素质尚未达到要求，需要至少等于1.5'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
@@ -258,5 +233,40 @@ init python early:
             Soreness.add(player, 6)
             PhysRezB.add(player)
             cls.setInjured(player, 80)
+
+
+    class ExRelation(GymTask):
+        id = 108
+        name = '超高速跑步机'
+        kind = '高难度'
+        unlocked = False
+        info = '基础恢复：5\n降低2~4严重程度，获得1层体魄。\n\n大概率会在运动中受伤。\n\n解锁条件 1.6身体素质解锁。'
+        ad = '后面就是玻璃窗，跟不上速度的就会直接被这台跑步机甩出窗外。'
+
+        @classmethod
+        def checkAvailable(cls, player, day, time):
+            if not cls.isUnlocked(player):
+                return '日程未解锁！'
+            return True
+
+        @classmethod
+        def unlockCond(cls, player):
+            if player.physical < 1.6:
+                return '基础身体素质尚未达到要求，需要至少等于1.6'
+            return True
+
+
+        @classmethod
+        def executeTask(cls, player):
+            
+            reco = r2(5 * cls.getRecoScale(player))
+            player.mental += reco
+            g = ra(player, 2, 4) * 0.01
+            player.severity -= g
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('降低了%s点严重程度。' % int(g * 100))
+            Physique.add(player)
+            cls.setInjured(player, 90)
+            
 
             

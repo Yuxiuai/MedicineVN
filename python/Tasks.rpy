@@ -1,4 +1,14 @@
 init python early:
+    def doplan(p, pos):
+        Stat.record(p,p.plan[pos])
+        labelname = p.plan[pos].__name__ + '_beginning'
+        renpy.jump(labelname)
+        
+        
+
+
+
+
     class NoTask(Task):
         id = 0
         name = '未安排'
@@ -10,9 +20,17 @@ init python early:
         def checkAvailable(cls, player, day, time):
             return '该时间段尚未分配工作。'
 
+    class TestTask(Task):
+        id = 1
+        name = '测试日程'
+        kind = None
+        unlocked = True
+        info = '跳过日程。'
+       
+
     class DefaultWork(WorkTask):
         id = 100
-        name = '工作'
+        name = '完成工作'
         kind = '工作类'
         unlocked = True
         info = '基础消耗：35\n均衡提升工作能力，同时以标准水平完成工作进度。'
@@ -30,6 +48,10 @@ init python early:
         def excePerf(cls, player):
             cons = r2(35 * cls.getConsScale(player))
             a = r2(1.2 * player.workSpeed * player.wor() * f())
+            if MeetingReward3.has(player):
+                cons = r2(35 * cls.getConsScale(player) * 0.8)
+                a = r2(1.2 * player.workSpeed * player.wor() * f() * 1.15)
+            
             g = 0.02 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -45,6 +67,9 @@ init python early:
             
             cons = r2(35 * cls.getConsScale(player))
             a = r2(1.05 * player.workSpeed * player.wor() * f())
+            if MeetingReward3.has(player):
+                cons = r2(35 * cls.getConsScale(player) * 0.8)
+                a = r2(1.05 * player.workSpeed * player.wor() * f() * 1.15)
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -62,6 +87,9 @@ init python early:
             g = 0
             if rra(player, 50):
                 g = 0.01 + player.workingGain
+            if MeetingReward3.has(player):
+                cons = r2(40 * cls.getConsScale(player) * 0.8)
+                a = r2(0.95 * player.workSpeed * player.wor() * f() * 1.15)
             player.mental -= cons
             player.mental -= reco
             player.achievedGoal += a
@@ -77,6 +105,9 @@ init python early:
             
             cons = r2(40 * cls.getConsScale(player))
             a = r2(0.9 * player.workSpeed * player.wor() * f())
+            if MeetingReward3.has(player):
+                cons = r2(40 * cls.getConsScale(player) * 0.8)
+                a = r2(0.9 * player.workSpeed * player.wor() * f() * 1.15)
             player.mental -= cons
             player.severity -= 0.02
             player.achievedGoal += a
@@ -90,7 +121,7 @@ init python early:
         name = '偷懒'
         kind = '工作类'
         unlocked = True
-        info = '基础消耗：20\n进行偷懒日程时，还可以在日程的进行状态中进行其他的操作。'
+        info = '基础消耗：15\n进行偷懒日程时，还可以在日程的进行状态中进行其他的操作。'
         ad = '伪装自己正在工作，同时可以做一些其他事情，比如看书，写点什么或者单纯趴在桌子上。'
 
         @classmethod
@@ -107,16 +138,16 @@ init python early:
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
-            cls.executeAnotherTask(player, player.retval, perf)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
+            cls.executeAnotherTask(player, player.retval, perf)
             renpy.jump(resultLabel)
 
         @classmethod
         def executeAnotherTask(cls, player, doWith, perf):
             p = 1 if perf < 50 else 2
             if doWith == 'sleep':
-                rec = r2(8 * cls.getRecoScale(player) * player.sleepRecovery * p)
+                rec = r2(15 * cls.getRecoScale(player) * player.sleepRecovery * p)
                 Notice.add('在工作的间隙中尝试小睡，恢复了%s点精神状态。' % rec)
                 player.mental += rec
                 if ConcDec.has(player):
@@ -125,7 +156,7 @@ init python early:
                 if rra(player, 35 * p):
                     PhysRezA.add(player, 1 if rra(player, 50) else 2)
             elif doWith == 'phy' and player.canSport >= 0:
-                rec = r2(3 * cls.getRecoScale(player) * player.sleepRecovery * p)
+                rec = r2(10 * cls.getRecoScale(player) * player.sleepRecovery * p)
                 Notice.add('在工作的间隙中尝试做些杂活，恢复了%s点精神状态。' % rec)
                 if p == 2:
                     player.physical += 0.01
@@ -134,7 +165,7 @@ init python early:
                     PhysRezB.add(player)
                     Notice.add('流了些汗，获得了状态：良好的运动。')
             elif doWith == 'wri' and player.canRead >= 0:
-                rec = r2(5 * cls.getRecoScale(player) * player.sleepRecovery * p)
+                rec = r2(10 * cls.getRecoScale(player) * player.sleepRecovery * p)
                 Notice.add('在工作的间隙中看了一会网络小说，恢复了%s点精神状态，获得了1层灵感。' % rec)
                 Inspiration.add(player)
                 if p == 2:
@@ -147,13 +178,20 @@ init python early:
                 renpy.call_screen(_screen_name="screen_tr_readingbook", player=player)
                 book = player.retval
                 if book is not None:
+                    pro = 1
+                    if MeetingReward5.has(player):
+                        pro = 2
                     if book.progress == 0:
                         Notice.add('从头开始阅读书本：%s……' % type(book).name)
-                        book.readBook(player, 1)
-                        Notice.add('完成了一半的进度！')
+                        book.readBook(player, pro)
+                        
                     elif book.progress == 1:
                         Notice.add('从上次看过的位置继续阅读书本：%s……' % type(book).name)
-                        book.readBook(player, 1)
+                        book.readBook(player, pro)
+                        
+                    if book.progress == 1:
+                        Notice.add('完成了一半的进度！')
+                    elif book.progress == 2:
                         Notice.add('完成了整本书的阅读！')
             else:
                 renpy.say(None, '任务参数错误！')
@@ -164,8 +202,12 @@ init python early:
 
         @classmethod
         def excePerf(cls, player):
-            cons = r2(20 * cls.getConsScale(player))
+            cons = r2(15 * cls.getConsScale(player))
+            if MeetingReward5.has(player):
+                cons = r2(15 * cls.getConsScale(player) * 1.2)
             a = r2(0.55 * player.workSpeed * player.wor() * f())
+            if MeetingReward6.has(player):
+                a = r2(0.55 * player.workSpeed * player.wor() * f() * 1.3)
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -176,8 +218,12 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            cons = r2(20 * cls.getConsScale(player))
+            cons = r2(15 * cls.getConsScale(player))
             a = r2(0.4 * player.workSpeed * player.wor() * f())
+            if MeetingReward5.has(player):
+                cons = r2(15 * cls.getConsScale(player) * 1.2)
+            if MeetingReward6.has(player):
+                a = r2(0.4 * player.workSpeed * player.wor() * f() * 1.3)
             g=0
             if rra(player, 50):
                 g = 0.01 + player.workingGain
@@ -191,8 +237,12 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            cons = r2(25 * cls.getConsScale(player))
+            cons = r2(20 * cls.getConsScale(player))
+            if MeetingReward5.has(player):
+                cons = r2(20 * cls.getConsScale(player) * 1.2)
             a = r2(0.35 * player.workSpeed * player.wor() * f())
+            if MeetingReward6.has(player):
+                a = r2(0.35 * player.workSpeed * player.wor() * f() * 1.3)
             player.mental -= cons
             player.achievedGoal += a
             Notice.add('消耗了%s点精神状态。' % cons)
@@ -200,8 +250,12 @@ init python early:
 
         @classmethod
         def badPerf(cls, player):
-            cons = r2(25 * cls.getConsScale(player))
+            cons = r2(20 * cls.getConsScale(player))
+            if MeetingReward5.has(player):
+                cons = r2(20 * cls.getConsScale(player) * 1.2)
             a = r2(0.2 * player.workSpeed * player.wor() * f())
+            if MeetingReward6.has(player):
+                a = r2(0.2 * player.workSpeed * player.wor() * f() * 1.3)
             player.mental -= cons
             player.achievedGoal += a
             player.severity += 0.01
@@ -222,7 +276,7 @@ init python early:
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
@@ -233,10 +287,6 @@ init python early:
             if player.working < 1.1:
                 return '基础工作能力尚未达到要求，需要至少等于1.1'
             return True
-
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def getConcScale(cls, player):
@@ -267,6 +317,8 @@ init python early:
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
+            if player.week >= 2 and player.times >= 10 and PhysProb.has(player) and not player.s7:
+                renpy.jump("solitus_route_7")
             renpy.jump(resultLabel)
 
         @classmethod
@@ -337,13 +389,13 @@ init python early:
         kind = '工作类'
         unlocked = False
         info = '基础消耗：0\n' \
-            '结果为差以上时，将睡意转化为状态：整备。\n' \
+            '结果为差以上时，将睡意转化为整备。\n' \
             '解锁条件 1.2工作能力解锁。'
         ad = '偷偷睡一觉……不会被发现吧？'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if player.onVacation:
                 return '正在放假！'
@@ -356,10 +408,6 @@ init python early:
             if player.working < 1.2:
                 return '基础工作能力尚未达到要求，需要至少等于1.2'
             return True
-
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def excePerf(cls, player):
@@ -416,14 +464,22 @@ init python early:
             stacks = 0
 
             if ConcDec.has(player):
-                stacks = ConcDec.get(player).stacks
-                player.mental += 2.5 * stacks
+                if MeetingReward4.has(player):
+                    stacks = ConcDec.get(player).stacks + 1
+                    player.mental += 5 * stacks
+                else:
+                    stacks = ConcDec.get(player).stacks
+                    player.mental += 2.5 * stacks
             
             player.updateAfterTask(cls)
 
             if stacks != 0 and perf > 18:
                 ConcDec.clearByType(player)
                 SleepReward.add(player, stacks)
+            
+            if WeatherRainy.has(player):
+                Notice.add('由于雨天，降低了2点严重程度！')
+                player.severity -= 0.02
 
             
 
@@ -435,12 +491,12 @@ init python early:
         name = '全力工作'
         kind = '工作类'
         unlocked = False
-        info = '基础消耗：75\n没有状态：整备的情况进行该日程将额外获得2层过劳。\n\n解锁条件 1.3工作能力解锁。'
+        info = '基础消耗：70\n没有整备的情况进行该日程将额外获得2层过劳。\n\n解锁条件 1.3工作能力解锁。'
         ad = '像牲畜一样工作。'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if player.onVacation:
                 return '正在放假！'
@@ -454,9 +510,6 @@ init python early:
                 return '基础工作能力尚未达到要求，需要至少等于1.3'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
@@ -470,7 +523,7 @@ init python early:
 
         @classmethod
         def excePerf(cls, player):
-            cons = r2(75 * cls.getConsScale(player))
+            cons = r2(70 * cls.getConsScale(player))
             a = r2(1.75 * player.workSpeed * player.wor() * f())
             g = 0.03 + player.workingGain
             player.mental -= cons
@@ -484,7 +537,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            cons = r2(75 * cls.getConsScale(player))
+            cons = r2(70 * cls.getConsScale(player))
             a = r2(1.55 * player.workSpeed * player.wor() * f())
             g = 0.01 + player.workingGain
             player.mental -= cons
@@ -496,7 +549,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            cons = r2(90 * cls.getConsScale(player))
+            cons = r2(80 * cls.getConsScale(player))
             a = r2(1.35 * player.workSpeed * player.wor() * f())
             player.mental -= cons
             player.achievedGoal += a
@@ -507,7 +560,7 @@ init python early:
 
         @classmethod
         def badPerf(cls, player):
-            cons = r2(90 * cls.getConsScale(player))
+            cons = r2(80 * cls.getConsScale(player))
             a = r2(1.2 * player.workSpeed * player.wor() * f())
             player.mental -= cons
             player.achievedGoal += a
@@ -531,12 +584,13 @@ init python early:
         name = '参与周研讨会'
         kind = '工作类'
         unlocked = True
-        info = '基础消耗：20\n获得1层会议指导。'
+        info = '基础消耗：20\n随机获得一种会议指导。'
         ad = '整理本周的工作，确定工作目标和下周要做的工作。'
+
 
         @classmethod
         def hasplot(cls, player):
-            if player.aco_p%2==1:
+            if player.aco_p in (0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 98):
                 return True
             return False
 
@@ -587,7 +641,8 @@ init python early:
 
         @classmethod
         def afterTaskResult(cls, player):
-            MeetingReward.add(player)
+            mrs = (MeetingReward1, MeetingReward2, MeetingReward3, MeetingReward4, MeetingReward5, MeetingReward6)
+            rca(player, mrs).add(player)
             # some code……  # 剧情
 
 
@@ -596,7 +651,7 @@ init python early:
         name = '外出散步'
         kind = '运动类'
         unlocked = True
-        info = '基础恢复：10\n偏向于均衡发展的运动，不会在运动中受伤。'
+        info = '基础恢复：20\n偏向于均衡发展的运动，不会在运动中受伤。'
         ad = '走走长路舒活筋骨。'
 
         @classmethod
@@ -622,8 +677,8 @@ init python early:
 
         @classmethod
         def excePerf(cls, player):
-            reco = r2(10 * cls.getRecoScale(player))
-            exReco = r2(5 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
+            exReco = r2(12.5 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
             player.mental += reco + exReco
             player.physical += g
@@ -634,8 +689,8 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(10 * cls.getRecoScale(player))
-            exReco = r2(2.5 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
+            exReco = r2(10 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
             player.mental += reco + exReco
             player.severity -= 0.01
@@ -648,7 +703,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(10 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
             player.mental += reco
             player.physical += g
@@ -658,8 +713,8 @@ init python early:
 
         @classmethod
         def badPerf(cls, player):
-            reco = r2(10 * cls.getRecoScale(player))
-            exReco = r2(10 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
+            exReco = r2(15 * cls.getRecoScale(player))
             player.mental += reco + exReco
             Notice.add('恢复了%s点精神状态。' % reco)
             Notice.add('额外恢复了%s点精神状态。' % exReco)
@@ -679,12 +734,12 @@ init python early:
         name = '慢跑'
         kind = '运动类'
         unlocked = False
-        info = '基础恢复：12.5\n偏向于减轻严重程度的运动，小概率额外获得1层良好的运动，极少会在运动中受伤。\n\n解锁条件 1.1身体素质解锁。'
+        info = '基础恢复：30\n偏向于减轻严重程度的运动，小概率额外获得1层良好的运动，极少会在运动中受伤。\n\n解锁条件 1.1身体素质解锁。'
         ad = '“我洋溢着活力。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if player.canOutdoorSport < 0:
                 return '外面正在下雨。'
@@ -701,10 +756,6 @@ init python early:
             return True
 
         @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
-
-        @classmethod
         def getRecoScale(cls, player):
             scale = 1.0
             scale *= player.basicRecovery
@@ -717,7 +768,7 @@ init python early:
 
         @classmethod
         def excePerf(cls, player):
-            reco = r2(12.5 * cls.getRecoScale(player))
+            reco = r2(30 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
             player.mental += reco
             player.physical += g
@@ -728,7 +779,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(12.5 * cls.getRecoScale(player))
+            reco = r2(30 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.01
@@ -738,7 +789,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(12.5 * cls.getRecoScale(player))
+            reco = r2(30 * cls.getRecoScale(player))
             player.mental += reco
             player.severity -= 0.02
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -770,12 +821,12 @@ init python early:
         name = '速跑'
         kind = '运动类'
         unlocked = False
-        info = '基础恢复：12.5\n偏向于提升身体素质的运动，小概率额外获得1层良好的运动，偶尔会在运动中受伤。\n\n解锁条件 1.1身体素质解锁。'
+        info = '基础恢复：25\n偏向于提升身体素质的运动，小概率额外获得1层良好的运动，偶尔会在运动中受伤。\n\n解锁条件 1.1身体素质解锁。'
         ad = '“我的心跳平稳又充满力量，汗水从我的皮肤上渗出。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if player.canOutdoorSport < 0:
                 return '外面正在下雨。'
@@ -790,10 +841,6 @@ init python early:
             if player.physical < 1.1:
                 return '基础身体素质尚未达到要求，需要至少等于1.1'
             return True
-
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def getRecoScale(cls, player):
@@ -818,7 +865,7 @@ init python early:
 
         @classmethod
         def excePerf(cls, player):
-            reco = r2(12.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
             if rra(player, 50):
                 g+= 0.01
@@ -830,7 +877,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(12.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
             player.mental += reco
             player.physical += g
@@ -841,7 +888,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(12.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
             exReco = r2(10 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
             player.physical += g
@@ -876,13 +923,13 @@ init python early:
         name = '去健身房健身'
         kind = '运动类'
         unlocked = False
-        info = '定制健身日程自定义健身内容。\n单日购卡需50元。\n\n解锁条件 1.2身体素质解锁。'
+        info = '基础恢复：15\n定制健身日程自定义健身内容。\n单日购卡需40元。\n\n解锁条件 1.2身体素质解锁。'
         ad = '“这部机器，即我的身体，涌动着力量。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            cls.info = '定制健身日程自定义健身内容。\n单日购卡需%s元。\n\n解锁条件 1.2身体素质解锁。' % r2(0.2*player.price)
-            if not cls.unlocked:
+            cls.info = '基础恢复：15\n定制健身日程自定义健身内容。\n单日购卡需%s元。\n\n解锁条件 1.2身体素质解锁。' % r2(0.2*player.price)
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if player.canSport < 0:
                 return '你受伤了，不能做激烈的运动。'
@@ -899,23 +946,23 @@ init python early:
             return True
 
         @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
-
-        @classmethod
         def executeTask(cls, player):
-            if not GymTicket.hasByType(player):
-                player.money -= r2(0.4*player.price)
-                GymTicket.add(player)
-
-            resultLabel = cls.getResultLabel(player)
+            perf = ra(player, 1, 100)
+            perf += cls.getConcScale(player)
+            if Injured.has(player):
+                cls.badPerf(player)
+            elif perf > 85:
+                cls.excePerf(player)
+            elif perf > 58:
+                cls.goodPerf(player)
+            else:
+                cls.normPerf(player)
 
             cls.afterTaskResult(player)
-            renpy.jump(resultLabel)
 
         @classmethod
         def excePerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(15 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
             player.mental += reco
             player.physical += g
@@ -926,7 +973,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             player.severity -= 0.02
             Soreness.add(player)
@@ -935,8 +982,8 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
-            exReco = r2(12.5 * cls.getRecoScale(player))
+            reco = r2(15 * cls.getRecoScale(player))
+            exReco = r2(7.5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             PhysRezB.add(player)
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -945,14 +992,12 @@ init python early:
         @classmethod
         def badPerf(cls, player):
             player.severity += 0.02
-            Injured.add(player)
-            Notice.add('你在运动中受伤了，没有恢复精神状态。')
             Notice.add('升高了2点严重程度。')
 
         @classmethod
         def afterTaskResult(cls, player):
             if not Injured.has(player):
-                Soreness.add(player, 6)
+                Soreness.add(player, 2)
                 PhysRezB.add(player)
                 while rra(player, 50):
                     PhysRezB.add(player)
@@ -974,7 +1019,7 @@ init python early:
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
@@ -987,10 +1032,6 @@ init python early:
         @classmethod
         def unlockCond(cls, player):
             return '课程已结束！'
-
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = True
 
         @classmethod
         def executeTask(cls, player):
@@ -1062,6 +1103,7 @@ init python early:
         kind = '运动类'
         unlocked = True
         info = '恢复根据酸痛层数的精神状态，将酸痛转化为体魄。'
+        ad = '扭动你的手腕和关节直到它们脱臼断裂。'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
@@ -1070,10 +1112,6 @@ init python early:
             if player.canSport < 0:
                 return '你受伤了，不能做激烈的运动。'
             return True
-
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = True
 
         @classmethod
         def executeTask(cls, player):
@@ -1094,7 +1132,7 @@ init python early:
             if rra(player, 100 * (g-int(g))):
                 Physique.add(player)
             Soreness.clearByType(player)
-            reco = r2(1.5 * stacks)
+            reco = r2(1 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
@@ -1106,7 +1144,7 @@ init python early:
             if rra(player, 100 * (g - int(g))):
                 Physique.add(player)
             Soreness.clearByType(player)
-            reco = r2(1.3 * stacks)
+            reco = r2(0.8 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
@@ -1118,7 +1156,7 @@ init python early:
             if rra(player, 100 * (g - int(g))):
                 Physique.add(player)
             Soreness.clearByType(player)
-            reco = r2(1.1 * stacks)
+            reco = r2(0.7 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
@@ -1130,7 +1168,7 @@ init python early:
             if rra(player, 100 * (g - int(g))):
                 Physique.add(player)
             Soreness.clearByType(player)
-            reco = r2(1 * stacks)
+            reco = r2(0.6 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
@@ -1145,7 +1183,7 @@ init python early:
         name = '读流行小说'
         kind = '写作类'
         unlocked = True
-        info = '基础恢复：10\n偏向于均衡发展的阅读，偶尔可以额外多获得1层灵感。'
+        info = '基础恢复：12.5\n偏向于均衡发展的阅读，偶尔可以额外多获得1层灵感。'
         ad = '俗话说文人相轻，但偶尔我也是会看点当下流行的小说的……虽然我觉得大多都没我写的好，哼哼。'
 
         @classmethod
@@ -1160,7 +1198,7 @@ init python early:
 
         @classmethod
         def excePerf(cls, player):
-            reco = r2(10 * cls.getRecoScale(player))
+            reco = r2(12.5 * cls.getRecoScale(player))
             exReco = r2(12.5 * cls.getRecoScale(player))
             g = 0.02 + player.writingGain
             player.mental += reco + exReco
@@ -1172,7 +1210,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(10 * cls.getRecoScale(player))
+            reco = r2(12.5 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.02
@@ -1182,7 +1220,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(10 * cls.getRecoScale(player))
+            reco = r2(12.5 * cls.getRecoScale(player))
             exReco = r2(7.5 * cls.getRecoScale(player))
             g = 0.01 + player.writingGain
             player.mental += reco + exReco
@@ -1206,12 +1244,12 @@ init python early:
         name = '读感伤文学'
         kind = '写作类'
         unlocked = False
-        info = '基础恢复：7.5\n偏向获得灵感的阅读。\n\n解锁条件 1.1写作技巧解锁。'
+        info = '基础恢复：15\n偏向获得灵感的阅读。\n\n解锁条件 1.1写作技巧解锁。'
         ad = '“我的情绪远比平常更为高昂或低沉，但我也仍然无法完全理解这些文字。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
@@ -1228,12 +1266,8 @@ init python early:
             return True
 
         @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
-
-        @classmethod
         def excePerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             player.writing -= 0.02
             ReadReward.add(player)
@@ -1243,7 +1277,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(15 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.01
@@ -1255,17 +1289,17 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             Inspiration.add(player, 1)
             Notice.add('恢复了%s点精神状态。' % reco)
 
         @classmethod
         def badPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
-            player.mental += reco
+            cons = r2(20 * cls.getConsScale(player))
+            player.mental -= cons
             player.writing -= 0.01
-            Notice.add('恢复了%s点精神状态。' % reco)
+            Notice.add('消耗了%s点精神状态。' % cons)
             Notice.add('降低了1点写作技巧。')
 
 
@@ -1274,12 +1308,12 @@ init python early:
         name = '读传统文学'
         kind = '写作类'
         unlocked = False
-        info = '基础恢复：7.5\n偏向于提升写作技巧的阅读。\n\n解锁条件 1.1写作技巧解锁。'
+        info = '基础恢复：10\n偏向于提升写作技巧的阅读。\n\n解锁条件 1.1写作技巧解锁。'
         ad = '“我的双眼如饥似渴地吸收着文字，仿佛影子吸收光线。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
@@ -1295,13 +1329,10 @@ init python early:
                 return '基础写作技巧尚未达到要求，需要至少等于1.1'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def excePerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(10 * cls.getRecoScale(player))
             g = 0.03 + player.writingGain
             player.mental += reco
             player.writing += g
@@ -1313,7 +1344,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(10 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             g = 0.02 + player.writingGain
             player.mental += reco + exReco
@@ -1325,7 +1356,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(10 * cls.getRecoScale(player))
             g = 0.01 + player.writingGain
             player.mental += reco
             player.severity -= 0.02
@@ -1336,19 +1367,19 @@ init python early:
 
         @classmethod
         def badPerf(cls, player):
-            reco = r2(7.5 * cls.getRecoScale(player))
-            player.mental += reco
-            player.severity -= 0.01
-            Notice.add('恢复了%s点精神状态。' % reco)
+            cons = r2(15 * cls.getConsScale(player))
+            player.mental -= cons
+            player.severity += 0.01
+            Notice.add('消耗了%s点精神状态。' % cons)
             Notice.add('升高了1点严重度。')
 
 
     class FreewheelingWriting(WriteTask):
         id = 303
-        name = '写随笔短文'
+        name = '随笔写作'
         kind = '写作类'
         unlocked = True
-        info = '基础恢复：17.5\n消耗所有状态转化为额外的灵感并作为写作题材进行写作，并消耗所有灵感进行写作，无需接取委托。\n可转化的状态：（焦虑，偏执，悲伤，勃起）'
+        info = '基础恢复：25\n消耗所有状态转化为额外的灵感并作为写作题材进行写作，并消耗所有灵感进行写作，无需接取委托。\n可转化的状态：（焦虑，偏执，悲伤，勃起）'
         ad = '发泄想法与灵感，积累人气，偶尔还能获得打赏，但我并非为金钱才踏上写作。'
 
         @classmethod
@@ -1381,6 +1412,7 @@ init python early:
             informalEssay.name = rca(player, comm_informal_names)
             if len(comm_informal_names) != 1:
                 comm_informal_names.remove(informalEssay.name)
+            informalEssay.freewheeling = True
             informalEssay.needWora = -1
             informalEssay.needInspiration = -1
             informalEssay.du = -1
@@ -1398,7 +1430,7 @@ init python early:
         @classmethod
         def excePerf(cls, player):
             s = 0.015 * player.week if player.week <= 7 else 0.12
-            reco = r2(17.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += r2(s)
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -1406,7 +1438,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(17.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
             s = 0.012 * player.week if player.week <= 7 else 0.1
             player.mental += reco
             player.severity += r2(s)
@@ -1415,7 +1447,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(17.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             s = 0.01 * player.week if player.week <= 7 else 0.08
             player.mental += reco + exReco
@@ -1426,7 +1458,7 @@ init python early:
 
         @classmethod
         def badPerf(cls, player):
-            reco = r2(17.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += 0.02
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -1438,7 +1470,7 @@ init python early:
         name = '完成委托'
         kind = '写作类'
         unlocked = True
-        info = '基础恢复：15\n消耗灵感进行写作，需要在手机上接取委托。'
+        info = '基础恢复：20\n消耗灵感进行写作，需要在手机上接取委托。'
         ad = '赚点外快罢了，现在谁还没个两份工——'
 
         @classmethod
@@ -1449,7 +1481,7 @@ init python early:
                 return '情绪过于低落无法专心写作。'
             if Anxiety.has(player):
                 return '你由于十分担心自己能否有稳定经济来源而没有写委托的欲望。'
-            if not UnfinishedCommission.hasByType(player):
+            if not UnfinishedCommission.has(player):
                 return '并没有接委托，请先接个委托吧。'
             return True
 
@@ -1469,7 +1501,7 @@ init python early:
         @classmethod
         def excePerf(cls, player):
             s = 0.015 * player.week if player.week <= 7 else 0.12
-            reco = r2(15 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += r2(s)
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -1477,7 +1509,7 @@ init python early:
 
         @classmethod
         def goodPerf(cls, player):
-            reco = r2(15 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
             s = 0.012 * player.week if player.week <= 7 else 0.1
             player.mental += reco
             player.severity += r2(s)
@@ -1486,7 +1518,7 @@ init python early:
 
         @classmethod
         def normPerf(cls, player):
-            reco = r2(15 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             s = 0.01 * player.week if player.week <= 7 else 0.08
             player.mental += reco + exReco
@@ -1497,7 +1529,7 @@ init python early:
 
         @classmethod
         def badPerf(cls, player):
-            reco = r2(15 * cls.getRecoScale(player))
+            reco = r2(20 * cls.getRecoScale(player))
             player.mental += reco
             player.severity += 0.02
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -1514,7 +1546,7 @@ init python early:
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
@@ -1522,7 +1554,7 @@ init python early:
                 return '你由于十分担心自己能否有稳定经济来源而没有写委托的欲望。'
             if player.canWrite < 0:
                 return '情绪过于低落无法专心写作。'
-            if not UnfinishedCommission.hasByType(player):
+            if not UnfinishedCommission.has(player):
                 return '并没有接委托，请先接个委托吧。'
             return True
 
@@ -1532,9 +1564,6 @@ init python early:
                 return '基础写作技巧尚未达到要求，需要至少等于1.2'
             return True
 
-        @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
@@ -1599,7 +1628,8 @@ init python early:
         name = '阅读书籍'
         kind = '写作类'
         unlocked = True
-        info = '选择一本物品中的书籍来阅读，没有书籍无法进行该日程。'
+        info = '基础恢复：15\n降低严重度并获得1层灵感。\n选择一本物品中的书籍进行完整的阅读，没有书籍无法进行该日程。'
+        ad = '“书籍是不死的记忆。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
@@ -1615,6 +1645,11 @@ init python early:
         
         @classmethod
         def executeTask(cls, player):
+            reco = r2(15 * cls.getRecoScale(player))
+            player.mental += reco
+            Notice.add('恢复了%s点精神状态。' % reco)
+            Inspiration.add(p)
+            player.severity -= 0.01
             player.retval.readBook(player, 2)
             player.updateAfterTask(cls)
             resultLabel = cls.getResultLabel(player, rd(1,100))
@@ -1626,7 +1661,8 @@ init python early:
         name = '记录想法'
         kind = '写作类'
         unlocked = True
-        info = '将转瞬即逝的灵感记录，将灵感转化为写作素材，基于灵感获得精神状态。'
+        info = '将灵感转化为写作素材，基于转化的灵感获得少量精神状态。'
+        ad = '“回首某个瞬间。下个瞬间即告消逝。”'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
@@ -1656,7 +1692,7 @@ init python early:
             if rra(player, 100 * (g-int(g))):
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
-            reco = r2(0.9 * stacks)
+            reco = r2(1.8 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
@@ -1668,7 +1704,7 @@ init python early:
             if rra(player, 100 * (g - int(g))):
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
-            reco = r2(0.85 * stacks)
+            reco = r2(1.7 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
@@ -1680,7 +1716,7 @@ init python early:
             if rra(player, 100 * (g - int(g))):
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
-            reco = r2(0.8 * stacks)
+            reco = r2(1.6 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
@@ -1692,14 +1728,14 @@ init python early:
             if rra(player, 100 * (g - int(g))):
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
-            reco = r2(0.65 * stacks)
+            reco = r2(1.3 * stacks)
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
 
 
     class Sleep(RestTask):
         id = 400
-        name = '休息'
+        name = '在床上休息'
         kind = '休息类'
         unlocked = True
         info = '基础恢复：40\n移除睡意，概率治疗受伤和生病，获得良好的睡眠。'
@@ -1743,7 +1779,7 @@ init python early:
 
             if PhysPun.has(player):
                 PhysPun.get(player).cureBySleep(player)
-            if Injured.has(player):
+            elif Injured.has(player):
                 Injured.get(player).cureBySleep(player)
 
             player.updateAfterTask(cls)
@@ -1752,6 +1788,13 @@ init python early:
             if stacks != 0:
                 SleepReward.add(player, stacks)
 
+            if rra(player, 25):  
+                Relaxation.add(player)
+
+            if not player.s6 and player.today in (6, 7):
+                if Inspiration.has(player):
+                    if Inspiration.get(player).stacks >= 5:
+                        renpy.jump("solitus_route_6")
             renpy.jump(resultLabel)
 
 
@@ -1769,7 +1812,7 @@ init python early:
         @classmethod
         def goodPerf(cls, player):
             reco = r2(40 * cls.getRecoScale(player))
-            exReco = r2(5 * cls.getRecoScale(player))
+            exReco = r2(15 * cls.getRecoScale(player))
             player.mental += reco + exReco
             player.severity -= 0.01
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -1786,8 +1829,8 @@ init python early:
 
         @classmethod
         def badPerf(cls, player):
-            reco = r2(35 * cls.getRecoScale(player))
-            exReco = r2(7.5 * cls.getRecoScale(player))
+            reco = r2(25 * cls.getRecoScale(player))
+            exReco = r2(15 * cls.getRecoScale(player))
             player.mental += reco + exReco
             Notice.add('恢复了%s点精神状态。' % reco)
             Notice.add('额外恢复了%s点精神状态。' % exReco)
@@ -1798,7 +1841,7 @@ init python early:
         name = '打游戏'
         kind = '休息类'
         unlocked = True
-        info = '基础消耗：10\n获得2层兴奋，将精力消耗相关的状态的一半层数转化为精神的平复。'
+        info = '基础消耗：10\n有大概率减少过劳或焦虑的持续时间，偶尔能恢复少量精神状态。'
         ad = '玩玩单机或者网络游戏解压。'
 
         @classmethod
@@ -1844,20 +1887,13 @@ init python early:
 
         @classmethod
         def afterTaskResult(cls, player):
-            ConcInc.add(p,2)
-            effects = 0
-            if ConsInc.has(player):
-                s = int(ConsInc.get(player).stacks/2)
-                effects += s
-                ConsInc.subByType(player, s)
-                
-            if ConsDec.has(player):
-                s = int(ConsDec.get(player).stacks/2)
-                effects += s
-                ConsDec.subByType(player, s)
-
-            if effects > 0:
-                MentRezB.add(player, effects)
+            if PhysProb.has(player):
+                if rra(player, 75):
+                    PhysProb.get(player).timeUpdate(player)
+            
+            if MentProb.has(player):
+                if rra(player, 75):
+                    MentProb.get(player).timeUpdate(player)
 
 
     class CleanRoom(RestTask):
@@ -1865,7 +1901,7 @@ init python early:
         name = '打扫房间'
         kind = '休息类'
         unlocked = True
-        info = '基础恢复：15\n获得状态：整洁的房间。'
+        info = '基础恢复：15\n获得整洁的房间。如果未过劳还会移除焦虑，如果过劳则增加恢复的精神状态。'
         ad = '收拾收拾屋子吧，瞅你那房间乱得像猪窝一样。'
 
         @classmethod
@@ -1878,7 +1914,10 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            reco = r2(15 * cls.getRecoScale(player))
+            if PhysProb.has(player):
+                reco = r2(25 * cls.getRecoScale(player))
+            else:
+                reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
             player.updateAfterTask(cls)
@@ -1887,6 +1926,8 @@ init python early:
 
         @classmethod
         def afterTaskResult(cls, player):
+            if not PhysProb.has(player) and MentProb.has(player):
+                MentProb.clearByType(player)
             MentRezB.add(player, ra(player, 0, 2))
             CleanReward.add(player)
 
@@ -1904,12 +1945,8 @@ init python early:
             return '当前版本尚未开放此日程。'
 
         @classmethod
-        def defaultClass(cls):
-            cls.unlocked = False
-
-        @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '请先单击该日程解锁！'
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
@@ -1960,10 +1997,15 @@ init python early:
         kind = '特殊类'
         unlocked = True
         info = '去医院购买药物或者去一些其他的地方。'
+        ad = '“一切事物皆有其所在之处，如此物位于此处。”'
 
         @classmethod
         def hasplot(cls, player):
-            if player.sol_p%2==1:
+            if p.sol_p == 0 and p.week >=4 and p.today == 5:
+                return True
+            elif p.sol_p == 2 and p.week >=8 and p.today == 5:
+                return True
+            elif player.aco_p == 7:
                 return True
             return False
 
@@ -1971,6 +2013,8 @@ init python early:
         def checkAvailable(cls, player, day, time):
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
+            if player.canExplore < 0:
+                return '外面正在刮台风。'
             return True
 
         @classmethod
@@ -1981,17 +2025,17 @@ init python early:
         def afterTaskResult(cls, player):
             pass  # some codes
 
-    class HallukeTask1(RestTask):
+    class HallukeTask1(Task):
         id = 500
-        name = '？？？'
+        name = '和Halluke打羽毛球'
         kind = '特殊类'
         unlocked = False
-        info = '？？？'
-        ad = '？？？'
+        info = '基础恢复：15\n获得1层良好的运动和精神的平复。\n该日程不受专注度影响。'
+        ad = '某种意义上的约会。'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '日程将根据剧情解锁'
             if player.canSport < 0:
                 return '你受伤了，不能做激烈的运动。'
@@ -2000,71 +2044,148 @@ init python early:
             return '非约定时间'
 
         @classmethod
+        def hasplot(cls, player):
+            if player.hal_p in (8, 9, 10):
+                return True
+            return False
+
+        @classmethod
         def unlockCond(cls, player):
+            if player.hal_p == 99:
+                return '{color=#ff0000}需要Halluke活着。{/color}'
             return '日程将根据剧情解锁'
-
-        @classmethod
-        def unlock(cls):
-            cls.name = '和Halluke打羽毛球'
-            cls.info = '基础恢复：15\n获得2层良好的运动，2层精神的平复。\n该日程不受专注度影响。'
-            cls.ad = '某种意义上的约会。'
-            cls.unlocked = True
-
-        @classmethod
-        def defaultClass(cls):
-            cls.name = '？？？'
-            cls.info = '？？？'
-            cls.ad = '？？？'
-            cls.unlocked = False
 
         @classmethod
         def executeTask(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
-            PhysRezB.add(player, 2)
-            MentRezB.add(player, 2)
+            PhysRezB.add(player)
+            MentRezB.add(player)
             player.updateAfterTask(cls)
             renpy.jump("HallukeTask1_result")
 
-    class HallukeTask2(RestTask):
+    class HallukeTask2(Task):
         id = 501
-        name = '？？？'
+        name = '去Halluke家'
         kind = '特殊类'
         unlocked = False
-        info = '？？？'
-        ad = '？？？'
+        info = '该日程不受专注度影响。'
+        ad = '你们已经是恋人关系了，找他聊聊天？或者做些什么？'
 
         @classmethod
         def checkAvailable(cls, player, day, time):
-            if not cls.unlocked:
+            if not cls.isUnlocked(player):
                 return '日程将根据剧情解锁'
-            if day == 7 and time == 1:
+            if day == 6 and time == 1:
                 return True
             return '非约定时间'
 
         @classmethod
+        def hasplot(cls, player):
+            if player.hal_p == 12:
+                return True
+            return False
+
+        @classmethod
         def unlockCond(cls, player):
+            if player.hal_p == 99:
+                return '{color=#ff0000}需要Halluke活着。{/color}'
             return '日程将根据剧情解锁'
 
         @classmethod
-        def unlock(cls):
-            cls.name = '去Halluke家'
-            cls.info = '基础恢复：30\n该日程不受专注度影响。'
-            cls.ad = '你们已经是恋人关系了，找他聊聊天？或者做些什么？'
-            cls.unlocked = True
+        def executeTask(cls, player):
+            player.updateAfterTask(cls)
+            renpy.jump("HallukeTask2_result")
+
+
+    class AcolasTask1(Task):
+        id = 600
+        name = '完成Acolas的项目'
+        kind = '特殊类'
+        unlocked = False
+        info = '基础消耗：100\n完成进度，获得3层过劳，提升5点严重程度。\n该日程不受专注度影响。'
+        ad = '这应该不是什么难事……对吧？。'
+        
+        @classmethod
+        def checkAvailable(cls, player, day, time):
+            if not cls.isUnlocked(player):
+                return '日程将根据剧情解锁'
+            if day == 5 and time == 2:
+                return '你不想在这个时候完成项目。'
+            if not player.onVacation and time != 2:
+                return '现在是正常上班时间！'
+            if player.canWrite < 0:
+                return '你没有写作的心情。'
+            if not any([x.has(player) for x in (AcolasItem2, AcolasItem3, AcolasItem4)]):
+                return '你没有可以完成的设计稿'
+            return True
 
         @classmethod
-        def defaultClass(cls):
-            cls.name = '？？？'
-            cls.info = '？？？'
-            cls.ad = '？？？'
-            cls.unlocked = False
+        def unlockCond(cls, player):
+            if player.aco_p == 99:
+                return '{color=#ff0000}需要Acolas活着。{/color}'
+            return '日程将根据剧情解锁'
 
         @classmethod
         def executeTask(cls, player):
-            reco = r2(30 * cls.getRecoScale(player))
+            cons = r2(100 * cls.getConsScale(player))
+            a = r2(10 * player.workSpeed * f()* f())
+            player.mental -= cons
+            player.severity += 0.05
+            Notice.add('消耗了%s点精神状态。' % cons)
+            Notice.add('完成了%s%s的进度。' % (a, '%'))
+            Notice.add('提升了5点严重程度。')
+            PhysProb.add(player, 3)
+            for i in (AcolasItem2, AcolasItem3, AcolasItem4):
+                if i.has(player):
+                    item = i.get(player)
+                    if item.progress <= 50:
+                        item.progress += a
+                    elif item.progress <= 75:
+                        item.progress += a * 0.5
+                    elif item.progress <= 90:
+                        item.progress += a * 0.25
+                    elif item.progress <= 99:
+                        item.progress += a * 0.01
+                    
+                    break
+            
+            player.updateAfterTask(cls)
+            renpy.jump("AcolasTask1_result")
+
+    class AcolasTask2(Task):
+        id = 601
+        name = '去Acolas家'
+        kind = '特殊类'
+        unlocked = False
+        info = '该日程不受专注度影响。'
+        ad = '听说他生病了，去探望他一下吧？切记，不要做蠢事。'
+
+        @classmethod
+        def checkAvailable(cls, player, day, time):
+            if not cls.isUnlocked(player):
+                return '日程将根据剧情解锁'
+            if day == 6 and time == 1:
+                return True
+            return '非约定时间'
+
+        @classmethod
+        def hasplot(cls, player):
+            if player.hal_p == 8:
+                return True
+            return False
+
+        @classmethod
+        def unlockCond(cls, player):
+            if player.aco_p == 99:
+                return '{color=#ff0000}需要Acolas活着。{/color}'
+            return '日程将根据剧情解锁'
+
+        @classmethod
+        def executeTask(cls, player):
+            reco = r2(20 * cls.getRecoScale(player))
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
             player.updateAfterTask(cls)
-            renpy.jump("HallukeTask2_result")
+            renpy.jump("AcolasTask2_result")

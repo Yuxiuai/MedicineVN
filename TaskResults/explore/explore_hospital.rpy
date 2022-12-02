@@ -47,6 +47,8 @@ label explore_elevator:
             jump explore_hospital_pharmacy
         "1楼：大厅":
             jump explore_hospital_end
+        '住院部3楼' if p.aco_p == 7:
+            jump acolas_route_7
            
     
 label explore_hospital_pharmacy:
@@ -57,6 +59,29 @@ label explore_hospital_pharmacy:
 
     "出电梯口后左拐。"
     "我再熟悉不过的位置了。"
+    if p.today == 5 and (p.week == 15 or SteamerTicket.has(p)):
+        "等等……"
+        "今天好像……有点不太对……"
+        $renpy.music.set_pause(True, channel='music')
+        scene white with dissolve
+        "脑中像是爆炸一般地痛，每次血管鼓动都会让痛苦更甚。"
+        "呃呃……啊啊啊啊啊啊啊啊啊！"
+        "{color=#ffffff}脑中的嗡鸣{/color}" "“听好了……你这家伙……”"
+        "{color=#ffffff}脑中的嗡鸣{/color}" "“金钱已经失去意义了，你必须用你所有的钱尽可能多地购买药物……”"
+        "{color=#ffffff}脑中的嗡鸣{/color}" "“如果你没有足够的药……接下来会有十分恐怖的事情发生……”"
+        "{color=#ffffff}脑中的嗡鸣{/color}" "“再见了……年轻人……”"
+        "什么……？"
+        if p.times==12:
+            scene hospital_corridor_night
+        else:
+            scene hospital_corridor
+        $renpy.music.set_pause(False, channel='music')
+        "啊！我！"
+        "我晃了晃头，头已经没有刚才那么疼了。"
+        "身边的景物再次重回医院。"
+        "什么……刚才那是怎么回事……要我花所有的钱买药？为什么？……"
+        nurse"“病人848662号，取药了。”"
+        nurse"“需要多少？”"
     $temp = p.money
     call screen screen_buyMed(p)
     if temp != p.money:
@@ -200,9 +225,9 @@ label explore_hospital_brain:
         scene elevator with fade
         jump explore_elevator
     else:
-        if p.sol_p == 0 and p.week >=5:
+        if p.sol_p == 0 and p.week >=4:
             jump pathos_route_0
-        elif p.sol_p == 2 and p.week >=10:
+        elif p.sol_p == 2 and p.week >=8:
             jump pathos_route_1
         else:
             scene consulting_room with fade
@@ -255,10 +280,12 @@ label pathos_q_hosp:
             pathos"“首先生病的来源有两个，一个是平时工作太多，过劳的层数过多，也就是4层及以上，在第二天就会转化成生病。”"
             pathos"“另一个是阴冷天气，如果身体平时不多运动，很容易着凉感冒。”"
             pathos"“生病会降低基础属性，也会影响精神状态的消耗恢复和专注度等，尽量避免自己不要生病。”"
-            show pathos normal_eyebrow awkward_eyes saying with dissolve
-            pathos"“生病了的话，可以自己选择治愈的方式。”"
-            pathos"“去医院治疗的话需要花一笔钱，越早越好；另一种方式是靠休息来恢复，以这种方法恢复会获得基础属性，而且不用花钱，缺点是需要消耗状态。”"
-            pathos"“消耗良好的运动和良好的睡眠来提高恢复率，阴天也能让恢复率提升。”"
+            show pathos normal_eyebrow awkward_eyes smile with dissolve
+            pathos"“可以花一笔钱去医院治疗，越早越花的钱越少。”"
+            pathos"“但如果生病了的话，也并不一定是坏事。”"
+            show pathos normal_eyebrow normal_eyes saying with dissolve
+            pathos"“另一种恢复方法便是在床上休息来恢复，以这种方法恢复不仅能重新获得失去的基础属性，还能根据体魄层数获得恢复奖励。”"
+            pathos"“消耗良好的运动和良好的睡眠等来提高恢复率，阴天也能让恢复率提升。”"
             show pathos normal_eyebrow normal_eyes saying with dissolve
             pathos"“吃感冒药可以延长生病的时间来减缓病情，每天一片，能够按层数来增加休息治疗的概率。”"
             pathos"“受伤也能根据这个方法来恢复，但是偏执不能靠休息恢复。”"
@@ -298,7 +325,7 @@ label pathos_q_hosp:
             $ss('scared_mouth normal2_eyes awkward_eyebrow')
             s"“……那个。”"
             $ss('smile_mouth smile_eyes smile_eyebrow blush')
-            s"“今天有时间和我出来吃个晚饭吗？”"
+            s"“今晚有时间和我出来吃个晚饭吗？”"
             $sh()
             show pathos normal_eyebrow normal_eyes normal_mouth sweat_e
             with dissolve
@@ -349,3 +376,61 @@ label pathos_q_hosp:
             $sh()
             scene elevator with fade
             jump explore_elevator
+
+
+screen screen_buyMed(player):
+    #tag gamegui
+    use barrier(screen="screen_buyMed", mode=0)
+
+    $ med = [MedicineA]
+    $ otherMed = list(filter(lambda x: x.kind == '普通药物', getSubclasses(Item)))
+    $ otherMed.sort(key=lambda x:x.id)
+    if player.sol_p>=1:
+        $med.append(MedicineB)
+    if player.sol_p>=3:
+        $med.append(MedicineC)
+
+    #modal True
+    zorder 200
+    drag:
+        xcenter 0.5
+        ycenter 0.48
+        frame:
+            at trans_toRight()
+            style "translucent_frame"
+            xsize 700
+            ysize 800
+            vbox:
+                frame:
+                    background None
+                    yalign 0.001
+                    textbutton '{size=+10}购买药物{/size}':
+                        text_style "gameUI"
+                        xoffset -5
+                        yoffset -5
+                        action NullAction()
+
+                    imagebutton auto "gui/exit_%s.png":
+                        xalign 1.0
+                        action [Hide("screen_buyMed"), Return()]
+
+                    frame:
+                        background None
+                        ysize 700
+                        xsize 650
+                        ypos 60
+                        xpos 25
+                        viewport:
+                            mousewheel True
+                            draggable True
+                            if len(med) + len(otherMed)>8:
+                                scrollbars "vertical"
+                            
+                            vbox:
+                                if player.today == 5:
+                                    use screen_buylist(player, med, p=1, d=0)
+                                    null height 10
+                                use screen_buylist(player, otherMed, p=-1, d=15)
+                                null height 30
+                                textbutton ''
+                    

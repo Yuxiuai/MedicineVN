@@ -20,4 +20,8 @@ label Task_processing:
 
 label NoTask_beginning:
     "当你看到这条消息时说明日程分配出现了错误，请重新读档。"
-    jump to_the_title
+    return
+
+label moduleerror:
+    "当你看到这条消息时说明你出现了模组问题，例如没有开启模组却使用了模组物品。"
+    return
