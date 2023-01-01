@@ -80,7 +80,7 @@ screen screen_phone_message_address(player):
                             yalign 0.7
                 null height 2
 
-                if player.hal_p>6:
+                if player.hal_p>6 and player.hal_p != 51:
                     frame:
                         ysize 75
                         xfill True
@@ -243,7 +243,7 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
             xpos 0.79
             ypos 0.77
             imagebutton auto "gui/phone/message/send_%s.png":
-                action [Function(Message.new, player, player.name, who, send, False), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
+                action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
                 hover_sound audio.cursor
 
         frame:
@@ -254,6 +254,6 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
                 action [Hide("screen_phone_message_weixin"),Hide("info"),Show(screen="screen_phone_message_address", player=player), Function(Message.see, player, who, who)]
                 hover_sound audio.cursor
 
-    key 'K_RETURN' action [Function(Message.new, player, player.name, who, send, False), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
-    key 'K_KP_ENTER' action [Function(Message.new, player, player.name, who, send, False), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
+    key 'K_RETURN' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
+    key 'K_KP_ENTER' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
     key 'K_ESCAPE' action [Hide("screen_phone_message_weixin"),Hide("info"),Show(screen="screen_phone_message_address", player=player), Function(Message.see, player, who, who)]

@@ -8,7 +8,7 @@ label explore_bookshop:
     $temp = p.money
     call screen screen_explore_buybook(p)
     python:
-        allbooks = list(filter(lambda x: x.__base__==BookBase and not x.has(p), getSubclasses(Item)))
+        allbooks = list(filter(lambda x: x.__base__==BookBase and not x.has(p), ALLITEMS))
         if ProfessionalBookWorking in allbooks:
             allbooks.remove(ProfessionalBookWorking)
         if ProfessionalBookWriting in allbooks:
@@ -38,7 +38,7 @@ screen screen_explore_buybook(player):
     use barrier(screen="screen_explore_buybook", mode=0)
 
     python:
-        allbooks = list(filter(lambda x: x.__base__==BookBase, getSubclasses(Item)))
+        allbooks = list(filter(lambda x: x.__base__==BookBase, ALLITEMS))
         allbooks.remove(ProfessionalBookWorking)
         allbooks.remove(ProfessionalBookWriting)
         allbooks.remove(ProfessionalBookSeverity)
@@ -83,17 +83,15 @@ screen screen_explore_buybook(player):
                             mousewheel True
                             draggable True
                             scrollbars "vertical"
-                            use screen_explore_buybook_show(player, items)
+                            vbox:
+                                $professBooks = [ProfessionalBookWorking, ProfessionalBookWriting, ProfessionalBookSeverity]
+
+                                use screen_buylist(player, professBooks, p=0.4, d=20, n='专业类书籍')
+
+                                null height 10
+
+                                use screen_buylist(player, items, p=0.85, d=40, n='未收藏的书本')
+
+                                null height 30
+                                textbutton ''
                     
-screen screen_explore_buybook_show(player, items):
-    vbox:
-        $professBooks = [ProfessionalBookWorking, ProfessionalBookWriting, ProfessionalBookSeverity]
-
-        use screen_buylist(player, professBooks, p=0.4, d=20, n='专业类书籍')
-
-        null height 10
-
-        use screen_buylist(player, items, p=0.85, d=40, n='未收藏的书本')
-
-        null height 30
-        textbutton ''

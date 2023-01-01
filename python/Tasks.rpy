@@ -49,8 +49,8 @@ init python early:
             cons = r2(35 * cls.getConsScale(player))
             a = r2(1.2 * player.workSpeed * player.wor() * f())
             if MeetingReward3.has(player):
-                cons = r2(35 * cls.getConsScale(player) * 0.8)
-                a = r2(1.2 * player.workSpeed * player.wor() * f() * 1.15)
+                cons = r2(cons * 0.8)
+                a = r2(a * 1.15)
             
             g = 0.02 + player.workingGain
             player.mental -= cons
@@ -68,8 +68,8 @@ init python early:
             cons = r2(35 * cls.getConsScale(player))
             a = r2(1.05 * player.workSpeed * player.wor() * f())
             if MeetingReward3.has(player):
-                cons = r2(35 * cls.getConsScale(player) * 0.8)
-                a = r2(1.05 * player.workSpeed * player.wor() * f() * 1.15)
+                cons = r2(cons * 0.8)
+                a = r2(a * 1.15)
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -88,8 +88,8 @@ init python early:
             if rra(player, 50):
                 g = 0.01 + player.workingGain
             if MeetingReward3.has(player):
-                cons = r2(40 * cls.getConsScale(player) * 0.8)
-                a = r2(0.95 * player.workSpeed * player.wor() * f() * 1.15)
+                cons = r2(cons * 0.8)
+                a = r2(a * 1.15)
             player.mental -= cons
             player.mental -= reco
             player.achievedGoal += a
@@ -104,10 +104,10 @@ init python early:
         def badPerf(cls, player):
             
             cons = r2(40 * cls.getConsScale(player))
-            a = r2(0.9 * player.workSpeed * player.wor() * f())
+            a = r2(0.75 * player.workSpeed * player.wor() * f())
             if MeetingReward3.has(player):
-                cons = r2(40 * cls.getConsScale(player) * 0.8)
-                a = r2(0.9 * player.workSpeed * player.wor() * f() * 1.15)
+                cons = r2(cons * 0.8)
+                a = r2(a * 1.15)
             player.mental -= cons
             player.severity -= 0.02
             player.achievedGoal += a
@@ -204,10 +204,10 @@ init python early:
         def excePerf(cls, player):
             cons = r2(15 * cls.getConsScale(player))
             if MeetingReward5.has(player):
-                cons = r2(15 * cls.getConsScale(player) * 1.2)
-            a = r2(0.55 * player.workSpeed * player.wor() * f())
+                cons = r2(cons * 1.2)
+            a = r2(0.4 * player.workSpeed * player.wor() * f())
             if MeetingReward6.has(player):
-                a = r2(0.55 * player.workSpeed * player.wor() * f() * 1.3)
+                a = r2(a * 1.3)
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -219,11 +219,11 @@ init python early:
         @classmethod
         def goodPerf(cls, player):
             cons = r2(15 * cls.getConsScale(player))
-            a = r2(0.4 * player.workSpeed * player.wor() * f())
+            a = r2(0.3 * player.workSpeed * player.wor() * f())
             if MeetingReward5.has(player):
-                cons = r2(15 * cls.getConsScale(player) * 1.2)
+                cons = r2(cons * 1.2)
             if MeetingReward6.has(player):
-                a = r2(0.4 * player.workSpeed * player.wor() * f() * 1.3)
+                a = r2(a * 1.3)
             g=0
             if rra(player, 50):
                 g = 0.01 + player.workingGain
@@ -239,10 +239,10 @@ init python early:
         def normPerf(cls, player):
             cons = r2(20 * cls.getConsScale(player))
             if MeetingReward5.has(player):
-                cons = r2(20 * cls.getConsScale(player) * 1.2)
-            a = r2(0.35 * player.workSpeed * player.wor() * f())
+                cons = r2(cons * 1.2)
+            a = r2(0.15 * player.workSpeed * player.wor() * f())
             if MeetingReward6.has(player):
-                a = r2(0.35 * player.workSpeed * player.wor() * f() * 1.3)
+                a = r2(a * 1.3)
             player.mental -= cons
             player.achievedGoal += a
             Notice.add('消耗了%s点精神状态。' % cons)
@@ -252,10 +252,10 @@ init python early:
         def badPerf(cls, player):
             cons = r2(20 * cls.getConsScale(player))
             if MeetingReward5.has(player):
-                cons = r2(20 * cls.getConsScale(player) * 1.2)
-            a = r2(0.2 * player.workSpeed * player.wor() * f())
+                cons = r2(cons * 1.2)
+            a = r2(0.1 * player.workSpeed * player.wor() * f())
             if MeetingReward6.has(player):
-                a = r2(0.2 * player.workSpeed * player.wor() * f() * 1.3)
+                a = r2(a * 1.3)
             player.mental -= cons
             player.achievedGoal += a
             player.severity += 0.01
@@ -295,7 +295,7 @@ init python early:
             scale += player.workConcentration
             scale += player.homeConcentration
             scale += 15 * player.wor() - 20
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -305,7 +305,7 @@ init python early:
             scale *= player.basicConsumption
             scale *= player.homeConsumption
             scale *= player.phyCons()
-            scale *= player.sev()
+            scale *= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -324,7 +324,7 @@ init python early:
         @classmethod
         def excePerf(cls, player):
             cons = r2(40 * cls.getConsScale(player))
-            a = r2(1.35 * player.workSpeed * player.wor() * f())
+            a = r2(1.3 * player.workSpeed * player.wor() * f())
             g = 0.02 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -351,7 +351,7 @@ init python early:
         def normPerf(cls, player):
             cons = r2(45 * cls.getConsScale(player))
             reco = r2(10 * cls.getRecoScale(player))
-            a = r2(1.0 * player.workSpeed * player.wor() * f())
+            a = r2(1.05 * player.workSpeed * player.wor() * f())
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.mental -= reco
@@ -365,7 +365,7 @@ init python early:
         @classmethod
         def badPerf(cls, player):
             cons = r2(45 * cls.getConsScale(player))
-            a = r2(0.95 * player.workSpeed * player.wor() * f())
+            a = r2(0.7 * player.workSpeed * player.wor() * f())
             player.mental -= cons
             player.severity += 0.01
             player.achievedGoal += a
@@ -389,7 +389,7 @@ init python early:
         kind = '工作类'
         unlocked = False
         info = '基础消耗：0\n' \
-            '结果为差以上时，将睡意转化为整备。\n' \
+            '将睡意转化为整备。\n' \
             '解锁条件 1.2工作能力解锁。'
         ad = '偷偷睡一觉……不会被发现吧？'
 
@@ -412,7 +412,7 @@ init python early:
         @classmethod
         def excePerf(cls, player):
             reco = r2(10 * cls.getRecoScale(player))
-            a = r2(0.35 * player.workSpeed * player.wor() * f())
+            a = r2(0.15 * player.workSpeed * player.wor() * f())
             player.mental += reco
             player.achievedGoal += a
             Notice.add('恢复了%s点精神状态。' % reco)
@@ -421,7 +421,7 @@ init python early:
         @classmethod
         def goodPerf(cls, player):
             reco = r2(10 * cls.getRecoScale(player))
-            a = r2(0.25 * player.workSpeed * player.wor() * f())
+            a = r2(0.125 * player.workSpeed * player.wor() * f())
             PhysRezA.add(player)
             player.mental += reco
             player.achievedGoal += a
@@ -431,7 +431,7 @@ init python early:
         @classmethod
         def normPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
-            a = r2(0.15 * player.workSpeed * player.wor() * f())
+            a = r2(0.1 * player.workSpeed * player.wor() * f())
             PhysRezA.add(player)
             player.severity -= 0.01
             player.mental += reco
@@ -465,7 +465,7 @@ init python early:
 
             if ConcDec.has(player):
                 if MeetingReward4.has(player):
-                    stacks = ConcDec.get(player).stacks + 1
+                    stacks = ConcDec.get(player).stacks + 2
                     player.mental += 5 * stacks
                 else:
                     stacks = ConcDec.get(player).stacks
@@ -476,6 +476,9 @@ init python early:
             if stacks != 0 and perf > 18:
                 ConcDec.clearByType(player)
                 SleepReward.add(player, stacks)
+            else:
+                ConcDec.clearByType(player)
+                SleepReward.add(player, int(stacks*0.5))
             
             if WeatherRainy.has(player):
                 Notice.add('由于雨天，降低了2点严重程度！')
@@ -524,7 +527,7 @@ init python early:
         @classmethod
         def excePerf(cls, player):
             cons = r2(70 * cls.getConsScale(player))
-            a = r2(1.75 * player.workSpeed * player.wor() * f())
+            a = r2(1.7 * player.workSpeed * player.wor() * f())
             g = 0.03 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -538,7 +541,7 @@ init python early:
         @classmethod
         def goodPerf(cls, player):
             cons = r2(70 * cls.getConsScale(player))
-            a = r2(1.55 * player.workSpeed * player.wor() * f())
+            a = r2(1.5 * player.workSpeed * player.wor() * f())
             g = 0.01 + player.workingGain
             player.mental -= cons
             player.working += g
@@ -550,7 +553,7 @@ init python early:
         @classmethod
         def normPerf(cls, player):
             cons = r2(80 * cls.getConsScale(player))
-            a = r2(1.35 * player.workSpeed * player.wor() * f())
+            a = r2(1.3 * player.workSpeed * player.wor() * f())
             player.mental -= cons
             player.achievedGoal += a
             player.severity += 0.02
@@ -561,7 +564,7 @@ init python early:
         @classmethod
         def badPerf(cls, player):
             cons = r2(80 * cls.getConsScale(player))
-            a = r2(1.2 * player.workSpeed * player.wor() * f())
+            a = r2(0.6 * player.workSpeed * player.wor() * f())
             player.mental -= cons
             player.achievedGoal += a
             player.severity += 0.02
@@ -584,7 +587,7 @@ init python early:
         name = '参与周研讨会'
         kind = '工作类'
         unlocked = True
-        info = '基础消耗：20\n随机获得一种会议指导。'
+        info = '基础消耗：20\n随机获得一种会议指导，结果为优时，再获得一种。'
         ad = '整理本周的工作，确定工作目标和下周要做的工作。'
 
 
@@ -611,6 +614,7 @@ init python early:
             player.working += g
             Notice.add('消耗了%s点精神状态。' % cons)
             Notice.add('升高了%s点工作能力。' % int(g * 100))
+            cls.afterTaskResult(player)
 
         @classmethod
         def goodPerf(cls, player):
@@ -641,8 +645,10 @@ init python early:
 
         @classmethod
         def afterTaskResult(cls, player):
-            mrs = (MeetingReward1, MeetingReward2, MeetingReward3, MeetingReward4, MeetingReward5, MeetingReward6)
-            rca(player, mrs).add(player)
+            mrs = (MeetingReward1, MeetingReward2, MeetingReward3, MeetingReward4, MeetingReward5, MeetingReward6, MeetingReward7, MeetingReward8)
+            mrs = filter(lambda x: not x.has(player), mrs)
+            if mrs:
+                rca(player, mrs).add(player)
             # some code……  # 剧情
 
 
@@ -671,7 +677,7 @@ init python early:
             scale *= player.phyReco()
             scale *= player.sportRecovery
             scale *= player.outdoorSportRecovery
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -762,7 +768,7 @@ init python early:
             scale *= player.phyReco()
             scale *= player.sportRecovery
             scale *= player.outdoorSportRecovery
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -849,7 +855,7 @@ init python early:
             scale *= player.phyReco()
             scale *= player.sportRecovery
             scale *= player.outdoorSportRecovery
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -1013,6 +1019,8 @@ init python early:
 
         @classmethod
         def hasplot(cls, player):
+            if player.hal_p == 50:
+                return True
             if player.hal_p < 7:
                 return True
             return False
@@ -1668,8 +1676,6 @@ init python early:
         def checkAvailable(cls, player, day, time):
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
-            if Anxiety.has(player):
-                return '你由于十分担心自己能否有稳定经济来源而没有整理想法的欲望。'
             if player.canWrite < 0:
                 return '情绪过于低落无法专心写作。'
             return True
@@ -1753,7 +1759,7 @@ init python early:
             scale *= player.basicRecovery
             scale *= player.sleepRecovery
             scale *= player.phyReco()
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -2115,10 +2121,12 @@ init python early:
                 return '你不想在这个时候完成项目。'
             if not player.onVacation and time != 2:
                 return '现在是正常上班时间！'
-            if player.canWrite < 0:
-                return '你没有写作的心情。'
             if not any([x.has(player) for x in (AcolasItem2, AcolasItem3, AcolasItem4)]):
                 return '你没有可以完成的设计稿'
+            for i in (AcolasItem2, AcolasItem3, AcolasItem4):
+                if i.has(p):
+                    if i.get(p).progress >= 100:
+                        return '你已经完成了项目，没有必要再做那种事了。'
             return True
 
         @classmethod
@@ -2130,29 +2138,68 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             cons = r2(100 * cls.getConsScale(player))
-            a = r2(10 * player.workSpeed * f()* f())
-            player.mental -= cons
+            a = r2(10 * player.workSpeed * f())
+            
             player.severity += 0.05
+
+            if AcolasItem2.has(player):
+                item = AcolasItem2.get(player)
+                if item.progress <= 33:
+                    a *= ra(player, 30, 60) * 0.01
+                elif item.progress <= 66:
+                    a *= ra(player, 15, 30) * 0.01
+                else:
+                    a *= ra(player, 1, 5) * 0.01
+                item.progress += r2(a)
+            
+            elif AcolasItem3.has(player):
+                item = AcolasItem3.get(player)
+                if item.progress <= 33:
+                    a *= ra(player, 80, 120) * 0.01
+                elif item.progress <= 66:
+                    a *= ra(player, 65, 85) * 0.01
+                else:
+                    a *= ra(player, 35, 55) * 0.01
+                item.progress += r2(a)
+
+            elif AcolasItem4.has(player):
+                item = AcolasItem4.get(player)
+                if item.progress < 1:
+                    a = item.progress * (1 + item.progress)
+                elif item.progress < 10:
+                    a = item.progress * (1 + item.progress * 0.01)
+                else:
+                    a = item.progress * (item.progress * 0.01) + 5
+                if a == 0:
+                    a = 0.01
+                cons += player.mental * 0.5
+                item.progress += r2(a)
+
+            player.mental -= cons
             Notice.add('消耗了%s点精神状态。' % cons)
-            Notice.add('完成了%s%s的进度。' % (a, '%'))
+            Notice.add('完成了%s%s的进度。' % (r2(a), '%'))
+            if 100 > item.progress:
+                Notice.add('还差%s%s。' % (r2(100-item.progress), '%'))
+            if item.progress > 100:
+                item.progress = 100.0
             Notice.add('提升了5点严重程度。')
             PhysProb.add(player, 3)
-            for i in (AcolasItem2, AcolasItem3, AcolasItem4):
-                if i.has(player):
-                    item = i.get(player)
-                    if item.progress <= 50:
-                        item.progress += a
-                    elif item.progress <= 75:
-                        item.progress += a * 0.5
-                    elif item.progress <= 90:
-                        item.progress += a * 0.25
-                    elif item.progress <= 99:
-                        item.progress += a * 0.01
-                    
-                    break
+
             
             player.updateAfterTask(cls)
-            renpy.jump("AcolasTask1_result")
+            if AcolasItem3.has(p) and player.times == 12 and player.today == 4 and player.aco_p == 8:
+                renpy.jump("AcolasTask1_loop")
+            elif AcolasItem4.has(p) and player.times == 12:
+                aa = 0.01 * int(a)
+                if aa > 0:
+                    player.severity += aa
+                    Notice.add('提升了%s点严重程度。' % int(a))
+                p.color = (100 - item.progress)* 0.01
+                if p.color < 0:
+                    p.color = 0.0
+                renpy.jump("AcolasTask2_loop")
+            else:
+                renpy.jump("AcolasTask1_result")
 
     class AcolasTask2(Task):
         id = 601

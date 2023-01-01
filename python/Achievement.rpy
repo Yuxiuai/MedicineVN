@@ -15,13 +15,13 @@ init python early:
 
         @classmethod
         def done(cls):
-            l = list(filter(lambda x: x in persistent.achievements, getSubclasses(Achievement)))
+            l = list(filter(lambda x: x in persistent.achievements, ALLACHIEVEMENTS))
             sortByID(l)
             return l
         
         @classmethod
         def undone(cls):
-            l = list(filter(lambda x: x not in persistent.achievements, getSubclasses(Achievement)))
+            l = list(filter(lambda x: x not in persistent.achievements, ALLACHIEVEMENTS))
             sortByID(l)
             return l
 
@@ -37,7 +37,7 @@ init python early:
         
         @classmethod
         def all(cls):
-            for i in getSubclasses(Achievement):
+            for i in ALLACHIEVEMENTS:
                 i.achieve()
                 
         @classmethod
@@ -170,6 +170,12 @@ init python early:
         name = '#0000FF'
         icon = "gui/achievements/achievement303.png"
         info = '阅读《不要读这本书》。'
+
+    class Achievement304(Achievement):
+        id = 601
+        name = '也许我会试着尝试烂醉一场'
+        icon = "gui/achievements/achievement304.png"
+        info = '摄入过量的普通药物。'
     
     
 
@@ -206,30 +212,62 @@ init python early:
         name = '摔裂我的喙'
         icon = "gui/achievements/achievement502.png"
         info = '与Halluke完成除坏结局外任意结局。'
+
+    '''
+    class Achievement503(Achievement):
+        id = 501
+        name = '放飞嚎叫'
+        icon = "gui/achievements/achievement503.png"
+        info = '与Depline完成除坏结局外任意结局。'
+    '''
+
+    class Achievement504(Achievement):
+        id = 502
+        name = '踏入乌托邦的大门'
+        icon = "gui/achievements/achievement504.png"
+        info = '完成Acolas的隐藏剧情。'
+    
+    class Achievement505(Achievement):
+        id = 502
+        name = '这一切仿佛从未发生'
+        icon = "gui/achievements/achievement505.png"
+        info = '完成Halluke的隐藏剧情。'
     
     class Achievement600(Achievement): # 高难成就
         id = 600
         name = '我拒绝消亡'
         icon = "gui/achievements/achievement600.png"
-        info = '以极难难度完成除坏结局和治愈结局外任意结局。'
+        info = '以硬核难度完成除坏结局外任意结局。'
     
     class Achievement601(Achievement):
         id = 601
         name = '我才不是什么可悲的受害者'
         icon = "gui/achievements/achievement601.png"
-        info = '开启挑战模式模组后完成除坏结局和治愈结局外任意结局。'
+        info = '开启挑战模式模组后完成除坏结局外任意结局。'
 
     class Achievement602(Achievement):
         id = 601
         name = '轻轻地温柔地狂暴地亲吻我吧'
         icon = "gui/achievements/achievement602.png"
-        info = '在废墟下存活超过30天。'
+        info = '在废墟下存活超过20天。'
+    
+    class Achievement603(Achievement):
+        id = 601
+        name = '试试看我们能够承受多少痛楚'
+        icon = "gui/achievements/achievement603.png"
+        info = '超过7天没有使用实验药物。'
     
     class Achievement700(Achievement): # 模组成就
         id = 601
         name = '六百一十七张笔记'
         icon = "gui/achievements/achievement700.png"
-        info = '开启无尽之旅模组后完成除坏结局和治愈结局外任意结局。'
+        info = '开启无尽之旅模组后完成除坏结局外任意结局。'
+
+    class Achievement800(Achievement): # 模组成就
+        id = 601
+        name = '仿真肺叶'
+        icon = "gui/achievements/achievement800.png"
+        info = '找到作弊模式的开关。'
 
     #class Achievement602(Achievement):
     #    id = 602

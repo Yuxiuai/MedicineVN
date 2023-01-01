@@ -28,7 +28,7 @@ screen screen_index(player):
         else:
             imagebutton auto "gui/menu/medicine_%s.png":
                 at trans_Up()
-                action [Hide("info"), Jump("despairusemed")]
+                action [Hide("info"), Return(), Jump("despairusemed")]
                 hovered Show(screen="info", i='服用药物\n你的药物。', a='这些东西本应属于你，只属于你。')
                 unhovered Hide("info")
                 hover_sound audio.cursor
@@ -60,7 +60,7 @@ screen screen_index(player):
     hbox:
         xpos 0.9
         ypos 0.85
-        if player.hal_p == 11 and player.today==6 and player.times == 11 and player.messages['Halluke'][-1].seen != None:
+        if player.hal_p == 11 and player.today==6 and player.times in (11, 13) and player.messages['Halluke'][-1].seen != None:
             imagebutton auto "gui/menu/edit_%s.png":
                 at trans_toLeft()
                 action Function(showNotice, ['还没有给Halluke发消息。'])
@@ -90,13 +90,13 @@ screen screen_index(player):
     key 'e' action [Show(screen="screen_items", player=player), Hide("info")]
     key 'r' action [Show(screen="screen_effects", player=player), Hide("info")]
     
-    if player.hal_p == 11 and player.today==6 and player.times == 11 and player.messages['Halluke'][-1].seen != None:
+    if player.hal_p == 11 and player.today==6 and player.times in (11, 13) and player.messages['Halluke'][-1].seen != None:
         key 'K_SPACE' action Function(showNotice, ['还未完成日程的安排！'])
     elif NoTask in player.plan:
         key 'K_SPACE' action Function(showNotice, ['还未完成日程的安排！'])
     else:
         key 'K_SPACE' action [Hide("screen_index"),Return(None),Hide("info")]
-    if player.hal_p == 11 and player.today==6 and player.times == 11 and player.messages['Halluke'][-1].seen != None:
+    if player.hal_p == 11 and player.today==6 and player.times in (11, 13) and player.messages['Halluke'][-1].seen != None:
         key 'K_SPACE' action Function(showNotice, ['还未完成日程的安排！'])
     elif NoTask in player.plan:
         key 'K_LCTRL' action Function(showNotice, ['还未完成日程的安排！'])

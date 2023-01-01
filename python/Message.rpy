@@ -32,7 +32,7 @@ init python early:
         @classmethod
         def new(cls, player, fro, to, what, h=None, m=None, seen=False, pos='b', chachong=True):
             if what!='':
-                if to == 'Halluke' and player.hal_p == 11 and player.today == 6 and player.times == 11 and seen==False:
+                if to == 'Halluke' and player.hal_p == 11 and player.today == 6 and player.times in (11, 13) and seen==False:
                     seen = None
                     renpy.music.stop()
                 if to == 'Halluke' and player.hal_p == 99:
@@ -42,13 +42,14 @@ init python early:
                 if h == None:
                     h = player.st()[0]
                 if m == None:
+                    m = player.st()[1]
                     if pos == 'b':
-                        m = int(player.st()[1]) - rd(2, 40)
+                        m = int(m) - rd(2, 40)
                         if m < 0:
                             h = int(h) - 1
                             m += 60
                     elif pos == 'a':
-                        m = int(player.st()[1]) + rd(2, 40)
+                        m = int(m) + rd(2, 40)
                         if m >= 60:
                             h = int(h) + 1
                             m -= 60
@@ -85,6 +86,12 @@ init python early:
                 if i.seen == False and i.fro == fro:
                     i.seen = True
 
+        @classmethod
+        def hasMes(cls, player, to, mes):
+            for i in player.messages[to]:
+                if mes in i.what:
+                    return True
+            return False
 
         @classmethod
         def hasNew(cls, player, to): # 是否单个人有新消息

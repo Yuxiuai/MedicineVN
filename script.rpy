@@ -1,6 +1,7 @@
 label splashscreen:
     scene black
     $ p=None
+    $ replaying = False
 
     $ _game_menu_screen = None
     $ quick_menu=False
@@ -120,13 +121,15 @@ label acceptedName:
             jump nameYourself
 
 label initplayer:
+    $ replaying = False
     $ persistent.beforename = mc
     $ p = Player(name=mc)
     $ WeatherSunny.add(p)
     $ DrugHypnotic.add(p, 5)
     $ DrugColdrex.add(p, 5)
     #$ DrugVitamin.add(p, 2)
-    $ Cola.add(p, 2)
+    $ Cola.add(p, 3)
+    $ SexyPic.add(p, 2)
     $ StreetFood10.add(p, 2)
 
     $ BookDefault.add(p)
@@ -160,6 +163,7 @@ label to_the_title:
     $ _game_menu_screen = None
     $ _skipping = False
     $ quick_menu = False
+    $ replaying = False
 
     if not persistent.nosplash:
         scene black with fade
@@ -173,6 +177,7 @@ label to_the_title:
     return
 
 label testStart:
+    $ replaying = False
     $ config.rollback_enabled = False
     $ p = None
     $ Save.clear()
@@ -181,8 +186,9 @@ label testStart:
     $ DrugHypnotic.add(p, 5)
     $ DrugColdrex.add(p, 5)
     #$ DrugVitamin.add(p, 2)
+    $ Cola.add(p, 3)
+    $ SexyPic.add(p, 2)
     $ StreetFood10.add(p, 2)
-    $ Cola.add(p, 2)
     $ GameDifficulty3.add(p)
 
     $ BookDefault.add(p)

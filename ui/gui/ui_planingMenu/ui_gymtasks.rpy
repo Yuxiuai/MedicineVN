@@ -3,7 +3,7 @@ screen screen_gymtasks(player):
     use barrier(screen="screen_gymtasks", mode=0)
     default show_all_task = False
 
-    $ gymtasks = sliceArr(getSubclasses(GymTask))
+    $ gymtasks = sliceArr(ALLGYMTASKS)
     $ gymtasks[0].remove(NoSport)
 
     #modal True
@@ -109,7 +109,7 @@ screen gymtasks_show(player, gymtasks, show_all_task):
             $gymtasks = returnOnlyAvaiableTask(player, gymtasks)
 
 
-        $UnlockedButCanUnlock = list(filter(lambda x:x.isUnlocked(p) == False and x.unlockCond(p) == True, getSubclasses(GymTask)))
+        $UnlockedButCanUnlock = list(filter(lambda x:x.isUnlocked(p) == False and x.unlockCond(p) == True, ALLGYMTASKS))
 
         xsize 460
         default isFold = {

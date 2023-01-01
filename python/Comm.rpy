@@ -47,7 +47,7 @@ init python early:
             if rra(player, 40) or self.priceFluctuation > 1.5:
                 self.needInspiration = ra(player, 20, 35)
             if rra(player, 40) or self.priceFluctuation > 1.5:
-                self.du = ra(player, 14, 28)
+                self.du = ra(player, 7, 21)
             self.writeCounts = 0
             self.content = []
             self.info = ""
@@ -81,17 +81,19 @@ init python early:
         def commInfo(self):
             info1 = '{size=+2}委托内容：' + self.name + '{/size}\n写作技巧需求：' + str(self.require) + '\n价格修正：' + str(
                 int(self.priceFluctuation * 100)) + '%'
+
             if self.needWord != -1:
                 info2 = '\n字数需求：' + str(self.needWord)
             else:
                 info2 = '\n无字数需求 '
+
             if self.needInspiration != -1:
                 info2 += '\n灵感需求：' + str(self.needInspiration)
             else:
                 info2 += '\n无灵感需求 '
                 
-            if self.broken == True:
-                info2 += '\n委托已超时'
+            if self.broken:
+                info2 += '\n{color=#ff0000}委托已超时{/color}'
             elif self.du != -1:
                 info2 += '\n委托到期时间：' + str(self.du)
             else:
@@ -107,6 +109,10 @@ init python early:
                 word += i[0]
                 rewara += i[1]
                 ins += i[2]
+
+            if rewara <= 0:
+                rewara = 0.0
+
             return [int(word), r2(rewara), ins]
 
         def write(self, player):
@@ -147,7 +153,7 @@ init python early:
             else:
                 reward = value * word
 
-            reward /= player.sev()
+            reward /= player.sevscale()
             reward *= 0.001
 
             MentRezA.add(player, int(ins * 0.15))
@@ -160,7 +166,11 @@ init python early:
                 player.writing += g * 0.01
                 Notice.add('额外获得%s点写作技巧。' % g)
 
-            self.content.append([int(word), r2(reward), ins])
+            if len(self.content) == 0:
+                self.content.append([int(word), r2(reward), ins])
+            else:
+                self.content.append([int(word), 0, ins])
+
             self.writeCounts += 1
 
             word = 0
@@ -168,8 +178,9 @@ init python early:
             ins = 0
             for i in self.content:
                 word += i[0]
-                rewara += i[1]
                 ins += i[2]
+                rewara += i[1]
+                    
 
             finished = 0
 
@@ -200,7 +211,7 @@ init python early:
             # self.inputs.append(inputs)
 
         def checkWritable(self, player):
-            if self.broken == True:
+            if self.broken:
                 return '委托已经超出期限！'
             if player.wri() < self.require:
                 return '写作技巧未达要求！'

@@ -6,7 +6,7 @@ init python:
             return 7
         if 7 < t < 11:
             return 11
-        if t == 11:
+        if t >= 11:
             return 12
 
 

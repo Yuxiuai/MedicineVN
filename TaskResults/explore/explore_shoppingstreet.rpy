@@ -1,5 +1,5 @@
 label explore_shop:
-    $temp = ra(p, 1, 8)
+    $temp = ra(p, 1, 9)
     $jumplabel = 'explore_shop_' + str(temp)
     $renpy.jump(jumplabel)
 
@@ -156,11 +156,11 @@ screen screen_explore_store(player):
                                 if Achievement502.has():
                                     cookie.append(HallukeCookie)
                             vbox:
-                                use screen_buylist(player, [StreetFood9, StreetFood10], p=0.1, d=15, n='货架1')
+                                use screen_buylist(player, [StreetFood9, StreetFood10], p=0.2, d=15, n='货架1')
                                 null height 10
-                                use screen_buylist(player, drinks, p=0.2, d=20, n='货架2')
+                                use screen_buylist(player, drinks, p=0.35, d=20, n='货架2')
                                 null height 10
-                                use screen_buylist(player, cookie, p=0.05, d=0, n='货架3')
+                                use screen_buylist(player, cookie, p=0.1, d=0, n='货架3')
                                 null height 30
                                 textbutton ''
                     
@@ -224,9 +224,9 @@ screen screen_explore_buystreetfood(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [StreetFood1, StreetFood2], p=0.05, d=30, n='货架1')
+                                use screen_buylist(player, [StreetFood1, StreetFood2], p=0.2, d=30, n='货架1')
                                 null height 10
-                                use screen_buylist(player, [StreetFood3, StreetFood4], p=0.02, d=30, n='货架2')
+                                use screen_buylist(player, [StreetFood3, StreetFood4], p=0.1, d=30, n='货架2')
                                 null height 30
                                 textbutton ''
 
@@ -291,7 +291,7 @@ screen screen_explore_buystreetgift(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [Humidifier, MusicBox, ClockTower, TomatoBrooch], p=0.7, d=30, n='礼品')
+                                use screen_buylist(player, [Humidifier, MusicBox, ClockTower, TomatoBrooch], p=1.5, d=30, n='礼品')
                                 null height 30
                                 textbutton ''
 
@@ -355,7 +355,7 @@ screen screen_explore_buycoffee(player):
                             mousewheel True
                             draggable True
                             #scrollbars "vertical"
-                            use screen_buylist(player, [StreetFood5, StreetFood6, StreetFood7, StreetFood8], p=0.2, d=30, n='咖啡')
+                            use screen_buylist(player, [StreetFood5, StreetFood6, StreetFood7, StreetFood8], p=0.4, d=30, n='咖啡')
                             null height 30
                             textbutton ''
 
@@ -420,7 +420,7 @@ screen screen_explore_buystreetflower(player):
                             mousewheel True
                             draggable True
                             #scrollbars "vertical"
-                            use screen_buylist(player, [Flower1, Flower2, Flower3], p=0.4, d=30, n='鲜花')
+                            use screen_buylist(player, [Flower1, Flower2, Flower3], p=0.6, d=30, n='鲜花')
                             null height 30
                             textbutton ''
 
@@ -481,11 +481,13 @@ screen screen_explore_store2(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [Knife], p=0.4, d=35, n='货架1')
+                                use screen_buylist(player, [Knife], p=0.5, d=20, n='货架1')
                                 null height 10
-                                use screen_buylist(player, [RecordingPen, FasciaGun], p=0.7, d=35, n='货架2')
+                                use screen_buylist(player, [FixKit, Bondage], p=0.8, d=20, n='货架2')
                                 null height 10
-                                use screen_buylist(player, [FixKit, Bondage], p=0.6, d=35, n='货架3')
+                                use screen_buylist(player, [RecordingPen, FasciaGun], p=1, d=20, n='货架3')
+                                null height 10
+                                use screen_buylist(player, [Fridge], p=1.5, d=10, n='货架4')
                                 null height 30
                                 textbutton ''
 
@@ -548,6 +550,70 @@ screen screen_explore_store3(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [BadmintonRacket, Sneakers, NotePad, FileFolder], p=0.4, d=35, n='货架1')
+                                use screen_buylist(player, [BadmintonRacket, Sneakers, NotePad, FileFolder], p=0.8, d=20, n='货架1')
                                 null height 30
                                 textbutton ''
+
+
+label explore_shop_9:
+    scene cakeshop with fade
+    "是新开的蛋糕店。"
+    if 9 in p.visitedStore:
+        menu:
+            "蛋糕店。"
+            "就去这里":
+                pass
+            "再去其他地方看看":
+                jump explore_shop
+    $temp = p.money
+    call screen screen_explore_buycake(p)
+    $p.visitedStore.add(9)
+    if p.money==temp:
+        "算了，都太贵了。"
+    else:
+        "就当是犒劳自己努力工作吧！"
+    jump GoOutside_result
+
+
+screen screen_explore_buycake(player):
+    #tag gamegui
+    use barrier(screen="screen_explore_buycake", mode=0)
+
+    #modal True
+    zorder 200
+    drag:
+        xcenter 0.5
+        ycenter 0.48
+        frame:
+            at trans_toRight()
+            style "translucent_frame"
+            xsize 700
+            ysize 800
+            vbox:
+                frame:
+                    background None
+                    yalign 0.001
+                    textbutton '{size=+10}蛋糕店{/size}':
+                        text_style "gameUI"
+                        xoffset -5
+                        yoffset -5
+                        action NullAction()
+
+                    imagebutton auto "gui/exit_%s.png":
+                        xalign 1.0
+                        action [Hide("screen_explore_buycake"), Return()]
+
+                    frame:
+                        background None
+                        ysize 700
+                        xsize 650
+                        ypos 60
+                        xpos 25
+
+                        viewport:
+                            mousewheel True
+                            draggable True
+                            #scrollbars "vertical"
+                            use screen_buylist(player, [CreamCake, StrawberryCake, OrangeCake], p=0.4, d=20, n='蛋糕')
+                            null height 30
+                            textbutton ''

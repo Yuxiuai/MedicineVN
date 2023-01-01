@@ -33,7 +33,7 @@ init python early:
             output += "{/font}"
             return output
 
-    class DespairWaiting(CuredTask):
+    class DespairWaiting(DespairTask):
         id = 100
         name = '等待'
         kind = '日程'
@@ -57,7 +57,7 @@ init python early:
                 player.p2.updateAfterTask(cls)
             renpy.jump("DespairWaiting_result")
 
-    class DespairObserve(CuredTask):
+    class DespairObserve(DespairTask):
         id = 101
         name = '观察状况'
         kind = '日程'
@@ -71,7 +71,7 @@ init python early:
                 player.p2.updateAfterTask(cls)
             renpy.jump("DespairObserve_result")
 
-    class DespairDistribute(CuredTask):
+    class DespairDistribute(DespairTask):
         id = 102
         name = '分发药物'
         kind = '日程'

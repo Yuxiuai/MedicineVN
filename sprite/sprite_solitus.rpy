@@ -252,10 +252,9 @@ layeredimage solitus:
         attribute naked
         attribute white
         attribute dirty
+        attribute ship
 
-    group hat:
-        attribute hat default
-        attribute no_hat null
+    
 
     group eyebrow:
         attribute normal_eyebrow default
@@ -268,6 +267,10 @@ layeredimage solitus:
         attribute surprised_eyebrow
         attribute smile_eyebrow
 
+    group hat:
+        attribute hat default
+        attribute cap
+        attribute no_hat null
 
     group eyes:
         attribute normal_eyes default:
@@ -352,6 +355,7 @@ init python:
                 ['黑短袖', 'normal'],
                 ['白衬衫','white'],
                 ['脏的白衬衫','dirty'],
+                ['白外套','ship'],
                 ['裸体','naked']
             ]
         ],
@@ -359,6 +363,7 @@ init python:
         [
             '头巾', False, [
                 ['佩戴', 'hat'],
+                ['棒球帽', 'cap'],
                 ['无', 'no_hat']
             ]
         ],

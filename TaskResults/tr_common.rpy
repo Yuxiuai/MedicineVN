@@ -1,9 +1,12 @@
 screen Task_processing_screen(player): #show screen freeze(5)
     modal True
     zorder 50
-    $time=r2(2/player.wor())
-    if persistent.nowaiting == True:
-        $time=0.1
+    python:
+        time = r2(2/player.wor())
+        if persistent.nowaiting == True:
+            time = 0.1
+        if time > 2:
+            time = 2
     timer time:
         action Hide(screen="Task_processing_screen")
 

@@ -42,13 +42,14 @@ screen screen_phone_commission(player):
                                 text _("{size=-5}以下是本日平台用户向您发送的写作委托：{/size}") style "white"
                             else:
                                 text _("{size=-5}本日还没有平台用户向您发送任何写作委托。{/size}") style "white"
-                if config.developer==True: 
+
+                if config.developer: 
                     imagebutton idle "gui/reset_w.png":
                         action Function(player.refreshUnacComm)
-                        #action Function(sp_comm_1)
                         hover_sound audio.cursor
                         xpos 0.85
                         ypos 0.05
+
                 frame:
                     background None
                     ypos 0.16
@@ -246,6 +247,7 @@ screen comm_use(player, item, i=None, a=None, width=400, pp=renpy.get_mouse_pos(
                     textbutton _("{size=-3}丢弃文稿{/size}"):
                         action [Hide("comm_use"), Function(ui_itemQuit, item=item, player=player)]
                         activate_sound audio.cursor
+                        
                 textbutton _("{size=-3}返回{/size}"):
                     action Hide("comm_use")
                     activate_sound audio.cursor

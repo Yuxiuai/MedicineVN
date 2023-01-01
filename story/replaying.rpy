@@ -10,5 +10,6 @@ label afterreplay:
         $ p.onOutside = False
         $ p.onVacation = False
         scene office with fade
+    
     $routineMusic(p)
     jump TaskExecuting

@@ -1919,7 +1919,7 @@ label halluke_route_13:
     "玻璃窗由三片纵高窄宽的矩形玻璃片以梯形向外突出的方式连接而成，能看见暗蓝的天空上堆积着碎云，偏亮一点的视野终点的地平线，之后便是朦胧气雾之下的海蓝色。"
     "贴心地，紧挨着玻璃窗的则是一张小桌，大概可以坐在上面喝杯茶之类的。"
     "Halluke把背包放在桌子上，然后把他自己整个人面朝下丢到床上。"
-    $ss("normal2_eyes")
+    $ss("ship cap normal2_eyes")
     s"“你觉得怎么样？”"
     $sh()
     "我把背包也放在桌子上，搭着他的白色背包，将外衣脱掉，放在椅背上。"
@@ -1940,7 +1940,7 @@ label halluke_route_13:
     "刚刚来的时候，外面还是晴天，但等船慢慢开始航行的时候却突然下起雨来了。"
     "Halluke似乎为不能出门吹吹风这件事有点难过，仅仅只是靠在窗户边上看着波澜的海。"
     "我们已经驶离A市的港口了，现在只能从地平线处看到一点点小小的建筑顶端。"
-    $ss("normal2_eyes")
+    $ss("ship cap normal2_eyes")
     s"“不开心吗？”"
     $p.stime(12)
     $sh()
@@ -1969,7 +1969,7 @@ label halluke_route_13:
     $p.stime(15)
     h"“[p.name]？”"
     "他好像叫了好几次我的名字，而我才刚刚回过神来。"
-    $ss("normal2_eyes")
+    $ss("ship cap normal2_eyes")
     s"“噢噢…嗯…怎么了？”"
     $sh()
     "他微笑着，眯起眼睛来，转身试图挣脱我。"
@@ -1981,7 +1981,7 @@ label halluke_route_13:
     show halluke shirt angry_eyes smile_mouth with dissolve
     h"“很少有人喜欢听我的话，也很少有人能让我放下心来和他说话。”"
     $p.stime(16)
-    $ss("normal2_eyes")
+    $ss("ship cap normal2_eyes")
     s"“怎么突然说这个？”"
     $sh()
     show halluke normal_mouth with dissolve
@@ -2019,7 +2019,7 @@ label halluke_route_13:
     $p.stime(20)
     show halluke normal_eyebrow angry_eyes normal_mouth with dissolve
     h"“这样没法完全体会到活着的美好的生命，还有什么存在的必要呢。”"
-    $ss()
+    $ss('ship cap')
     s"“…”"
     s"“就像时常复发的口腔溃疡，鼻塞，嗓子疼这种…”"
     $sh()
@@ -2027,7 +2027,7 @@ label halluke_route_13:
     h"“没错…但倒不至于让我活不下去，我知道有一天会治得好，只是过程也让人感到痛苦。”"
     h"“更像是没法治疗的慢性病…”"
     $p.stime(21)
-    $ss("normal2_eyes smile_mouth")
+    $ss("ship cap normal2_eyes smile_mouth")
     s"“…”"
     s"“假如，你从小时候开始就得了一种病，会让你每天每时每刻都会头痛，医生也治不好的那种，你需要每天都吃药…你会怎么做？”"
     $sh()
@@ -2049,7 +2049,7 @@ label halluke_route_13:
     "看来他还没感觉到我其实心不在焉吧。"
     h"“我们可以找工作人员借一把伞，然后我们去甲板呆一会，如何？”"
     stop music fadeout 5
-    $ss("normal2_eyes smile_mouth")
+    $ss("ship cap normal2_eyes smile_mouth")
     s"“好啊，听你的。”"
     $sh()
     play music audio.deldrimorsdeck fadein 5
@@ -2067,7 +2067,7 @@ label halluke_route_13:
     show halluke shirt angry_eyes with dissolve
     h"“说实话，我没想过自己真的可以找到一个让我无话不谈的人。”"
     h"“我以为我口中的一字一句都要永远地烂在我的思绪里了。”"
-    $ss("normal2_eyes smile_mouth")
+    $ss("ship cap normal2_eyes smile_mouth")
     s"“我记得，我刚认识你不久的时候，你支支吾吾地回答我说的话的样子。”"
     $sh()
     "他也随我的视线看向大海。"
@@ -2075,7 +2075,7 @@ label halluke_route_13:
     show halluke angry_eyes smile_mouth with dissolve
     h"“是啊，我以为我只能在别人面前那个样子了。”"
     h"“谢谢你，在你身边说话，我一点都不感觉紧张。”"
-    $ss("smile_mouth")
+    $ss("ship cap smile_mouth")
     s"“挺好的。”"
     $sh()
     "我们只是看着海。"
@@ -2090,7 +2090,7 @@ label halluke_route_13:
     $p.stime(39)
     show halluke normal_eyebrow normal2_eyes normal_mouth with dissolve
     h"“[p.name]。”"
-    $ss()
+    $ss('ship cap')
     s"“什么？”"
     $sh()
     show halluke awkward_eyebrow angry_eyes normal_mouth with dissolve
@@ -2112,7 +2112,7 @@ label halluke_route_13:
     "于是我高中的时候决定做个老师，又喜欢理科，想着做个化学老师之类的。"
     $p.stime(42)
     "但是为什么阴差阳错地，把志愿填成了软工呢。"
-    $ss()
+    $ss('ship cap')
     s"“软件工程。”"
     $sh()
     show halluke angry_eyes normal_mouth with dissolve
@@ -2138,9 +2138,9 @@ label halluke_route_13:
     show halluke smile_eyes smile_mouth with dissolve
     h"“如果我死了，[p.name]也会很难过吧？”"
     $p.stime(46)
-    $ss("normal2_eyes")
+    $ss("ship cap normal2_eyes")
     s"“但是如果仅仅只是为了别人而活，那还有什么意义？”"
-    $ss("normal2_eyes smile_mouth")
+    $ss("ship cap normal2_eyes smile_mouth")
     s"“不如我们两个肩并肩一起跳海吧？那还算有趣一点。”"
     $sh()
     $p.stime(47)
@@ -2230,7 +2230,7 @@ label halluke_route_14:
     "…"
     "我感觉快乐吗？"
     "或许是的。"
-    "当我把那种小狗一样可爱的狼崽抱起来侵犯时，某种特殊，十分稀有又让人完全痴迷的感觉填满了我的大脑。"
+    "当我把那种小狗一样可爱的家伙抱起来侵犯时，某种特殊，十分稀有又让人完全痴迷的感觉填满了我的大脑。"
     "我突然回忆起几个月前，我在A大体育馆对着小便的Halluke自慰，清理完自己自慰产生的精液后没多久，突然对着马桶呕吐起来的事。"
     if p.hal_p == 14:
         $p.hal_p = 15
@@ -2239,3 +2239,178 @@ label halluke_route_14:
         jump afterreplay
     $p.onOutside = False
     jump dayEnd
+
+
+
+label Halluke_hidden_plot1:
+    stop music fadeout 3
+    "我真的有必要这样做吗？"
+    "我的拇指悬停在手机荧幕之上，如果我按下去，讯息便会以我无法计量的速度传输到基站，随后我的上司的手机便会接收到转发而来的电波。"
+    "为什么我这么紧张呢，以前不也是经常和他请假吗，可这次却…"
+    "我按下了通话按钮。"
+    "随后手机便开始发出等待接通的嘟声。"
+    "我深呼吸，脑中将破碎的词句快速拼接成可用的借口，按理说我不应该如此慌乱的，果然还是因为加班请假…"
+    "电话接通了。"
+    ar"“喂？[p.name]？什么事？”"
+    $ss('glasses white no_hat normal2_eyebrow smile_eyes awkward_mouth sweat')
+    s"“我，我要请假…”"
+    $sh()
+    ar"“为什么请假？今天老板宁愿付给你们这些人三倍的加班费也要让你们所有人加班，你不知道这件事有多重要吗？”"
+    ar"“你要是请假回去睡觉，就去给CEO打电话吧，我做不了主。”"
+    $ss('glasses white no_hat normal_eyebrow smile_eyes agony_mouth sweat')
+    s"“…我，我是为了一件很重要很重要的事。”"
+    $sh()
+    "不，这句话不在我所构思的借口之中，难道我必须临场发挥了吗？"
+    "意外的是，在我说出这句话之后，电话里的声音停下了，他只是叹了口气。"
+    ar"“你说吧。”"
+    $ss('glasses white no_hat scared_eyebrow sad_eyes sad_mouth sweat')
+    s"“因为…因为我的恋人…她…今天是她…很重要的日子…我必须…去…”"
+    $sh()
+    ar"“恋人？你还有女朋友了？”"
+    $ss('glasses white no_hat surprised_eyebrow surprised_eyes surprised_mouth sweat')
+    s"“…对…她今天…比赛，我要去场上…给她加油。”"
+    $ss('glasses white no_hat sad_eyebrow sad_eyes angry_mouth sweat')    
+    s"“我每周都去，如果我这周不去她肯定…”"
+    $sh()
+    ar"“…好了，我听够了。”"
+    play music audio.debilitatinganxiety
+    ar"“你要不要看看你自己编得都是些什么乱七八糟的，把我当小孩耍？”"
+    "恐惧令四肢的血液抽回心脏。"
+    $ss('glasses white no_hat sad_eyebrow closed_eyes angry_mouth sweat')   
+    s"“我…抱歉，但我…必须……”"
+    $sh()
+    stop music
+    ar"“不过…我有没说不给你假吗？”"
+    ar"“…请假的事我去处理，工资的事就算了。你给我记住了，这件事情之后再让我抓到你睡觉…你就完蛋了。”"
+    "什么？他居然…同意了吗？"
+    $ss('glasses white no_hat smile_eyebrow surprised_eyes smile_mouth no_sweat happy tear')   
+    s"“啊啊！…谢谢主管！我…我以后一定！…一定努力工作！…”"
+    $sh()
+    play sound audio.interruption
+    "他挂断了电话。"
+    $routineMusic(p)
+    "刀子嘴豆腐心…至少在我印象里，我每次请假，虽然他嘴上一直在骂我，实际上也没有哪次是不允许我离开的。"
+    "我突然有点感动，是因为我为了他，为了我所爱的人，做了一些我平时不敢去做的事吗？"
+    "这种心中的澎湃感，是因为我正在做着正确的事吗？"
+    scene workarea with fade  
+    $p.onVacation = True
+    $p.stime(55)
+    $p.hal_p = 50
+    $p.checkTask()
+    $routineMusic(p)
+    "我离开公司，回到了家中。"
+    "等吃过午饭之后就像之前那样去球场帮他吧。"
+    
+    jump end_call
+
+label Halluke_hidden_plot2:
+    stop music fadeout 3
+    scene court with fade
+    "我终于来到了这里。"
+    "这不是我第一次来，也不会是最后一次。"
+    show halluke with dissolve
+    "Halluke正在羽毛球场的角落拿着球拍，对着墙壁发球，再将球击回。"
+    show halluke awkward_eyebrow normal2_eyes opened_mouth with dissolve
+    "几乎在我看到他之后的片刻，他就像感知到了我的存在一般，快速地转过头来，看向我。"
+    "我能看到他的眼睛都亮了起来。"
+    "…"
+    scene court_ with dissolve
+    "就这样，我和他坐在球场的休息侧的长凳上等待体育老师的叫号，同时观察着其他人的考试内容。"
+    "其实就是一人在球网一侧发球，而考试人则需要将球击回发球人的半场，同时还要打得足够远，还不能出界。"
+    "乍一看好像还有难度，但想必体育应该不会给太低的分数，所以放宽心态就好。"
+    "更别说我身边的人那么擅长羽毛球，这种考试如鱼得水啦。"
+    show halluke normal_eyebrow cry_eyes normal_mouth with dissolve
+    "我无意识地转头看向他，他却看上去十分紧张，眼神紧盯着体育馆的地面，身体微微颤抖着。"
+    $ss('scared_eyebrow normal2_eyes normal_mouth sweat')
+    s"“发生什么事了？”"
+    $ss('scared_eyebrow normal2_eyes agony_mouth sweat')
+    s"“考试要鼓起劲来啊。”"
+    $sh()
+    show halluke normal_eyebrow angry_eyes cry_mouth with dissolve
+    h"“…没事。”"
+    "他抬头看向我，像是在努力对着我做出一个微笑。"
+    "我有点担心，是因为家里的事吗？"
+    "…"
+    scene court with fade
+    "考试开始了。"
+    "我站在他的球网对侧，一共有五个球，我朝着他丢出球，就像我们平时在课上训练的那样。"
+    play sound audio.badminton
+    "他击到了球，我抬头，白色的羽毛球越过球网，像拖着尾迹的彗星。"
+    teac"“出界。”"
+    "老师的声音让我一惊。"
+    "是我丢球丢的不够好吗？"
+    "我注视着球网对面的Halluke的眼睛，他明显十分紧张。"
+    "不…这样不行…"
+    "我再次丢出接下来的几发球。"
+    play sound audio.badminton
+    teac"“没接到球。”"
+    play sound audio.badminton
+    teac"“没过网。”"
+    play sound audio.badminton
+    teac"“出界。”"
+    play sound audio.badminton
+    teac"“出界！”"
+    "…"
+    "我不敢看同学们异样的眼光，仿佛那个正在考试的人是我。"
+    "我和他离开了球网边。"
+    scene court_ with dissolve
+    "估计Halluke的体育课期末成绩要垫底了，但他的平时分一定能确保他及格的。"
+    "我和他离开球场，他看上去有些沮丧，本就不愿意说话的他更是一言不发。"
+    $ss('sad_eyebrow normal2_eyes normal_mouth')
+    s"“没关系，不用担心的，你这几节课表现得都那么好，而且也都出勤了，老师不会为难你的。”"
+    $sh()
+    "他的状态更差了，只是一直低着头往前走，或许是在听到我的声音后才停下，随后转头看向我。"
+    play music audio.debilitatinganxiety fadein 3
+    show halluke cry_eyebrow angry_eyes angry_mouth with dissolve
+    h"“…你…走吧…”"
+    show halluke cry_eyebrow angry_eyes opened_mouth tear with dissolve
+    h"“…然后…不要来找我了…”"
+    show halluke angry_eyebrow shy_eyes opened_mouth with dissolve
+    h"“都…都是你…都是你害的…都是你！…”"
+    "他的手抓住我胸口的短袖。"
+    "我能解释什么呢？"
+    "是我的角度不对？力度？方向？可我们之前在课上的时候就是这样练习的啊？"
+    $ss('surprised_eyebrow scared_eyes scared_mouth sweat')
+    s"“我…”"
+    $sh()
+    hide halluke with dissolve
+    "还没来得及解释，他便松开了手，朝着球场出口的方向跑走了。"
+    "…"
+    "我该生气吗？为了来他这里，我宁愿抛下一大笔加班费，抛下同事额外包揽我的工作，该卖了Arnel一个大人情。"
+    "明明是他自己太紧张，自己发挥失常，怎么能怪到我头上？"
+    "果然是撒泼成性的小孩子，幼稚得可笑。"
+    "我居然还为了他来到这里。"
+    "…"
+    "唉。"
+    "Halluke他，考试失利成那样，一定很伤心吧。"
+    "所以他才会这样。"
+    "…"
+    "我转头，刚刚我们所在的球网边还在进行着别人的考试。"
+    "那两个我不认识的人配合得十分出彩，几乎每一球都拿到了满分。"
+    "我叹气，离开了羽毛球场。"
+    $p.hal_p = 51
+    $p.times+=1
+    scene nightrun with fade
+    $p.onOutside = True
+    "意料之中，我被他删除了好友。"
+    "这样的话，无论是要我向他道歉，补偿他，或者做一切只求他原谅的事都没可能了。"
+    "羽毛球课已经结束了，我不知道他在哪一班，也不知道他是哪一届的。"
+    "也许因为这次考试，他可能再也不会打羽毛球了。"
+    "都是因为我。"
+    "因为我。"
+    $p.times+=1
+    stop music fadeout 3
+    $HallukeTask1.lock(p)
+    $HallukeTask2.lock(p)
+    $Achievement505.achieve()
+    scene black with dissolve
+    "……"
+    play sound unlocking
+    $pause(0.5)
+    play sound audio.button
+    scene livingroom
+    $p.onOutside = False
+    jump TaskExecuting
+
+
+

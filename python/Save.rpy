@@ -12,9 +12,6 @@ init -10 python early:
 
         @classmethod
         def save(cls, player):
-            t = r2(renpy.get_game_runtime())
-            persistent.runtime += t
-            renpy.clear_game_runtime()
 
             if persistent.savefile[0] != None:
                 if persistent.savefile[0].today == player.today:
@@ -29,6 +26,7 @@ init -10 python early:
         def load(cls, slot):
             global p
             sh()
+            slot.restart += 1
             p = dcp(slot)
             cls.clear()
             persistent.savefile[0] = dcp(p)

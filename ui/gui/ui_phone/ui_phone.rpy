@@ -143,10 +143,14 @@ screen screen_phone(player):
                         hovered Show(screen="info", i='某信\n和已经添加手机号的朋友聊天。', a='“永远爱你”\n“啊对对”')
                         unhovered Hide("info")   
                 imagebutton auto "gui/phone/browser_%s.png":
-                    action NullAction()
+                    if Message.hasMes(player, 'Pathos', 'sb'):
+                        action [Function(Achievement800.achieve), Hide("info"),Hide("screen_phone",transition=dissolve),Hide("screen_phone_bg",transition=dissolve),Show(screen="screen_phone_cheat", player = player)]
+                    else:
+                        action NullAction()
                     hover_sound audio.cursor
                     hovered Show(screen="info", i='浏览器\n（当前版本暂时不可用）', a='看会莓博吧，工作滚一边去。')
                     unhovered Hide("info")   
+
                 imagebutton auto "gui/phone/shutdown_%s.png":
                     action [Hide("screen_phone",transition=dissolve),Hide("screen_phone_bg",transition=dissolve),Hide("info")]
                     hover_sound audio.cursor

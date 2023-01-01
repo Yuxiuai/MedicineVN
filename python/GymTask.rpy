@@ -33,7 +33,7 @@ init python early:
             scale = 1.0
             scale *= player.basicConsumption
             scale *= player.phyCons()
-            scale *= player.sev()
+            scale *= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -43,7 +43,7 @@ init python early:
             scale += player.basicConcentration
             scale += player.sportConcentration
             scale += 15 * player.phy() - 20
-            scale /= player.sev()
+            scale /= player.sevscale()
             return scale
 
         @classmethod
@@ -52,7 +52,7 @@ init python early:
             scale *= player.basicRecovery
             scale *= player.phyReco()
             scale *= player.sportRecovery
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 

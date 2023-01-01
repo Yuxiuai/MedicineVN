@@ -153,9 +153,11 @@ screen screen_phone_video_show(player, who='pathos'):
     default d_routes = {
         'pathos':['解锁第二种药物', '解锁第三种药物'],
         'halluke':['初次偷拍','Halluke的能力展示','厕所自慰','初次留下印象','自我怀疑',
-            '初次开口','周末约球','特别的约会','获得护膝','鸭血粉丝店的思考','',
+            '初次开口','周末约球','特别的约会','获得护膝','粉丝店的思考','',
             '体育馆的亲吻与诉苦','对一切失去兴趣','与Halluke的轮渡酒店之一','与Halluke的轮渡酒店之二'],
-        'acolas':['电梯偶遇','性骚扰式自我介绍'],
+        'acolas':['电梯偶遇','性骚扰式自我介绍','道歉与游戏项目','火锅店与第一次项目','结束第一次项目',
+        '咖啡营地与第二次项目','缺席会议的Acolas','医院看望','Acolas的公寓与结束第二次项目','游戏发布与获得旧笔记',
+        'Acolas的办公室','报复性工作的Acolas','与Acolas的轮渡酒店之一','与Acolas的轮渡酒店之二'],
     }
 
     #tag gamegui
@@ -211,19 +213,22 @@ screen screen_phone_video_show(player, who='pathos'):
 screen video_slot(player, routename, labelname):
     frame:
         ysize 70
-        xsize 335
+        xsize 340
         xpos 15
         background Frame("gui/style/transparent.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-        textbutton routename text_style "white":
-            action [SetVariable("replaying", True), SetVariable("replaying_times", player.times), SetVariable("replaying_labelname", labelname), Hide("screen_phone_video_show"),Hide("screen_phone_bg"),Function(renpy.hide_screen,"screen_dashboard"), Return()]
-            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-            xfill True
-            yfill True
-            text_xoffset 85
-            activate_sound audio.cursor
-        imagebutton idle "gui/phone/video.png":
-            yalign 0.5
-            xalign 0.05
+        hbox:
+            imagebutton idle "gui/phone/video.png":
+                yalign 0.5
+                xalign 0.05
+                background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+
+            textbutton routename text_style "white":
+                action [SetVariable("replaying", True), SetVariable("replaying_times", player.times), SetVariable("replaying_labelname", labelname), Hide("screen_phone_video_show"),Hide("screen_phone_bg"),Function(renpy.hide_screen,"screen_dashboard"), Return()]
+                background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                xfill True
+                yfill True
+                activate_sound audio.cursor
+            
     null height 2
 
 
@@ -235,7 +240,7 @@ screen screen_phone_videos(player, who, routes):
     frame:
         background None
         vbox:
-            xsize 370
+            xsize 330
             for i in range(len(routes)): 
                 $labelname = who + '_route_' + str(i)
                 if renpy.has_label(labelname):

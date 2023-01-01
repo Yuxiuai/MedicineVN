@@ -16,7 +16,7 @@ label acolas_plot_judge:  # 羽毛球课程
 
         if p.aco_p == 8 and AcolasTask2 not in p.unlockedTasks:
             $AcolasTask2.unlock(p)
-            $Message.new(p, 'Acolas', 'Acolas', '好消息！\n医生说我可能今天就可以出院了，你似乎还没来过我家吧？来玩一玩吧？周末的下午我有空哦。\n我家就在亚斯塔禄大街的恩多尔芬小区，54栋3312，到了楼下直接说我的名字就可以，服务生会带你上来的。\n除此之外我还想问你一些其他的东西，等你来了再和你说。', pos='a')
+            $Message.new(p, 'Acolas', 'Acolas', '好消息！\n医生说我可能今天就可以出院了，你似乎还没来过我家吧？来玩一玩吧？周六的下午我有空哦。\n我家就在亚斯塔禄大街的恩多尔芬小区，54栋3112，到了楼下直接说我的名字就可以，服务生会带你上来的。\n除此之外我还想问你一些其他的东西，等你来了再和你说。', pos='a')
         $p.times+=1
         jump TaskExecuting
 
@@ -50,20 +50,6 @@ label acolas_route_0:
     "我单手按下电源键，将整理好的文件资料塞进文件夹里，丢进抽屉里之后离开我的工位。"
     "终于下班了。"
     "…"
-    menu:
-        "去楼梯（将无法触发人物剧情）" if replaying and p.aco_p>0 or not replaying:
-            "走楼梯回去吧……"
-            "公司的电梯总让我想起医院的电梯，似乎两个电梯是同一型号的。"
-            "……"
-            $end_plot()
-            if replaying:
-                jump afterreplay
-            $p.aco_p = -1
-            $p.times+=1
-            jump TaskExecuting
-                
-        "去电梯" if replaying and p.aco_p==0 or not replaying:
-            pass
 
     scene corridor with dissolve
     "如果他真的有能力带领我们，让项目进度更快的话，那也算是好事吧。"
@@ -923,7 +909,7 @@ label acolas_route_6:
     "待会给他发某信问问他怎么回事吧…"
     $end_plot()
     if p.aco_p == 6:
-        $Message.new(p, 'Acolas', 'Acolas', '在吗……\n我忘记和你说了，我因为最近着凉了，现在在医院输液，如果你想来的话，明后天的下午可以来市立医院看望我一下……\n我就在住院部的324号房间。')
+        $Message.new(p, 'Acolas', 'Acolas', '在吗……\n我忘记和你说了，我因为最近着凉了，现在在医院输液，如果你想来的话，这周末可以来市立医院看望我一下……\n我就在住院部的324号房间。')
         $p.aco_p = 7
     if replaying:
         jump afterreplay
@@ -1125,6 +1111,9 @@ label acolas_route_8:
     s"“但是…那个…你最喜欢的动漫是什么…有机会的话我会去看看的！”"
     $sh()
     stop music
+    if AcolasItem3.has(p) and not replaying:
+        if AcolasItem3.get(p).progress >= 100:
+            jump Acolas_hidden_plot1
     show acolas vest2 angry_eyebrow normal_eyes normal_mouth with dissolve
     a"“其实，除此之外更重要的是，我更关心你的文案写的如何了。”"
     $Erection.clearByType(p)
@@ -1447,15 +1436,10 @@ label acolas_route_11:
     "或许他实在是太忙了吧，甚至听不见我敲门的声音。"
     "也可能是他知道是我，只是不想开门。"
     menu:
-        "直接推门进入他的办公室（可能会让他十分不满）" if (not replaying and (p.route == 'a' or not p.route)) or (replaying and p.aco_p != 98 and p.aco_p != 99):
-            menu:
-                "真的吗？即便会让这条线完全失败哦？即便你可能无法和他永远在一起哦？"
-                "推门":
-                    pass
-                "离开":
-                    jump acolas_route_11_1
-                
-        "离开（反正现在和他也没什么想说的）" if not replaying or (replaying and p.aco_p != 98 and p.aco_p != 99):
+        "用力推开门" if (not replaying and (p.route == 'a' or not p.route)) or (replaying and p.aco_p != 98 and p.aco_p != 99):
+            pass
+    
+        "离开" if not replaying or (replaying and p.aco_p != 98 and p.aco_p != 99):
             jump acolas_route_11_1
     
     play sound audio.door
@@ -1647,7 +1631,7 @@ label acolas_route_12:
     "玻璃窗由三片纵高窄宽的矩形玻璃片以梯形向外突出的方式连接而成，能看见暗蓝的天空上堆积着碎云，偏亮一点的视野终点的地平线，之后便是朦胧气雾之下的海蓝色。"
     "贴心地，紧挨着玻璃窗的则是一张小桌，大概可以坐在上面喝杯茶之类的。"
     "Acolas把他的背包放在桌子上，随后便抱着两臂，像评价师那样打量着整个房间。"
-    $ss("normal2_eyes")
+    $ss("ship cap normal2_eyes")
     s"“你觉得怎么样？”"
     $sh()
     "我把背包放在他的包旁边，将外衣脱掉，放在椅背上。"
@@ -1656,7 +1640,7 @@ label acolas_route_12:
     a"“看样子内饰并不值这个价格，但也能接受。毕竟也有名气的价格在内…”"
     show acolas vest necklace frown_eyebrow with dissolve
     a"“…一静下来我就在想工作和我们在做的游戏的事，早该系统性地对游戏做一次单元测试的，不然就不会出这么多问题…”"
-    $ss("awkward_eyebrow awkward_eyes awkward_mouth sweat")
+    $ss("ship cap awkward_eyebrow awkward_eyes awkward_mouth sweat")
     s"“说好了，来这里就给我认真放松啊…别再想工作的事了。”"
     $sh()
     "担忧的情绪攀上心思，但毕竟是他，如果真的放松下来就不是他了。"
@@ -1888,26 +1872,26 @@ label acolas_route_13:
     "Acolas则在看着大海，我顺着他的方向看去，在地平线处，已经能够看到陆地和较高的建筑群了。"
     "这场邮轮之行就快结束了，他看上去有些忧愁。"
     show acolas vest necklace smile_eyebrow normal_eyes normal_mouth with dissolve
-    a"“[p.name]害怕被抛弃吗？”"
+    a"“[p.name]，有个问题想问你……你害怕被抛弃吗？”"
     "他突然开口。"
     "我稍微有些惊讶，他为什么突然会有这样的想法。"
     show acolas vest necklace normal_eyebrow sad_eyes normal_mouth with dissolve
     a"“那种，没有人需要你，没有人觉得你有什么用处，大家都唾弃你，还有人夺走你的心血和作品，发表出来后受他人敬仰。”"
     "…"
     $p.stime(45)
-    $ss("scared_eyebrow normal_eyes normal_mouth")
+    $ss("ship cap scared_eyebrow normal_eyes normal_mouth")
     s"“是，这很可怕。”"
     $sh()
     show acolas vest necklace normal_eyebrow normal2_eyes normal_mouth with dissolve
     a"“如果我要是变成那个样子，可能就没有什么信心完成自己的想法了。”"
-    $ss("smile_eyebrow smile_eyes scared_mouth")
+    $ss("ship cap smile_eyebrow smile_eyes scared_mouth")
     s"“但是大家都喜欢你，大家都敬佩你的能力，你也为我们，尤其是我，做了很多。”"
-    $ss("agony_eyebrow smile_eyes normal_mouth")
+    $ss("ship cap agony_eyebrow smile_eyes normal_mouth")
     s"“你害怕被抛弃吗？所以Acolas才会那样努力吧。”"
     s"“努力到身心俱疲，在生病的时候责备自己没法完成自己想做的事，甚至责备别人，要求别人也和你一同努力到极限。”"
     "我看向他。"
     $p.stime(46)
-    $ss("normal_eyebrow normal_eyes smile_mouth")
+    $ss("ship cap normal_eyebrow normal_eyes smile_mouth")
     s"“希望你能稍微停下来速度，像这样好好休息一会…”"
     $sh()
     show acolas vest necklace surprised_eyebrow normal3_eyes normal_mouth with dissolve
@@ -1918,9 +1902,9 @@ label acolas_route_13:
     $p.stime(47)
     show acolas vest necklace smile_eyebrow smile_eyes sad_mouth with dissolve
     a"“我感觉我真是个差劲的人，在我身边肯定很累，很有压力吧。”"
-    $ss("normal_eyebrow normal_eyes normal_mouth")
+    $ss("ship cap normal_eyebrow normal_eyes normal_mouth")
     s"“是啊，我也从来没否认过，但没关系，我会陪着你的，直到你变成更好的自己…”"
-    $ss("normal2_eyebrow normal2_eyes smile_mouth")
+    $ss("ship cap normal2_eyebrow normal2_eyes smile_mouth")
     s"“我们…还有很长的时间呢…”"
     $sh()
     $p.stime(48)
@@ -1941,7 +1925,7 @@ label acolas_route_13:
     a"“[p.name]，我决定了。”"
     show acolas vest necklace frown_eyebrow smile_eyes smile_mouth with dissolve
     a"“下周五我就准备辞职。”"
-    $ss("surprised_eyebrow surprised_eyes scared_mouth")
+    $ss("ship cap surprised_eyebrow surprised_eyes scared_mouth")
     s"“啊？真的？”"
     $sh()
     $p.stime(31)
@@ -1952,20 +1936,21 @@ label acolas_route_13:
     a"“我想通了，也许职场压力确实大了点，或者仅仅是因为我自己无意识地放纵自己的报复性工作欲，给自己的压力太多了…”"
     show acolas vest necklace awkward_eyebrow smile_eyes surprised_mouth with dissolve
     a"“当总监这段时间我攒了很多钱，就算不够…不是还有你嘛——”"
-    $ss("sad_eyebrow awkward_eyes smile_mouth")
+    $ss("ship cap sad_eyebrow awkward_eyes smile_mouth")
     s"“哎呀…那你在家里呆爽了，偶尔帮我分摊下工作也挺好的…”"
     $sh()
     $p.stime(32)
     show acolas vest necklace sad_eyebrow normal_eyes sad_mouth blush with dissolve
     a"“是你让我学会放松的，怎么又突然反悔～”"
-    $ss("angry_eyebrow normal2_eyes angry_mouth")
+    $ss("ship cap angry_eyebrow normal2_eyes angry_mouth")
     s"“你这家伙！”"
     $sh()
     show acolas vest necklace smile_eyebrow smile_eyes laugh_mouth blush with dissolve
     "我不再理他，拿出来手机准备刷一会莓博。"
     "等这周结束，他辞职了，我的病应该也好了。"
     $p.stime(33)
-    "之后的人生，会变成什么样呢？"
+    "即便这段时间出现了很多的不愉快，或许我已经对他不再像往日那样热情？"
+    "……之后的人生，会变成什么样呢？"
     $end_plot()
     if p.aco_p == 13:
         $p.aco_p = 14
@@ -1992,3 +1977,144 @@ label acolas_route_98:
         jump afterreplay
     $p.times+=1
     jump TaskExecuting
+
+
+label Acolas_hidden_plot1:
+    show acolas vest2 smile_eyebrow normal_eyes normal_mouth with dissolve
+    a"“关于你前天发给我的文稿，我已经都看完了。”"
+    $Erection.clearByType(p)
+    "我突然一惊，仿佛全身的血肉都收缩起来，连带那东西也一起萎掉了。"
+    "怎么在这种时候提工作的事，我可不想再那样熬夜了……"
+    "有好几次都想着放弃，但一想到第一次他帮我做了那么多工作，我却还让他一个人完成，后来他又进了医院的事，就觉得就算撑下去也没关系……"
+    "只是，我真的有必要这样做吗……"
+    "那天晚上我几乎没怎么睡着，脑袋里像是完全炸开了花……"
+    show acolas vest2 normal_eyebrow normal_eyes laugh_mouth with dissolve
+    a"“不愧是在平台上有很多粉丝的大作家啊，写出来的文案就是棒。”"
+    show acolas vest2 surprised_eyebrow smile_eyes smile_mouth with dissolve
+    a"“我几乎也要代入到你写的角色之中了，你是怎么把这种头疼的痛苦和绝望写得那么精致又真实的？难道你文稿中的他就是你？…”"
+    "或许他的认可能让我开心很久吧，我抬头看向他。"
+    $ss('sad_eyebrow sad_eyes sad_mouth sweat')
+    s"“啊啊…当然不是啦，只是我…随便写的…而已…”"
+    $ss('scared_eyebrow normal2_eyes smile_mouth sweat')
+    s"“你能喜欢我写的我很开心…”"
+    $sh()
+    "一切都过去了，会好起来的，会好起来的，至少我的努力没有白费。"
+    "他会因为我的努力爱上我的，对吧？"
+    "我努力完成了他给我的任务，他肯定完全爱上我了对吧？"
+    "啊啊……如果这能让他爱上我的话……"
+    show acolas vest2 normal_eyebrow normal2_eyes smile2_mouth with dissolve
+    a"“我打算再过一段时间就发布，这段时间里不知道你愿不愿意为整个游戏再润色一下呢？”"
+    play music audio.debilitatinganxiety
+    show acolas vest2 normal_eyebrow normal_eyes smile2_mouth with dissolve
+    a"“你下周的这个时候把润色完的文稿发给我就好。”"
+    show acolas vest2 awkward_eyebrow normal_eyes laugh_mouth with dissolve
+    a"“相信你不会让我失望的，对吧？”"
+    show acolas vest2 normal_eyebrow normal3_eyes smile2_mouth phoneon with dissolve
+    "我看着他拿出手机，将游戏的文件发给了我。"
+    "我只是看着，睁开双眼看着。"
+    "看着他的手机，看着他，看着我的双手。"
+    "从自己口袋中传来的手机提示音如若丧钟之鸣。"
+    "…"
+    $end_plot()
+    stop music fadeout 3
+    if p.aco_p == 8:
+        $AcolasTask2.lock(p)
+        if AcolasItem3.has(p):
+            $AcolasItem3.get(p).remove(p)
+        $AcolasItem4.add(p)
+        $p.aco_p = 50
+    $p.times+=1
+    jump TaskExecuting
+
+label Acolas_hidden_plot2:
+    $blackmask(p)
+    "结束了。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "一切都结束了。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "是的，很好。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我的状态很好。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "说真的，我已经不知道我到底在写什么了。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "或许我只是随便乱涂乱画，像猴子一样胡乱敲击按键试图写出名著。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我完成了这个游戏。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "这个主角是我自己的游戏。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "是的，在游戏的最后，故事里的我把自己的病治好了。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "或许现在的我的病也治好了。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我的头一点都不痛，就像刚刚出生那样完美。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "是的，我完成了，他的作品。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我也可以，像他一样，一天就完成这个作品。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我不会再让他失望，我只需要让他看一看，我的作品。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我美丽的作品。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我会让他看到的。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "现在，我只需要，休息一会。"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "只需要，休息一会…"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "我很困…"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "只要…"
+    $p.color -= 0.05
+    scene workarea at setcolor
+    call screen cfreeze(1)
+    "休息一会……"
+    play sound audio.drop
+    call hide_all_screens from _call_hide_all_screens_4
+    scene black
+    show screen freeze(3)
+    pause
+    $Achievement504.achieve()
+    $Notice.show()
+    "{color=#FF0000}Bad Ending ？\n——踏入乌托邦的大门。{/color}"
+    return

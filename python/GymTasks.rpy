@@ -80,7 +80,7 @@ init python early:
         name = '哑铃训练'
         kind = '中难度'
         unlocked = False
-        info = '基础恢复：3\n获得1点身体素质，获得2层酸痛。\n\n有概率会在运动中受伤。\n\n解锁条件 1.3身体素质解锁。'
+        info = '基础恢复：3\n获得1~2点身体素质，获得2~3层酸痛。\n\n有概率会在运动中受伤。\n\n解锁条件 1.3身体素质解锁。'
         ad = '其实这枚哑铃的材质是木棍和棉花糖。'
 
         @classmethod
@@ -100,7 +100,7 @@ init python early:
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
             player.mental += reco
-            g = 0.01 + player.physicalGain
+            g = 0.01 * ra(player, 1, 2) + player.physicalGain
             player.physical += g
             Notice.add('恢复了%s点精神状态。' % reco)
             Notice.add('升高了%s点身体素质。' % int(g * 100))
@@ -143,7 +143,7 @@ init python early:
         name = '臂力训练'
         kind = '高难度'
         unlocked = False
-        info = '基础恢复：3.5\n获得2~3点身体素质，获得3层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
+        info = '基础恢复：3.5\n获得2~4点身体素质，获得3层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
         ad = '“火麒麟犹如千斤热油的血喷洒到他的左臂上，就像要将他的手臂炸熟一样。”'
 
         @classmethod
@@ -163,7 +163,7 @@ init python early:
         def executeTask(cls, player):
             reco = r2(3.5 * cls.getRecoScale(player))
             player.mental += reco
-            g = ra(player, 2, 3) * 0.01 + player.physicalGain
+            g = ra(player, 2, 4) * 0.01 + player.physicalGain
             player.physical += g
             Notice.add('恢复了%s点精神状态。' % reco)
             Notice.add('升高了%s点身体素质。' % int(g * 100))
@@ -177,7 +177,7 @@ init python early:
         name = '深蹲训练'
         kind = '高难度'
         unlocked = False
-        info = '基础恢复：3\n获得4层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
+        info = '基础恢复：3\n获得4~6层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。'
         ad = '“世间泰坦仅允我喘息，深陷其足下泥泞。”'
 
         @classmethod
@@ -198,7 +198,7 @@ init python early:
             reco = r2(3 * cls.getRecoScale(player))
             player.mental += reco
             Notice.add('恢复了%s点精神状态。' % reco)
-            Soreness.add(player, 4)
+            Soreness.add(player, ra(player, 4, 6))
             PhysRezB.add(player)
             cls.setInjured(player, 80)
 

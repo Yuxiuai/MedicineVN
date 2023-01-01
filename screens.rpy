@@ -250,13 +250,9 @@ style choice_button_text is default:
 
 
 
-
-
-screen quick_menu()
-
-
 screen quickmenu(player):
     zorder 100
+    use replaying_indicator()
 
     if quick_menu:
         hbox:
@@ -766,9 +762,17 @@ screen saveslot(slot, mode=-1):
             if mode >= 0:
                 savename += '⎟%s' % slot.savetime
             slotname = '{size=+5}'+slot.name+'{/size}'
+
             slotinfo = '精神状态: %s\n剩余药物: %s\n所持金钱: %s\n工作进度: %s\n\n严重程度: %s\n工作能力: %s\n身体素质: %s\n写作技巧: %s' % (slot.mental, slot.meds(), slot.money, r2(slot.achievedGoal/slot.goal), slot.severity, slot.working, slot.physical, slot.writing)
-            if hasattr(slot, 'version'):
-                slotinfo += '\n\n存档版本：%s' % slot.version 
+
+            if hasattr(slot, 'playtime'):
+                playtime_h = int(slot.playtime//60//60)
+                playtime_m = int((slot.playtime - playtime_h *60*60)//60)
+                playtime_s = int((slot.playtime - playtime_h *60*60 - playtime_m *60))
+                slotinfo = '%s\n\n存档版本：%s\n游戏时间：%s小时%s分%s秒\n读档次数：%s' % (slotinfo, slot.version, playtime_h, playtime_m, playtime_s, slot.restart)
+            
+            elif hasattr(slot, 'version'):
+                slotinfo = '%s\n\n存档版本：%s' % (slotinfo, slot.version)
 
     frame:
         background None
@@ -883,9 +887,9 @@ screen diff_select(player=player):
         frame:
             background None
             ysize 50
-            textbutton _("极易") text_style 'white':
+            textbutton _("简单") text_style 'white':
                 action [Function(GameDifficulty1.add, player),Hide("diff_select"),Hide('info')]
-                hovered Show(screen='info', i='游戏难度：极易\n\n勾选此项后，将游戏难度设置为极易。\n在此难度下，大幅度降低精神状态的消耗，睡眠消耗的精神状态并大幅度提高精神状态的恢复。',width=600)
+                hovered Show(screen='info', i='游戏难度：简单\n\n勾选此项后，将游戏难度设置为简单。\n在此难度下，大幅度降低精神状态的消耗，睡眠消耗的精神状态并大幅度提高精神状态的恢复。\n同时，允许直接阅读书籍而不需要回合阅读，药店也会出售更多的药物。',width=600)
                 unhovered Hide('info')
                 background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                 xfill True
@@ -895,20 +899,20 @@ screen diff_select(player=player):
                     xalign 1.0
                     yalign 0.5
 
-        frame:
-            background None
-            ysize 50
-            textbutton _("较易") text_style 'white':
-                action [Function(GameDifficulty2.add, player),Hide("diff_select"),Hide('info')]
-                hovered Show(screen='info', i='游戏难度：较易\n\n勾选此项后，将游戏难度设置为较易。\n在此难度下，低精神状态的消耗，睡眠消耗的精神状态并提高精神状态的恢复。',width=600)
-                unhovered Hide('info')
-                background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                xfill True
-                activate_sound audio.cursor
-            if GameDifficulty2.has(player):
-                imagebutton idle "gui/phone/right_.png":
-                    xalign 1.0
-                    yalign 0.5
+        #frame:
+        #    background None
+        #    ysize 50
+        #    textbutton _("较易") text_style 'white':
+        #        action [Function(GameDifficulty2.add, player),Hide("diff_select"),Hide('info')]
+        #        hovered Show(screen='info', i='游戏难度：较易\n\n勾选此项后，将游戏难度设置为较易。\n在此难度下，低精神状态的消耗，睡眠消耗的精神状态并提高精神状态的恢复。',width=600)
+        #        unhovered Hide('info')
+        #        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+        #        xfill True
+        #        activate_sound audio.cursor
+        #    if GameDifficulty2.has(player):
+        #        imagebutton idle "gui/phone/right_.png":
+        #            xalign 1.0
+        #            yalign 0.5
 
         frame:
             background None
@@ -925,27 +929,27 @@ screen diff_select(player=player):
                     xalign 1.0
                     yalign 0.5
 
-        frame:
-            background None
-            ysize 50
-            textbutton _("较难") text_style 'white':
-                action [Function(GameDifficulty4.add, player),Hide("diff_select"),Hide('info')]
-                hovered Show(screen='info', i='游戏难度：较难\n\n勾选此项后，将游戏难度设置为较难。\n在此难度下，提高精神状态的消耗和睡眠消耗的精神状态。',width=600)
-                unhovered Hide('info')
-                background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                xfill True
-                activate_sound audio.cursor
-            if GameDifficulty4.has(player):
-                imagebutton idle "gui/phone/right_.png":
-                    xalign 1.0
-                    yalign 0.5
+        #frame:
+        #    background None
+        #    ysize 50
+        #    textbutton _("较难") text_style 'white':
+        #        action [Function(GameDifficulty4.add, player),Hide("diff_select"),Hide('info')]
+        #        hovered Show(screen='info', i='游戏难度：较难\n\n勾选此项后，将游戏难度设置为较难。\n在此难度下，提高精神状态的消耗和睡眠消耗的精神状态。',width=600)
+        #        unhovered Hide('info')
+        #        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+        #        xfill True
+        #        activate_sound audio.cursor
+        #    if GameDifficulty4.has(player):
+        #        imagebutton idle "gui/phone/right_.png":
+        #            xalign 1.0
+        #            yalign 0.5
 
         frame:
             background None
             ysize 50
-            textbutton _("极难") text_style 'white':
+            textbutton _("硬核") text_style 'white':
                 action [Function(GameDifficulty5.add, player),Hide("diff_select"),Hide('info')]
-                hovered Show(screen='info', i='游戏难度：极难\n\n勾选此项后，将游戏难度设置为极难。\n在此难度下，提升更多精神状态的消耗，睡眠消耗的精神状态并降低精神状态的恢复。',width=600)
+                hovered Show(screen='info', i='游戏难度：硬核\n\n勾选此项后，将游戏难度设置为硬核。\n在此难度下，提升更多精神状态的消耗，睡眠消耗的精神状态并降低精神状态的恢复。',width=600)
                 unhovered Hide('info')
                 background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                 xfill True
@@ -1152,7 +1156,7 @@ screen challenges_select(player=player):
             background None
             ysize 50
 
-            $ i_gm1 = '开启该模式后，锁定难度为极难，同时游戏的难度会大幅上升，具体效果如下。\n\n偏头痛：每完成一个日程都会额外随机消耗精神状态。\n资源供给：立刻获得1000元，但后续药价的自然增长幅度提升150%。\n自卑感：立刻获得20点全属性，但过夜后每个能力属性都有50%的概率失去1%，25%的概率永久提升1%严重程度。\n理财不善：所持金钱大于500元时，过夜后失去10%的当前金钱。\n效率低下：每周需要完成的工作每周都会提升3%。\n药物过敏：药物恢复效果小幅度提升15%，过夜后有33%的概率提升随机一种已经使用过的药物的抗药性。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
+            $ i_gm1 = '开启该模式后，锁定难度为硬核，同时游戏的难度会大幅上升，具体效果如下。\n\n偏头痛：每完成一个日程都会额外随机消耗精神状态。\n资源供给：立刻获得1000元，但后续药价的自然增长幅度提升150%。\n自卑感：立刻获得20点全属性，但过夜后每个能力属性都有50%的概率失去1%，25%的概率永久提升1%严重程度。\n理财不善：所持金钱大于500元时，过夜后失去10%的当前金钱。\n效率低下：每周需要完成的工作每周都会提升3%。\n药物过敏：药物恢复效果小幅度提升15%，过夜后有33%的概率提升随机一种已经使用过的药物的抗药性。\n\n{color=#ff0000}仅在第一周内可添加！\n添加后无法解除！{/color}'
 
             textbutton _("挑战模式") text_style 'white':
                 if player.week < 2:
@@ -1274,7 +1278,7 @@ screen achievements(player=None):
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
-                textbutton '%s / %s' % (len(Achievement.done()), len(getSubclasses(Achievement))) text_style 'white':
+                textbutton '%s / %s' % (len(Achievement.done()), len(ALLACHIEVEMENTS)) text_style 'white':
                     action NullAction()
                     xalign 0.975
                     yalign 0.2
@@ -1340,7 +1344,7 @@ screen achievements(player=None):
                             text '？' * len(i.name) style 'white':
                                 xfill True
                                 yoffset 20
-                            text '？' * len(i.info) style 'admonition_text':
+                            text i.info style 'admonition_text':
                                 xfill True
                                 yoffset 13
 
@@ -1374,7 +1378,7 @@ screen preferences(player=None):
                         xfill True
                         activate_sound audio.cursor
                     if GameDifficulty1.has(player):
-                        textbutton _("极易") text_style 'white':
+                        textbutton _("简单") text_style 'white':
                             action NullAction()
                             xalign 0.975
                             yalign 0.2
@@ -1394,7 +1398,7 @@ screen preferences(player=None):
                             xalign 0.975
                             yalign 0.2
                     if GameDifficulty5.has(player):
-                        textbutton _("极难") text_style 'white':
+                        textbutton _("硬核") text_style 'white':
                             action NullAction()
                             xalign 0.975
                             yalign 0.2
@@ -1781,7 +1785,7 @@ screen screen_guidee(player, gd, gud):
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
-                textbutton '%s / %s' % (len(gd), len(getSubclasses(Effect))) text_style 'white':
+                textbutton '%s / %s' % (len(gd), len(ALLEFFECTS)) text_style 'white':
                     action NullAction()
                     xalign 0.975
                     yalign 0.2
@@ -1840,7 +1844,7 @@ screen screen_guidei(player, gd, gud):
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
-                textbutton '%s / %s' % (len(gd), len(getSubclasses(Item))) text_style 'white':
+                textbutton '%s / %s' % (len(gd), len(ALLITEMS)) text_style 'white':
                     action NullAction()
                     xalign 0.975
                     yalign 0.2
@@ -2060,7 +2064,7 @@ screen history():
                             yalign 0.5
                             substitute False
                             size 29
-                            xsize 1000
+                            xsize 950
 
 
                     else:
@@ -2069,7 +2073,7 @@ screen history():
                             yalign 0.5
                             substitute False
                             size 29
-                            xsize 1000
+                            xsize 950
 
 
 
@@ -2379,6 +2383,21 @@ screen skip_indicator():
         text "▸" at delayed_blink(0.0, 1.0) style "skip_triangle"
         text "▸" at delayed_blink(0.2, 1.0) style "skip_triangle"
         text "▸" at delayed_blink(0.4, 1.0) style "skip_triangle"
+
+screen replaying_indicator():
+
+    zorder 100
+    style_prefix "skip"
+    if replaying and not renpy.get_skipping():
+        frame:
+            has hbox:
+                spacing 9
+
+            text _("剧情回顾中")
+
+            text "•" at delayed_blink(0.0, 1.0) style "skip_triangle"
+            text "•" at delayed_blink(0.2, 1.0) style "skip_triangle"
+            text "•" at delayed_blink(0.4, 1.0) style "skip_triangle"
 
 
 

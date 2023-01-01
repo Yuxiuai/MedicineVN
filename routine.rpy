@@ -247,6 +247,21 @@ label dayCircle:
         $ SteamerTicket.get(p).sub(p, 2)
         menu:
             "准备去医院做手术" if True:
+                if Achievement402.has():
+                    menu:
+                        "是否直接抵达已经完成过的内容？"
+                        "治愈线坏结局":
+                            $p.cured = 0
+                            jump CuredBE
+                        "治愈线普通结局":
+                            python:
+                                for i in range(105 - p.cured):
+                                    p.newDay()
+                            $p.cured = 105
+                            jump CE
+                        "不需要":
+                            pass
+                        
                 $p.onOutside = True
                 jump CureEndingBeginning
             "和Halluke去游轮酒店" if p.route == 'h':
@@ -426,8 +441,9 @@ label TaskExecuting:
         hide screen info2
         hide screen info3
         if replaying == True:
+            $replaying_times = 9
             $renpy.jump(replaying_labelname)
-        if p.hal_p == 11 and p.today == 6:
+        if p.hal_p in (11, 13) and p.today == 6:
             "我……被Halluke删了好友？"
             "不会吧……为什么？"
             "仅仅是因为我没去和他考试？"
@@ -511,8 +527,6 @@ label TaskExecuting:
                 "但我脑袋里只是空荡荡的，什么东西都没有。"
                 "……有点奇怪，但是这对我来说有什么意义呢。"
 
-
-
         if p.cured == 13:
             if 10 <= p.hal_p <= 13:
                 play music audio.phonering
@@ -563,8 +577,6 @@ label TaskExecuting:
                 "我好像很久没到上班路上之外的地方了，记得之前还经常外出瞎逛，现在想想真是无聊。"
                 "我宁愿躺在床上。"
 
-
-
         if p.cured == 20:
             if 11 <= p.hal_p <= 13:
                 play music audio.phonering
@@ -604,8 +616,6 @@ label TaskExecuting:
                 "…"
                 "翻了翻，基本上都是些无聊的垃圾对话，还有一些生活琐事…"
                 "这种事为什么要给我发…有什么意义吗？"
-
-
 
         if p.cured == 27:
             if 11 <= p.hal_p <= 13:
@@ -676,10 +686,6 @@ label TaskExecuting:
 
                 "从电话中只有呜咽声和他模糊得听不出音节的话。"
                 "我挂断电话。"
-
-
-
-
 
 
         if p.cured < 0 and SteamerTicket.has(p) and p.today == 1:
@@ -757,9 +763,6 @@ label TaskExecuting:
             "还剩几天，这段时间就多休息休息，少工作，让自己顺畅地活到周末吧。"
             scene livingroom at setcolor with fade
 
-
-
-        
 
         if p.cured<21:
             "一天又快结束了，睡觉之前做些什么呢？"
@@ -905,12 +908,13 @@ screen screen_useMed_show(player, items):
 
 
 label curedRoutine:
-    $ p.beforeSchedule()
     show screen screen_dashboard(p)
     $ p.times = curedsettime(p.times)
     if p.cured == 105:
         jump CE
     if p.times == 3:
+        $ p.beforeSchedule()
+        
         $ gt = CuredTask.gt()
         menu:
             "工作" if p.today in (1, 2, 3, 4, 5) and p.cured < 98:

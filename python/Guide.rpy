@@ -15,13 +15,13 @@ init python early:
 
         @classmethod
         def done(cls):
-            l = list(filter(lambda x: x in persistent.guide, getSubclasses(Item)))
+            l = list(filter(lambda x: x in persistent.guide, ALLITEMS))
             sortByID(l)
             return l
         
         @classmethod
         def undone(cls):
-            l = list(filter(lambda x: x not in persistent.guide, getSubclasses(Item)))
+            l = list(filter(lambda x: x not in persistent.guide, ALLITEMS))
             sortByID(l)
             return l
 
@@ -37,7 +37,7 @@ init python early:
         
         @classmethod
         def all(cls):
-            for i in getSubclasses(Item):
+            for i in ALLITEMS:
                 i.achieve()
                 
         @classmethod
@@ -55,13 +55,13 @@ init python early:
 
         @classmethod
         def done(cls):
-            l = list(filter(lambda x: x in persistent.guide, getSubclasses(Effect)))
+            l = list(filter(lambda x: x in persistent.guide, ALLEFFECTS))
             sortByID(l)
             return l
         
         @classmethod
         def undone(cls):
-            l = list(filter(lambda x: x not in persistent.guide, getSubclasses(Effect)))
+            l = list(filter(lambda x: x not in persistent.guide, ALLEFFECTS))
             sortByID(l)
             return l
 
@@ -77,7 +77,7 @@ init python early:
         
         @classmethod
         def all(cls):
-            for i in getSubclasses(Effect):
+            for i in ALLEFFECTS:
                 i.achieve()
                 
         @classmethod

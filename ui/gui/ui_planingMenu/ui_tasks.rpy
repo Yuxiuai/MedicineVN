@@ -2,14 +2,19 @@ screen screen_tasks(player):
     #tag gamegui
     use barrier(screen="screen_tasks")
     default show_all_task = False
-    if player.cured > -1:
-        $ tasks = [[CuredWork, CuredRest, CuredHosp]]
-    elif Despair.has(player):
-        $ tasks = [[DespairWaiting, DespairObserve, DespairDistribute]]
-    else:
-        $ tasks = sliceArr(getSubclasses(Task))
-        if not persistent.unlocktesttask:
-            $ del tasks[0]
+
+    python:
+        if player.cured > -1:
+            tasks = [[CuredWork, CuredRest, CuredHosp]]
+        elif Despair.has(player):
+            tasks = [[DespairWaiting, DespairObserve, DespairDistribute]]
+        else:
+            tasks = sliceArr(ALLTASKS)
+            if not persistent.unlocktesttask:
+                del tasks[0]
+        
+        if AcolasItem4.has(player) and not config.developer:
+            player.checkTask()
 
     #modal True
     zorder 200
@@ -121,7 +126,7 @@ screen tasks_show(player, tasks, show_all_task):
         if show_all_task == False:
             $tasks = returnOnlyAvaiableTask(player, tasks)
 
-        $UnlockedButCanUnlock = list(filter(lambda x:x.isUnlocked(p) == False and x.unlockCond(p) == True, getSubclasses(Task)))
+        $UnlockedButCanUnlock = list(filter(lambda x:x.isUnlocked(p) == False and x.unlockCond(p) == True, ALLTASKS))
 
         xsize 460
         default isFold = {
@@ -207,6 +212,8 @@ screen tasks_show(player, tasks, show_all_task):
 
 screen print_single_tasks(ite, player):
     $lock = True
+    if AcolasItem4.has(player) and not config.developer:
+        $ite = AcolasTask1
     if player.times <= 2 or GameDifficulty1.has(player) or persistent.unlockplan:
         $lock = False
     frame:
@@ -289,6 +296,8 @@ screen plan_show(player):
                     textbutton player.plan[i].name text_style "white":
                         if lock:
                             action Function(showNotice, ['你已经定好日程了，你不想再随意调整。'])
+                        elif player.hal_p == 50 and player.today == 6 and i == 1 and player.plan[1] == BadmintonClass:
+                            action Function(showNotice, ['我就是为了这个才请假的。'])
                         else:
                             action [Hide("info"), Function(player.removeTask, i)]
                         hovered Show(screen="info", t=player.plan[i].name, i=player.plan[i].info+type_info + ctc_info+ plot_info, a=player.plan[i].ad)
@@ -412,7 +421,7 @@ screen tutorial_screen_tasks(player):
     elif Despair.has(player):
         $ tasks = [[DespairWaiting, DespairObserve, DespairDistribute]]
     else:
-        $ tasks = sliceArr(getSubclasses(Task))
+        $ tasks = sliceArr(ALLTASKS)
         if not persistent.unlocktesttask:
             $ del tasks[0]
 

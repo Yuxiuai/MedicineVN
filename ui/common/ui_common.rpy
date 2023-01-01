@@ -74,11 +74,26 @@ label hide_all_info:
 
 
 
-screen screen_buylist(player, items, p, d, n=None, r=False):
+screen screen_buylist(player, items, p, d, n=None, r=False, ds=True):
     # n: 自定义类名
     # p: 相对于药价的价格，例如当p为1时，所有道具的基础价格和药价相等；当p为0.5时，所有道具的基础价格为药价的一半；当p=-1时，则使用物品的p成员变量来定义价格
     # d：浮动大小，如d为30时，相对于基础价格浮动大小为*70%~130%
     # r: 为真时，只允许购买一个物品
+    python:
+
+        def havediscount(player, item, n=0.1):
+            MAXPOINT = 1000
+            pseed = rs(player, 1, MAXPOINT)
+            iseed = rh(item.id, player, 1, MAXPOINT)
+            if abs(pseed - iseed) < MAXPOINT * n * 0.05:
+                return 0.7
+            if abs(pseed - iseed) < MAXPOINT * n * 0.5:
+                return 0.8
+            if abs(pseed - iseed) < MAXPOINT * n:
+                return 0.9
+            return False
+
+
     if len(items)>0:
         vbox:
             xsize 640
@@ -104,13 +119,40 @@ screen screen_buylist(player, items, p, d, n=None, r=False):
                         background None
                         ysize 60
                         xfill True
-                        $ite_name = ite.name
-                        if p==-1:
-                            $money = r2(ite.p * player.price * rh(ite.id, player, 1000-d*10, 1000+d*10) * 0.001)
-                        else:
-                            $money = r2(p * player.price * rh(ite.id, player, 1000-d*10, 1000+d*10) * 0.001)
-                        $info = ite.getPrincipalInfo()
-                        $ad = ite.ad
+                        python:
+                            ite_name = ite.name
+                            if p==-1:
+                                money = r2(ite.p * player.price * rh(ite.id, player, 1000-d*10, 1000+d*10) * 0.001)
+                            else:
+                                money = r2(p * player.price * rh(ite.id, player, 1000-d*10, 1000+d*10) * 0.001)
+                            info = ite.getPrincipalInfo()
+                            ad = ite.ad
+                            amounts = ite.getamounts(player)
+                            if amounts > 0:
+                                info = '{color=#fde827}已拥有数量：%s{/color}\n\n%s' % (amounts, info)
+                            if ite.maxDu != -1:
+                                info = '%s\n\n{color=#fde827}保质期：%s天{/color}' % (info, ite.maxDu)
+                            else:
+                                info = '%s\n\n{color=#fde827}不会损坏{/color}' % info
+                            if ite.maxCd == 0:
+                                info = '%s\n{color=#fde827}无冷却时间{/color}' % info
+                            elif ite.maxCd != -1:
+                                info = '%s\n{color=#fde827}冷却时间：%s天{/color}' % (info, ite.maxCd)
+
+                            if config.developer:
+                                info += '\n\n折扣判定：%s' % (abs(rs(player, 1, 1000)-rh(ite.id, player, 1, 1000)))
+                            
+                            showmoney = str(money)
+
+                            discount = havediscount(player, ite)
+                            if discount and ds:
+                                money = r2(money*discount)
+                                showmoney = '%s{color=#fde827}（-%s%s）{/color}' % (money, int(100-discount*100), '%')
+                            else:
+                                showmoney = str(money)
+                            
+                            
+
 
                         frame:
                             background None
@@ -121,7 +163,9 @@ screen screen_buylist(player, items, p, d, n=None, r=False):
                                 background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                 activate_sound audio.cursor
                                 xfill True
-                            textbutton str(money) text_style "white":
+                            
+
+                            textbutton str(showmoney) text_style "white":
                                 xpos 1.0
                                 xoffset -40
                                 xanchor 1.0
@@ -193,6 +237,47 @@ screen screen_buy_info(player, item, money, pp, t=None, i=None, a=None, width=40
                     activate_sound audio.cursor
 
 
+screen screen_teststore(player):
+    use barrier(screen="screen_teststore", mode=0)
+
+    zorder 200
+    drag:
+        xcenter 0.5
+        ycenter 0.48
+        frame:
+            at trans_toRight()
+            style "translucent_frame"
+            xsize 700
+            ysize 800
+            vbox:
+                frame:
+                    background None
+                    yalign 0.001
+                    textbutton '{size=+10}测试商店{/size}':
+                        text_style "gameUI"
+                        xoffset -5
+                        yoffset -5
+                        action NullAction()
+
+                    imagebutton auto "gui/exit_%s.png":
+                        xalign 1.0
+                        action [Hide("screen_teststore"), Return()]
+
+                    frame:
+                        background None
+                        ysize 700
+                        xsize 650
+                        ypos 60
+                        xpos 25
+
+                        viewport:
+                            mousewheel True
+                            draggable True
+                            #scrollbars "vertical"
+                            vbox:
+                                use screen_buylist(player, ALLITEMS, p=1.0, d=20, n='测试商品')
+                                null height 30
+                                textbutton ''
 
 
 screen fix_select(player):
@@ -241,6 +326,109 @@ screen fix_select(player):
                             xalign 1.0
         else:
             textbutton '{size=-5}目前还没有需要修理的道具。{/size}' text_style "white":
+                action NullAction()
+                xfill True
+                xalign 1.0
+                activate_sound audio.cursor
+                xoffset -5
+
+
+screen fridge_check(player, fridge):
+    use barrier(screen="fridge_check")
+    style_prefix "info"
+    zorder 400
+    default pp = renpy.get_mouse_pos()
+    $ p = pp
+    if p[0] < 1500:
+        $ xc = 0.0
+        $ trans = trans_toLeft
+    else:
+        $ xc = 1.0
+        $ trans = trans_toRight
+    $ xc = 0.0 if p[0] < 1500 else 1.0
+    $ yc = 0.0 if p[1] < 540 else 1.0
+    $ fridgelen = len(fridge.items)
+
+    frame:
+        pos pp
+        padding (15, 15)
+        xanchor xc
+        yanchor yc
+        xsize 400
+        ysize 60 * fridgelen
+        
+        at trans()
+        
+        
+        
+        vbox:
+            for i in range(len(fridge.items)):
+                frame:
+                    background None
+                    ysize 50
+                    if fridge.items[i]:
+                        textbutton fridge.items[i].name text_style 'white':
+                            action [Function(fridge.take, player, i),Hide('info')]
+                            background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                            xfill True
+                            activate_sound audio.cursor
+                        $du_name = '（%s / %s）' % (fridge.items[i].du, fridge.items[i].maxDu)
+                        textbutton du_name text_style 'white':
+                            xalign 1.0
+                    else:
+                        textbutton '空位置' text_style 'white':
+                            action [Show(screen='fridge_select', player=player, fridge=fridge, poz=i),Hide('info')]
+                            background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                            xfill True
+                            activate_sound audio.cursor
+
+
+screen fridge_select(player, fridge, poz):
+    use barrier(screen="fridge_select")
+    style_prefix "info"
+    zorder 400
+    default pp = renpy.get_mouse_pos()
+    $ p = pp
+    if p[0] < 1500:
+        $ xc = 0.0
+        $ trans = trans_toLeft
+    else:
+        $ xc = 1.0
+        $ trans = trans_toRight
+    $ xc = 0.0 if p[0] < 1500 else 1.0
+    $ yc = 0.0 if p[1] < 540 else 1.0
+    $ fixlist = list(filter(lambda x: x.kind == '食物' and not x.broken, player.items))
+    $ yss = len(fixlist) + 1
+    if len(fixlist) == 0:
+        $ yss = 2
+    frame:
+        pos pp
+        padding (15, 15)
+        xanchor xc
+        yanchor yc
+        xsize 400
+        ysize yss* 50
+        
+        at trans()
+        
+        
+        
+        if len(fixlist) > 0:
+            vbox:
+                for i in range(len(fixlist)):
+                    frame:
+                        background None
+                        ysize 50
+                        textbutton fixlist[i].name text_style 'white':
+                            action [Function(fridge.put, player, fixlist[i], poz),Hide("fridge_select"),Hide('info')]
+                            background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                            xfill True
+                            activate_sound audio.cursor
+                        $du_name = '（%s / %s）' % (fixlist[i].du, fixlist[i].maxDu)
+                        textbutton du_name text_style 'white':
+                            xalign 1.0
+        else:
+            textbutton '{size=-5}目前还没有能够放进冰箱的食物。{/size}' text_style "white":
                 action NullAction()
                 xfill True
                 xalign 1.0

@@ -52,7 +52,7 @@ init python early:
             scale = 1.0
             scale *= player.basicRecovery
             scale *= player.phyReco()
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -61,7 +61,7 @@ init python early:
             scale = 1.0
             scale *= player.basicConsumption
             scale *= player.phyCons()
-            scale *= player.sev()
+            scale *= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -70,7 +70,7 @@ init python early:
             scale = 0
             scale += player.basicConcentration
             scale += player.wriConc()
-            scale /= player.sev()
+            scale /= player.sevscale()
             return scale
 
         @classmethod
@@ -139,7 +139,7 @@ init python early:
             scale += player.basicConcentration
             scale += player.workConcentration
             scale += 15 * player.wor() - 20
-            scale /= player.sev()
+            scale /= player.sevscale()
             return scale
 
         @classmethod
@@ -147,7 +147,7 @@ init python early:
             scale = 1.0
             scale *= player.basicConsumption
             scale *= player.phyCons()
-            scale *= player.sev()
+            scale *= player.sevscale()
             if AcolasItem1.has(player):
                 scale *= 0.7
             scale = max(0.2, scale)
@@ -174,7 +174,7 @@ init python early:
             scale += player.basicConcentration
             scale += player.sportConcentration
             scale += 20 * player.phy() - 30
-            scale /= player.sev()
+            scale /= player.sevscale()
             return scale
 
         @classmethod
@@ -183,7 +183,7 @@ init python early:
             scale *= player.basicRecovery
             scale *= player.phyReco()
             scale *= player.sportRecovery
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -209,7 +209,7 @@ init python early:
             scale += player.basicConcentration
             scale += player.homeConcentration
             scale += 7 * player.wri() - 10
-            scale /= player.sev()
+            scale /= player.sevscale()
             return scale
 
         @classmethod
@@ -218,7 +218,7 @@ init python early:
             scale *= player.basicRecovery
             scale *= player.writeRecovery
             scale *= player.phyReco()
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -228,7 +228,7 @@ init python early:
             scale *= player.basicConsumption
             scale *= player.homeConsumption
             scale *= player.phyCons()
-            scale *= player.sev()
+            scale *= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -249,7 +249,7 @@ init python early:
             scale = 0
             scale += player.basicConcentration
             scale += player.homeConcentration
-            scale /= player.sev()
+            scale /= player.sevscale()
             return scale
 
         @classmethod
@@ -258,7 +258,7 @@ init python early:
             scale *= player.basicConsumption
             scale *= player.homeConsumption
             scale *= player.phyCons()
-            scale *= player.sev()
+            scale *= player.sevscale()
             scale = max(0.2, scale)
             return scale
 
@@ -267,7 +267,7 @@ init python early:
             scale = 1.0
             scale *= player.basicRecovery
             scale *= player.phyReco()
-            scale /= player.sev()
+            scale /= player.sevscale()
             scale = max(0.2, scale)
             return scale
 

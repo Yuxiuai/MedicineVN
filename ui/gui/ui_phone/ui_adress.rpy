@@ -109,7 +109,7 @@ screen screen_phone_address(player):
                             yalign 0.5
                 null height 2
 
-                if player.hal_p>6:
+                if player.hal_p>6 and player.hal_p != 51:
                     frame:
                         ysize 75
                         xfill True

@@ -29,12 +29,17 @@ screen screen_dashboard_calendar(player):
         else:
             $wea_info = weather.info
         $wea_ad = weather.ad
-        if player.onOutside:
+        if player.cured > 0:
+            $ poz = '？？？'
+        elif player.onOutside:
             $ poz = _('在外面')
         elif player.onVacation:
             $ poz = _('在家中')
         else:
             $ poz = _('在公司')
+        
+        if config.developer:
+            $ poz += '\n时间段：%s' % player.times
 
         
 
@@ -171,17 +176,22 @@ screen screen_dashboard_medicine(player):
 
 screen screen_dashboard_severity(player):
     style_prefix "gameUI"
-    $ info0 = '衡量当前对疼痛忍耐度的重要指标。\n\n耗费精力时会消耗，做一些休息的事时则会恢复。\n当早晨起床时所有实验药物都被消耗，且精神状态低于0时，游戏结束。'
-    $ info1 = '\n\n基础精神状态消耗倍率：' + num_str(Task.getConsScale(player),rev=True)
-    $ info2 = '\n基础精神状态恢复倍率：' + num_str(Task.getRecoScale(player))
-    $ ad = '你天生罹患的偏头痛似乎没有办法治愈，药效随着时间流逝正在减弱。\n如果你没有在疼痛突破防线之前咽下药物，那么也许你便再也没有机会见到第二天的太阳了。'
+    python:
+        info0 = '衡量当前对疼痛忍耐度的重要指标。\n\n耗费精力时会消耗，做一些休息的事时则会恢复。\n当早晨起床时所有实验药物都被消耗，且精神状态低于0时，游戏结束。'
+        info1 = '\n\n基础精神状态消耗倍率：' + num_str(Task.getConsScale(player),rev=True)
+        info2 = '\n基础精神状态恢复倍率：' + num_str(Task.getRecoScale(player))
+        ad = '你天生罹患的偏头痛似乎没有办法治愈，药效随着时间流逝正在减弱。\n如果你没有在疼痛突破防线之前咽下药物，那么也许你便再也没有机会见到第二天的太阳了。'
+        p2men = ''
+        if config.developer and player.p2:
+            p2men = '<' + str(player.p2.mental) + '><' + str(Despair.getS(player.p2))+ '>'
+        if BookUndeadEffect.has(player) and player.mental < 0:
+            player.mental = 0.0
+
     zorder 100
     vbox:
         xcenter 0.5
         ypos 0.02
-        $ p2men = ''
-        if config.developer and player.p2:
-            $p2men = '<' + str(player.p2.mental) + '><' + str(Despair.getS(player.p2))+ '>'
+        
         textbutton _("精神状态\n") + str(player.mental) + p2men:
             at trans_Down(0.2)
             action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=info0 + info1 + info2, a=ad)]
@@ -424,7 +434,7 @@ screen screen_dashboard_effects(player):
     zorder 100
     $ effects = sliceArr(player.effects)
     $ del effects[0]
-    if LifeIsColorless.has(p):
+    if LifeIsColorless.has(player):
         $ effects = [[LifeIsColorless.get(p)]]
     frame:
         background None
@@ -445,7 +455,10 @@ screen screen_dashboard_effects(player):
                     $typea = effectKindInfo(typename, 'a')
                     textbutton typename text_style "gameL":
                         at trans_toLeft(0.2)
-                        action [Show(screen="screen_effects", player=player), Hide("info")]
+                        if not LifeIsColorless.has(player):
+                            action [Show(screen="screen_effects", player=player), Hide("info_e")]
+                        else:
+                            action NullAction()
                         hovered Show(screen="info", i=typei, a=typea)
                         unhovered Hide("info")
                         xalign 1.0
@@ -478,7 +491,10 @@ screen screen_dashboard_effects(player):
 
                                     textbutton colorinfo + type(eff).name + stackinfo  text_style "gameUI":
                                         #at trans_toLeft((j*col+k)*0.05+0.25)
-                                        action [Show(screen="screen_effects", player=player), Hide("info_e")]
+                                        if not LifeIsColorless.has(player):
+                                            action [Show(screen="screen_effects", player=player), Hide("info_e")]
+                                        else:
+                                            action NullAction()
                                         hovered Show(screen="info_e", eff=eff)
                                         unhovered Hide("info_e")
                                         hover_sound audio.cursor

@@ -264,6 +264,7 @@ screen item_use(player, item, pp, t=None, i=None, a=None, width=400):
                     textbutton _("{color=#ffff00}{size=-3}速读{/size}{/color}"):
                         action [Hide("item_use"), Function(ui_itemUse, item=item, player=player)]
                         activate_sound audio.cursor
+
                 else:
                     textbutton _("{size=-3}使用{/size}"):
                         action [Hide("item_use"), Function(ui_itemUse, item=item, player=player)]
@@ -275,11 +276,15 @@ screen item_use(player, item, pp, t=None, i=None, a=None, width=400):
                             action [Hide("item_use"), Function(item.uploadToSocial, player=player)]
                             activate_sound audio.cursor
                     else:
+                    
                         textbutton _("{size=-3}交稿{/size}"):
-                            action [Hide("item_use"), Function(item.getReward, player=player)]
+                            if item.comm.broken:
+                                action [Hide("item_use"), Function(showNotice, messages=['委托已过期，无法交付。'])]
+                            else:
+                                action [Hide("item_use"), Function(item.getReward, player=player)]
                             activate_sound audio.cursor
                             
-                if item.star == False:
+                if not item.star:
                     textbutton _("{size=-3}置顶{/size}"):
                         action [Hide("item_use"), Function(ui_itemStar, item=item)]
                         activate_sound audio.cursor
@@ -287,14 +292,11 @@ screen item_use(player, item, pp, t=None, i=None, a=None, width=400):
                     textbutton _("{size=-3}取消置顶{/size}"):
                         action [Hide("item_use"), Function(ui_itemUnstar, item=item)]
                         activate_sound audio.cursor
-                if type(item).canQuit:
-                    textbutton _("{size=-3}丢弃{/size}"):
-                        action [Hide("item_use"), Function(ui_itemQuit, item=item, player=player)]
-                        activate_sound audio.cursor
-                else:
-                    textbutton _("{size=-3}丢弃{/size}"):
-                        action [Hide("item_use"), Function(showNotice, messages='该物品不能被丢弃！')]
-                        activate_sound audio.cursor
+
+                textbutton _("{size=-3}丢弃{/size}"):
+                    action [Hide("item_use"), Function(ui_itemQuit, item=item, player=player)]
+                    activate_sound audio.cursor
+
                 textbutton _("{size=-3}取消{/size}"):
                     action Hide("item_use")
                     activate_sound audio.cursor

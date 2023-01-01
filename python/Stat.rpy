@@ -18,6 +18,8 @@ init python early:
 
         @classmethod
         def getbase(cls, key):# 查找合适的base
+            if key in (GymTask, CuredTask, DespairTask):
+                return Task
             if key.__name__ in cls.basenames:
                 return key
             return cls.getbase(key.__base__)

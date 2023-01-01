@@ -25,6 +25,12 @@ init python early:
                 return False
             if self.du != other.du:
                 return False
+            if self.maxDu == -1: # 如果都为不可损坏而且满足上述条件，即便购买时间不同也认为相等
+                return True
+            if self.gotWeek != other.gotWeek:
+                return False
+            if self.gotDay != other.gotDay:
+                return False
             return True
 
         def getPrefixInfo(self, player):
@@ -64,7 +70,7 @@ init python early:
 
             if cls.isUnique:
                 if not cls.has(p):
-                    uni_info = '\n唯一\n\n{color=#ffff00}未拥有{/color}'
+                    uni_info = '\n唯一\n\n{color=#fde827}未拥有{/color}'
                 else:
                     uni_info = '\n唯一'
             else:
@@ -84,7 +90,7 @@ init python early:
                     self.broken = True
                     self.timeUpAction(player)
                     self.disableAction(player)
-                    if self.kind == '收藏品' and self.id != GymTicket.id:
+                    if self.kind == '收藏品' and type(self) != GymTicket:
                         Trash.add(player)
                         player.items.remove(self)
                 
@@ -111,6 +117,14 @@ init python early:
             return player.items[player.items.index(item)]
 
         @classmethod
+        def getamounts(cls, player):  # 需要先用has检测
+            amounts = 0
+            for i in player.items:
+                if type(i) == cls and not i.broken:
+                    amounts += i.amounts
+            return amounts
+
+        @classmethod
         def add(cls, player, times=1):  # 增加新效果或增加层数
             if times == 0:
                 return
@@ -131,7 +145,7 @@ init python early:
                 self.amounts -= 1
                 if self.amounts == 0:
                     self.remove(player)
-                    break
+                    return
 
         def enableAction(self, player):  # 启用Buff时进行的操作，一般是提供某些数据
             pass
@@ -172,6 +186,7 @@ init python early:
                 oldItem.addStackAction(player)
                 oldItem.amounts += 1
             sortByID(player.items)
+            
 
         def useItemAction(self, player):
             pass
@@ -215,9 +230,10 @@ init python early:
         def quit(self, player, times=1):
             if times == 0:
                 return
-            self.sub(player, times)
             Notice.add('已丢弃'+ str(times) +'个物品：'+ type(self).name)
             Notice.show()
+            self.sub(player, times)
+            
 
         @classmethod
         def afterTaskAction(cls, player, task):  # 日程后
@@ -260,10 +276,13 @@ init python early:
         item.star=False
 
     def ui_itemQuit(item, player):
-        times = 1
-        if item.broken == True:
-            times = item.amounts
-        item.quit(player, times)
+        if item.canQuit:
+            if item.broken:
+                item.quit(player, item.amounts)
+            else:
+                item.quit(player, 1)
+        else:
+            showNotice(['该物品不能被丢弃！'])
 
     def buy(player, item, nums=1, money=0):
         if player.money < money * nums:

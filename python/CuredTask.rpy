@@ -67,6 +67,8 @@ init python early:
 
         @classmethod
         def checkAvailable(cls, player, day, time):
+            if day==5 and time == 2:
+                return '该买药了。'
             if not player.onVacation and time != 2:
                 return '不是该休息的时候。'
             return True
@@ -93,7 +95,6 @@ init python early:
             
         @classmethod
         def executeTask(cls, player):
-    
             player.money = 0.0
             MedicineD.add(p, 10)
             Notice.show()

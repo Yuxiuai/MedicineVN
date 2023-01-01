@@ -34,7 +34,7 @@ screen screen_phone_music(player):
                     xfill True
                     vbox:
                         text _("{size=+5}音乐播放器{/size}") style "white"
-                    if config.developer==True: 
+                    if config.developer: 
                         imagebutton idle "gui/reset_w.png":
                             action Function(unlockallmusic)
                             hover_sound audio.cursor

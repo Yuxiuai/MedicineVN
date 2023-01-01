@@ -109,11 +109,11 @@ init -505 python early:
         return classes
 
     def allE(player):
-        for i in getSubclasses(Effect):
+        for i in ALLEFFECTS:
             i.add(player, rd(1,5))
 
     def allI(player):
-        for i in getSubclasses(Item):
+        for i in ALLITEMS:
             i.add(player)
 
     def weekdayFormat(day):

@@ -128,6 +128,10 @@ init python early:
             self.visitedStore = set()
             self.version = config.version
 
+            self.nousemed = 0
+            self.playtime = 0
+            self.restart = 0
+
         def __eq__(self, other):
             return id(other) == id(self)
 
@@ -136,7 +140,7 @@ init python early:
             
         def rtn1(self, retval):
             self.retval1 = retval
-
+        
 
         def refreshUnacComm(self):
             self.unacComm = [Comm(self), Comm(self)]
@@ -169,6 +173,10 @@ init python early:
             for i in range(3):
                 if self.plan[i].checkAvailable(self, self.today, i)!=True:
                     self.plan[i] = NoTask
+            if AcolasItem4.has(self) and not config.developer:
+                self.plan = [AcolasTask1, AcolasTask1, AcolasTask1]
+            if p.hal_p == 50 and p.today == 6:
+                self.plan[1] = BadmintonClass
 
         def findNoSport(self):
             for i in range(3):
@@ -213,8 +221,15 @@ init python early:
                 return r2(self.severity * self.severityRegarded)
             if self.severity < 0.65 + 0.05 * self.week:
                 self.severity = 0.65 + 0.05 * self.week
-                return r2(self.severity ** 1.5 * self.severityRegarded)
+            if self.severityRegarded <= 0.2:
+                self.severityRegarded = 0.2
+
             return r2(self.severity ** 1.5 * self.severityRegarded)
+        
+        def sevscale(self):  # 单调递减
+            if self.sev() < 0.2:
+                return 0.2
+            return self.sev()
 
         def phyCons(self):  # 单调递减
             if self.phy()<3:
@@ -236,7 +251,9 @@ init python early:
             
 
         def useFoodScale(self):
-            scale = 1200 * self.foodRecovery / self.sev()
+            if self.fooduse < 0:
+                self.fooduse = 0
+            scale = 1200 * self.foodRecovery / self.sevscale()
             scale *= 1-(self.fooduse* 0.005)
             scale *= (self.basicRecovery + 1) / 2
             scale *= 0.001
@@ -244,11 +261,11 @@ init python early:
             return scale
 
         def useDrugScale(self):
-            scale = 1000 * self.drugRecovery / self.sev()
+            scale = 1000 * self.drugRecovery / self.sevscale()
             scale *= 0.001
             scale = max(0.2, scale)
             return scale
-
+        
         def aggravationConsumption(self):
             consumption = 60
             consumption *= self.deteriorateConsumption  # 受睡眠消耗数值影响
@@ -352,7 +369,6 @@ init python early:
                 '15' : ['24', '00'],
                 '666' : ['???', '???']
             }
-
             r = specTimeDict[str(self.times)]
             if self.spec_hour is not None:
                 r[0] = self.spec_hour
@@ -377,7 +393,7 @@ init python early:
 
         def meds(self):
             meds = 0
-            for i in (MedicineA, MedicineB, MedicineC):
+            for i in (MedicineA, MedicineB, MedicineC, MedicineD):
                 if i.has(self):
                     if not i.get(self).broken:
                         meds += i.get(self).amounts
@@ -439,22 +455,27 @@ init python early:
 
 
             if self.today in (1, 2):
-                states2[Restlessness] += 10
+                states2[Restlessness] += 20
             if self.today in (3, 4):
-                states2[Restlessness] += 15
+                states2[Restlessness] += 40
+
+            if self.today in (6, 7):
+                states2[Contentment] += 40
+            if MeetingReward7.has(self):
+                states2[Restlessness] += 100
+
             if PhysProb.has(self):
-                states2[Contentment] += 15
+                states2[Contentment] += 40
             if MentProb.has(self):
-                states2[Sadness] += 15
-            if MentPun.has(self):
-                states2[Sadness] += 15
+                states2[Sadness] += 40
+
             if self.severity > 1 + 0.075 * self.week:
-                states2[Agony] += 10
-                states2[Dread] += 10
+                states2[Agony] += 15
+                states2[Dread] += 15
+
             if self.mental > 50:
-                states2[Dread] += 20
-            if GameModule1.has(self):
-                states2[Dread] += 10
+                states2[Dread] += 30
+
             if Novice.has(self):
                 states2[Dread] = 0
 
@@ -474,10 +495,6 @@ init python early:
             for i in states2:
                 if rra(self, states2[i]):
                     i.add(self)
-            for i in self.medinfo:
-                if rra(self, 20+3*self.week):
-                    i.d_.add(self)
-                    break
 
 
         def updateAfterSleep(self):  # 夜晚进行的更新工作
@@ -574,7 +591,7 @@ init python early:
             self.wages = wages
             self.achievedGoal = 0.0
             self.goal = (1.075 ** self.week) * 0.3 + self.working * 0.7
-            self.goal = r2(self.goal * ra(self, 750, 1100) * 0.01 * f())
+            self.goal = r2(self.goal * ra(self, 800, 1100) * 0.01 * f())
             if GameModule1.has(self):
                 self.goal = r2(self.goal * (1 + (0.03 * self.week)))
             self.money += paid
@@ -595,22 +612,40 @@ init python early:
             pass
             
 
-        def newDay(self):
-            # 睡觉后
+        def newDay(self, times=1):
+            global _history_list
+            _history_list = []
+
+
             if self.p2:
                 self.p2.newDay()
-            global _history_list
+
+            t = r2(renpy.get_game_runtime())
+            persistent.runtime += t
+            self.playtime += t
+            renpy.clear_game_runtime()
+
+
             if not persistent.nomedicine:
                 self.aggravation()
+            if not Achievement603.has():
+                self.nousemed += 1
+                if self.nousemed >= 7:
+                    Achievement603.achieve()
             self.updateAfterSleep()
             self.updateMedicine()
             if self.cured < 0 and not Despair.has(self):
                 self.refreshUnacComm()
             self.newSeed()
-            _history_list = []
             
-            # 起床后
-            self.dateChange()
+            
+            #  起床后
+            #  熬夜的情况
+            if int(self.st()[0]) >= 7:
+                self.dateChange()
+            else:
+                self.times = 0
+                self.stime()
             
             self.newMorningEffects()
             if self.cured == -1 and not Despair.has(self):
@@ -619,6 +654,9 @@ init python early:
             
             sortByID(self.effects)
             sortByID(self.items)
+
+            if times > 1:
+                self.newDay(times-1)
 
         def beforeSchedule(self):
             if self.cured < 0 and not Despair.has(self):
@@ -637,13 +675,13 @@ init python early:
                 self.price = r2(self.price *(100 + self.priceIncrease) * 0.01)
 
                 
-                if self.money <= self.price * 8:
-                    self.priceIncrease = ra(self, 15, 25)
+                if self.money <= self.price * 10:
+                    self.priceIncrease = ra(self, 10, 25)
                     if GameModule1.has(self):
                         self.priceIncrease *= 1.5
                 
                 else:
-                    self.priceIncrease = (self.money * 0.125 / self.price) - 1
+                    self.priceIncrease = (self.money * 0.1 / self.price) - 1
                     self.priceIncrease *= 10
 
                     self.priceIncrease = int(self.priceIncrease * f())
@@ -654,3 +692,24 @@ init python early:
                 self.hal_p = 11
     
             Notice.show()
+
+        def cheat_times(self):
+            self.times = 2
+
+        def cheat_ment(self, value):
+            self.mental += value
+        
+        def cheat_sev(self, value):
+            self.severity += value
+        
+        def cheat_wor(self, value):
+            self.working += value
+        
+        def cheat_phy(self, value):
+            self.physical += value
+        
+        def cheat_wri(self, value):
+            self.writing += value
+
+        def cheat_route(self, value):
+            self.route = value

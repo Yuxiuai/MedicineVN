@@ -211,6 +211,17 @@ label FastrunSport_result_bad:
     jump TaskExecuting
 
 label BadmintonClass_beginning:
+    if p.hal_p == 50:
+        scene court with fade
+        jump Halluke_hidden_plot2
+    if p.hal_p == 51:
+        scene court with fade
+        "虽然还有上课的班级，但已经看不到Halluke和之前的同学们了。"
+        "虽然带了球拍来，但总觉得没什么动力。"
+        "还是回去吧。"
+        $p.times+=2
+        jump TaskExecuting
+
     scene gym with fade
     "……"
     "像之前那样溜进来了。"
@@ -226,7 +237,7 @@ label BadmintonClass_result_exce:
     $Notice.show()
     "不知道为什么总是很想快乐的打一次羽毛球。"
     "我或许是在羡慕这些大学生没有接受社会毒打？"
-    "要认真练习了，得让Halluke注意到我才行。"
+    "要认真练习了，得让他注意到我才行。"
     jump halluke_plot_judge_1
 
 label BadmintonClass_result_good:
@@ -234,7 +245,7 @@ label BadmintonClass_result_good:
     $Notice.show()
     "不知道为什么总是很想快乐的打一次羽毛球。"
     "我或许是在羡慕这些大学生没有接受社会毒打？"
-    "要认真练习了，得让Halluke注意到我才行。"
+    "要认真练习了，得让他注意到我才行。"
     jump halluke_plot_judge_1
 
 label BadmintonClass_result_norm:

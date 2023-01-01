@@ -106,6 +106,7 @@ label ending1:
 
 label ending2:
     $start_plot()
+    stop music
     scene bedroom with dissolve
     "我把手伸向闹钟边的药瓶。"
     "当爪子握住塑料瓶身时，某种奇怪的感觉从爪心传递至大脑。"
@@ -374,12 +375,16 @@ screen ce_block:
 label CE:
     stop music
     $start_plot()
-    scene black with fade
+    
     if not replaying:
+        $LifeIsColorless.add(p)
         $p.severity = 0.0
+        $p.mental = 200.0
         $p.stime(15,54)
         $_skipping = False
         $p.onOutside = True
+        
+    scene black with fade
     "…"
     "最后一次手术结束了。"
     "于是我的病真正意义上地痊愈了。"
@@ -483,17 +488,19 @@ label CE:
     show screen freeze(5)
     pause
     "{color=#9500ff}Cured End.\n——即使我被焚烧，我依然如此愉快。{/color}" 
+    $end_plot()
     if replaying:
         jump afterreplay
-    $end_plot()
     $persistent.ce = True
     $persistent.lastend = 'ce'
     $Achievement402.achieve()
+    $Achievement.reachAnyEnd(p)
     $Notice.show()
     jump credits
 
 label earthquakeBE:
     $start_plot()
+    stop music
     scene ruins with dissolve
     "摇晃仍然没有停止。"
     "整个世界都因崩裂发出嘈杂的响声。"

@@ -399,6 +399,19 @@ label earthquake:
     "脸上的眼泪，是什么时候流出来的？"
     "…"
 
+    if Achievement401.has():
+        menu:
+            "是否直接抵达已经完成过的内容？"
+            "废墟线坏结局":
+                jump despairBE
+            "废墟线普通结局":
+                jump ne
+            "废墟线真实结局":
+                jump te
+            "不需要":
+                pass
+            
+
     jump despair_dayend
 
 
@@ -969,7 +982,7 @@ label lastMed_me:
     "是啊，我早该清楚地意识到，对方已经无力回天了，即便我给他吃药，也只是杯水车薪罢了。"
     "…"
     "我蠕动身体，和往常一样，用饮水机，往纸杯里滴水。"
-    "然后将最后一粒药，用食指推进口里。"
+    "然后将最后一粒药，用食指推进自己的口里。"
     "…"
     jump despair_end
 
@@ -981,7 +994,7 @@ label despair_end:
     call screen cfreeze(5)
     pause
     scene black with fade
-    if p.finalStageDays >= 30:
+    if p.finalStageDays >= 20:
         $Achievement602.achieve()
     if p.finalStageDays >= 7:
         "……"

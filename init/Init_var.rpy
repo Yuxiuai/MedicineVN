@@ -63,6 +63,15 @@ init python:
     config.main_game_transition = dissolve  
     config.layers = [ 'master', 'mask', 'transient', 'screens', 'headimage' ,'overlay']
 
+    ALLEFFECTS = getSubclasses(Effect)
+    ALLITEMS = getSubclasses(Item)
+    ALLITEMS.remove(UnfinishedCommission)
+    ALLITEMS.remove(FinishedCommission)
+    ALLACHIEVEMENTS = getSubclasses(Achievement)
+    ALLTASKS = getSubclasses(Task)
+    ALLGYMTASKS = getSubclasses(GymTask)
+    ALLBOOKS = getSubclasses(BookBase)
+
    
 
     def pause(time=None):

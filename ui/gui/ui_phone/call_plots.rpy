@@ -1,12 +1,25 @@
 label end_call:
-    if p.times == 11:
-        $p.times = 10
     $renpy.sound.stop(channel="chara_voice")
     call screen screen_index(p)
     hide screen info
     hide screen info2
     hide screen info3
-    $p.times+=1
+    if p.times == 13:
+        $p.times += 1
+    if replaying == True:
+        $renpy.jump(replaying_labelname)
+    if p.hal_p == 11 and p.today == 6 and p.times in (11, 13):
+        "我……被Halluke删了好友？"
+        "不会吧……为什么？"
+        "仅仅是因为我没去和他考试？"
+        "可……但……这到底是为什么？"
+        "我重新添加为好友，得到的却只有红色的拒绝。"
+        "……"
+        "某种挫败感交杂着怒火冲上大脑。"
+        "所以我做了这么多，结果却是这样的么？"
+        "我还没鼓起勇气先说再见，就先被他这种什么也不用担心，什么也不用顾虑的家伙删了？"
+        "现在还有时间，我必须去找他问个清楚。"
+        jump halluke_route_11
     jump TaskExecuting
 
 
@@ -63,11 +76,7 @@ label call_Arnel:
         "这个时间给他打电话干什么……要请假还是早上请假好了……"
         jump end_call
     if p.hal_p == 11 and p.today == 6:
-        "虽然这个时候要加班肯定是很重要的事情吧……"
-        "我可不想因为这种事被那家伙骂一顿……"
-        "……"
-        "Halluke会原谅我的吧。"
-        jump end_call
+        jump Halluke_hidden_plot1
     "给Arnel打电话。"
     "……"
     ar"“干嘛？又想请假？”"
@@ -100,6 +109,7 @@ label arnel_q:
             ar"“你这周的工资我已经给你扣了，建议你回去之后有时间把留给你们小组的那几个客户需求都给我写得明明白白的，好自为之吧。”"
             $sh()
             s"“嗯。”"
+            play sound audio.interruption
             "挂断了电话。"
             "呼，可以回家歇一会了。"
             "……"

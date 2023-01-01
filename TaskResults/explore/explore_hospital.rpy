@@ -47,7 +47,7 @@ label explore_elevator:
             jump explore_hospital_pharmacy
         "1楼：大厅":
             jump explore_hospital_end
-        '住院部3楼' if p.aco_p == 7:
+        '住院部3楼' if p.aco_p == 7 and p.today in (6, 7):
             jump acolas_route_7
            
     
@@ -332,33 +332,33 @@ label pathos_q_hosp:
             $temp=rd(0,13)
             if temp==0:
                 pathos"“没时间。”"
-            if temp==1:
+            elif temp==1:
                 pathos"“下次。”"
                 pathos"“最近很忙。”"
-            if temp==2:
+            elif temp==2:
                 pathos"“我今晚有约了。”"
-            if temp==3:
+            elif temp==3:
                 pathos"“如果你的精神状态还算良好，就不要对你的主治医师发情了。”"
-            if temp==4:
+            elif temp==4:
                 pathos"“其实我有男朋友的。”"
                 pathos"“他今晚好不容易有时间陪我。”"
-            if temp==5:
+            elif temp==5:
                 pathos"“我拒绝。”"
-            if temp==6:
+            elif temp==6:
                 pathos"“没兴趣。”"
-            if temp==7:
+            elif temp==7:
                 pathos"“今天不行。”"
-            if temp==8:
+            elif temp==8:
                 pathos"“……”"
-            if temp==9:
+            elif temp==9:
                 pathos"“你没有其他的事可以做了吗？”"
-            if temp==10:
+            elif temp==10:
                 pathos"“别开玩笑，严肃点。”"
-            if temp==11:
+            elif temp==11:
                 pathos"“下次下次。”"
-            if temp==12:
+            elif temp==12:
                 pathos"“唉，我现在可是在上班时间诶，能不能说点正经的？”"
-            if temp==13:
+            elif temp==13:
                 pathos"“下次你这样我就要收费了。”"
             $ss('sweat')
             s"“好吧。”"
@@ -382,13 +382,24 @@ screen screen_buyMed(player):
     #tag gamegui
     use barrier(screen="screen_buyMed", mode=0)
 
-    $ med = [MedicineA]
-    $ otherMed = list(filter(lambda x: x.kind == '普通药物', getSubclasses(Item)))
-    $ otherMed.sort(key=lambda x:x.id)
-    if player.sol_p>=1:
-        $med.append(MedicineB)
-    if player.sol_p>=3:
-        $med.append(MedicineC)
+    python:
+        
+        otherMed = list(filter(lambda x: x.kind == '普通药物', ALLITEMS))
+
+        if not GameDifficulty1.has(player):
+            otherMed.remove(DrugVitamin)
+            otherMed.remove(DrugStomach)
+            otherMed.remove(DrugAmphetamine)
+            otherMed.remove(DrugEtizolam)
+            otherMed.remove(DrugUnknown)
+
+        otherMed.sort(key=lambda x:x.id)
+
+        med = [MedicineA]
+        if player.sol_p>=1:
+            med.append(MedicineB)
+        if player.sol_p>=3:
+            med.append(MedicineC)
 
     #modal True
     zorder 200
@@ -428,9 +439,12 @@ screen screen_buyMed(player):
                             
                             vbox:
                                 if player.today == 5:
-                                    use screen_buylist(player, med, p=1, d=0)
+                                    if ExaminationReport.has(player):
+                                        use screen_buylist(player, med, p=0.85, d=0, ds=False)
+                                    else:
+                                        use screen_buylist(player, med, p=1, d=0, ds=False)
                                     null height 10
-                                use screen_buylist(player, otherMed, p=-1, d=15)
+                                use screen_buylist(player, otherMed, p=-1, d=15, ds=False)
                                 null height 30
                                 textbutton ''
                     
