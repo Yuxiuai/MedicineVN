@@ -353,6 +353,7 @@ init python:
         [
             '外观', False, [
                 ['黑短袖', 'normal'],
+                ['黑短袖4', 'normal_4'],
                 ['白衬衫','white'],
                 ['脏的白衬衫','dirty'],
                 ['白外套','ship'],
@@ -361,8 +362,8 @@ init python:
         ],
 
         [
-            '头巾', False, [
-                ['佩戴', 'hat'],
+            '头部', False, [
+                ['头巾', 'hat'],
                 ['棒球帽', 'cap'],
                 ['无', 'no_hat']
             ]

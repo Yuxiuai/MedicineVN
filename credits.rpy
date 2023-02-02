@@ -138,4 +138,3 @@ label credits:
     stop music fadeout 3
     $ quick_menu = True
     return
-# Decompiled by unrpyc: https://github.com/CensoredUsername/unrpyc

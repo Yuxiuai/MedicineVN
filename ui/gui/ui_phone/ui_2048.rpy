@@ -1,22 +1,30 @@
 init python:
     score = 0
 
+    def game2048_scoredefault():
+        global score
+        score = 0
+
     def game2048_geticon(num):
-        return "gui/phone/2048/" + str(num) + ".png"
+        if num > 524288:
+            return "gui/phone/2048/999999.png"
+        return "gui/phone/2048/%s.png" % num
 
     def game2048_newgame(blocks):
         global score
         if score > persistent.highestscore2048:
             persistent.highestscore2048 = score 
-        score = 0
         for i in blocks:
             blocks[i] = 0
+        game2048_scoredefault()
         game2048_newblock(blocks)
 
     def game2048_newblock(blocks):
+        global score
         emptyblocks = list(filter(lambda x: blocks[x]==0, blocks))
         if emptyblocks != []:
             blocks[rcd(emptyblocks)] = rcd((2,2,2,2,4))
+            #blocks[rcd(emptyblocks)] = 1024
         else:
             if score > persistent.highestscore2048:
                 persistent.highestscore2048 = score 
@@ -59,8 +67,12 @@ init python:
                 if blocks[fun(i)] == 0:
                     blocks[fun(i)] = blocks[i]
                     blocks[i] = 0
-                elif blocks[i] == blocks[fun(i)]:
+                elif blocks[i] == blocks[fun(i)] and blocks[fun(i)] <= 524288:
                     blocks[fun(i)] *= 2
+                    if blocks[fun(i)] == 2048:
+                        Achievement307.achieve()
+                        Achievement.show()
+                        Notice.show()
                     score += blocks[fun(i)]
                     blocks[i] = 0
             if temp_blocks == blocks:
@@ -71,7 +83,7 @@ init python:
 screen screen_phone_bg_y():
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     
     frame:
         background None
@@ -88,7 +100,7 @@ screen screen_phone_2048(player):
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     #use screen_phone_bg_y 
     frame:
         at trans_app(-150, 50)
@@ -183,8 +195,8 @@ screen screen_phone_2048(player):
                 xalign 0.835
                 yalign 0.12
                 xsize 105
-                $info = '曾获得的最高分：' + str(persistent.highestscore2048)
-                $ad = '真的有人会玩游戏里的游戏吗？'
+                $info = _('曾获得的最高分：') + str(persistent.highestscore2048)
+                $ad = _('真的有人会玩游戏里的游戏吗？')
                 textbutton str(score):#str(blocks['score']):
                     xalign 0.5
                     action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=info, a=ad)]
@@ -204,15 +216,16 @@ screen screen_phone_2048(player):
                 xpos 0.8
                 ypos 0.83
                 imagebutton auto "gui/phone/back_%s.png":
-                    action [Hide("screen_phone_2048"),Hide("info"),Show(screen="screen_phone", player=player)]
+                    action [Function(game2048_scoredefault), Hide("screen_phone_2048"),Hide("info"),Show(screen="screen_phone", player=player)]
                     hover_sound audio.cursor
 
     if not renpy.variant("pc"):
         frame:
             background None
-            xcenter 0.7
+            xcenter 0.75
             ycenter 0.6
             vbox:
+                spacing 40
                 hbox:
                     xalign 0.5
                     imagebutton auto "gui/phone/2048/w_%s.png":
@@ -220,6 +233,7 @@ screen screen_phone_2048(player):
                         activate_sound audio.sfx2048
     
                 hbox:
+                    spacing 40
                     imagebutton auto "gui/phone/2048/a_%s.png":
                         action Function(game2048_move, blocks, 'left')
                         activate_sound audio.sfx2048
@@ -233,7 +247,7 @@ screen screen_phone_2048(player):
                         activate_sound audio.sfx2048
         frame:
             background None
-            xcenter 0.7
+            xcenter 0.75
             ycenter 0.3
 
             imagebutton auto "gui/phone/2048/r_%s.png":
@@ -246,4 +260,4 @@ screen screen_phone_2048(player):
     key "K_RIGHT" action [Function(game2048_move, blocks, 'right'), Function(play_audio, audio.sfx2048)]
     key "K_LEFT" action [Function(game2048_move, blocks, 'left'), Function(play_audio, audio.sfx2048)]
     key 'r' action [Function(game2048_newgame, blocks), Function(play_audio, audio.sfx2048)]
-    key 'K_ESCAPE' action [Hide("screen_phone_2048"),Hide("info"),Show(screen="screen_phone", player=player)]
+    key 'K_ESCAPE' action [Function(game2048_scoredefault), Hide("screen_phone_2048"),Hide("info"),Show(screen="screen_phone", player=player)]

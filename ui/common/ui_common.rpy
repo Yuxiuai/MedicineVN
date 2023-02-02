@@ -13,15 +13,16 @@ screen barrier(screen, mode=1):
         button:
             xfill True
             yfill True
-            action Hide(screen)
+            action Hide(screen, transition=dissolve)
+    
+    key 'K_SPACE' action NullAction()
+    key 'K_LCTRL' action NullAction()
 
 
 
 screen freeze(time=None): #show screen freeze(5)
     modal True
     zorder 50
-    if persistent.nowaiting == True:
-        $time=0.1
     timer time:
         action Hide(screen="freeze")
 
@@ -33,8 +34,6 @@ screen freeze(time=None): #show screen freeze(5)
 screen cfreeze(time=None): #call screen freeze(5)
     modal True
     zorder 50
-    if persistent.nowaiting == True:
-        $time=0.1
     timer time:
         action Return()
 
@@ -53,8 +52,9 @@ label hide_all_screens:
     hide screen screen_dashboard_abilities
     hide screen screen_dashboard_effects
     hide screen screen_effects
-    hide screen screen_index
+    hide screen screen_operate
     hide screen screen_items
+    hide screen screen_objects
     hide screen screen_map
     hide screen screen_notify
     hide screen screen_phone
@@ -129,25 +129,25 @@ screen screen_buylist(player, items, p, d, n=None, r=False, ds=True):
                             ad = ite.ad
                             amounts = ite.getamounts(player)
                             if amounts > 0:
-                                info = '{color=#fde827}已拥有数量：%s{/color}\n\n%s' % (amounts, info)
+                                info = _('{color=#fde827}已拥有数量：%s{/color}\n\n%s') % (amounts, info)
                             if ite.maxDu != -1:
-                                info = '%s\n\n{color=#fde827}保质期：%s天{/color}' % (info, ite.maxDu)
+                                info = _('%s\n\n{color=#fde827}保质期：%s天{/color}') % (info, ite.maxDu)
                             else:
-                                info = '%s\n\n{color=#fde827}不会损坏{/color}' % info
+                                info = _('%s\n\n{color=#fde827}不会损坏{/color}') % info
                             if ite.maxCd == 0:
-                                info = '%s\n{color=#fde827}无冷却时间{/color}' % info
+                                info = _('%s\n{color=#fde827}无冷却时间{/color}') % info
                             elif ite.maxCd != -1:
-                                info = '%s\n{color=#fde827}冷却时间：%s天{/color}' % (info, ite.maxCd)
+                                info = _('%s\n{color=#fde827}冷却时间：%s天{/color}') % (info, ite.maxCd)
 
                             if config.developer:
-                                info += '\n\n折扣判定：%s' % (abs(rs(player, 1, 1000)-rh(ite.id, player, 1, 1000)))
+                                info += _('\n\n折扣判定：%s') % (abs(rs(player, 1, 1000)-rh(ite.id, player, 1, 1000)))
                             
                             showmoney = str(money)
 
                             discount = havediscount(player, ite)
                             if discount and ds:
                                 money = r2(money*discount)
-                                showmoney = '%s{color=#fde827}（-%s%s）{/color}' % (money, int(100-discount*100), '%')
+                                showmoney = _('%s{color=#fde827}（-%s%s）{/color}') % (money, int(100-discount*100), '%')
                             else:
                                 showmoney = str(money)
                             
@@ -175,6 +175,13 @@ screen screen_buy_info(player, item, money, pp, t=None, i=None, a=None, width=40
     style_prefix "info"
     default num = '1'
     use barrier(screen="screen_buy_info")
+    if width == 400:
+        if a:
+            if len(i) + len(a) > 150:
+                $width = 600
+        else:
+            if len(i) > 100:
+                $width = 600
     zorder 3000
     $p = pp
     $yc = 0.0 if p[1] < 540 else 1.0
@@ -193,7 +200,7 @@ screen screen_buy_info(player, item, money, pp, t=None, i=None, a=None, width=40
         vbox:
             align p
             if t is not None:
-                label t+'\n':
+                label '[t!t]\n':
                     text_style "info_text"
                     xsize width
             if i is not None:
@@ -202,9 +209,8 @@ screen screen_buy_info(player, item, money, pp, t=None, i=None, a=None, width=40
                     text_style "info_text"
                     xsize width
             if a is not None:
-                $a = '{i}' + a + '{/i}'
                 null height 13
-                label a:
+                label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
             null height 30
@@ -253,7 +259,7 @@ screen screen_teststore(player):
                 frame:
                     background None
                     yalign 0.001
-                    textbutton '{size=+10}测试商店{/size}':
+                    textbutton _('{size=+10}测试商店{/size}'):
                         text_style "gameUI"
                         xoffset -5
                         yoffset -5
@@ -275,7 +281,7 @@ screen screen_teststore(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, ALLITEMS, p=1.0, d=20, n='测试商品')
+                                use screen_buylist(player, ALLITEMS, p=1.0, d=20, n=_('测试商品'))
                                 null height 30
                                 textbutton ''
 
@@ -283,7 +289,7 @@ screen screen_teststore(player):
 screen fix_select(player):
     use barrier(screen="fix_select")
     style_prefix "info"
-    zorder 400
+    zorder 1000
     default pp = renpy.get_mouse_pos()
     $ p = pp
     if p[0] < 1500:
@@ -294,7 +300,7 @@ screen fix_select(player):
         $ trans = trans_toRight
     $ xc = 0.0 if p[0] < 1500 else 1.0
     $ yc = 0.0 if p[1] < 540 else 1.0
-    $ fixlist = list(filter(lambda x: x.kind == '收藏品' and x.id not in (622, 623, 624) and x.du < x.maxDu and not x.broken, player.items))
+    $ fixlist = list(filter(lambda x: x.kind == _('收藏品') and x.id not in (622, 623, 624) and x.du < x.maxDu and not x.broken, player.items))
     $ yss = len(fixlist) + 1
     if len(fixlist) == 0:
         $ yss = 2
@@ -321,11 +327,11 @@ screen fix_select(player):
                             background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             xfill True
                             activate_sound audio.cursor
-                        $du_name = '（%s / %s）' % (i.du, i.maxDu)
+                        $du_name = _('（%s / %s）') % (i.du, i.maxDu)
                         textbutton du_name text_style 'white':
                             xalign 1.0
         else:
-            textbutton '{size=-5}目前还没有需要修理的道具。{/size}' text_style "white":
+            textbutton _('{size=-5}目前还没有需要修理的道具。{/size}') text_style "white":
                 action NullAction()
                 xfill True
                 xalign 1.0
@@ -336,7 +342,7 @@ screen fix_select(player):
 screen fridge_check(player, fridge):
     use barrier(screen="fridge_check")
     style_prefix "info"
-    zorder 400
+    zorder 1000
     default pp = renpy.get_mouse_pos()
     $ p = pp
     if p[0] < 1500:
@@ -354,7 +360,7 @@ screen fridge_check(player, fridge):
         padding (15, 15)
         xanchor xc
         yanchor yc
-        xsize 400
+        xsize 500
         ysize 60 * fridgelen
         
         at trans()
@@ -372,11 +378,11 @@ screen fridge_check(player, fridge):
                             background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             xfill True
                             activate_sound audio.cursor
-                        $du_name = '（%s / %s）' % (fridge.items[i].du, fridge.items[i].maxDu)
+                        $du_name = _('新鲜度：（%s / %s）') % (fridge.items[i].du, fridge.items[i].maxDu)
                         textbutton du_name text_style 'white':
                             xalign 1.0
                     else:
-                        textbutton '空位置' text_style 'white':
+                        textbutton _('空位置') text_style 'white':
                             action [Show(screen='fridge_select', player=player, fridge=fridge, poz=i),Hide('info')]
                             background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             xfill True
@@ -386,7 +392,7 @@ screen fridge_check(player, fridge):
 screen fridge_select(player, fridge, poz):
     use barrier(screen="fridge_select")
     style_prefix "info"
-    zorder 400
+    zorder 1000
     default pp = renpy.get_mouse_pos()
     $ p = pp
     if p[0] < 1500:
@@ -397,7 +403,7 @@ screen fridge_select(player, fridge, poz):
         $ trans = trans_toRight
     $ xc = 0.0 if p[0] < 1500 else 1.0
     $ yc = 0.0 if p[1] < 540 else 1.0
-    $ fixlist = list(filter(lambda x: x.kind == '食物' and not x.broken, player.items))
+    $ fixlist = list(filter(lambda x: x.kind == _('食物') and not x.broken, player.items))
     $ yss = len(fixlist) + 1
     if len(fixlist) == 0:
         $ yss = 2
@@ -424,11 +430,11 @@ screen fridge_select(player, fridge, poz):
                             background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             xfill True
                             activate_sound audio.cursor
-                        $du_name = '（%s / %s）' % (fixlist[i].du, fixlist[i].maxDu)
+                        $du_name = _('（%s / %s）') % (fixlist[i].du, fixlist[i].maxDu)
                         textbutton du_name text_style 'white':
                             xalign 1.0
         else:
-            textbutton '{size=-5}目前还没有能够放进冰箱的食物。{/size}' text_style "white":
+            textbutton _('{size=-5}目前还没有能够放进冰箱的食物。{/size}') text_style "white":
                 action NullAction()
                 xfill True
                 xalign 1.0

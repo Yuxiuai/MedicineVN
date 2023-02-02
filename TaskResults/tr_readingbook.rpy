@@ -3,7 +3,7 @@ screen screen_tr_readingbook(player):
     #tag gamegui
     use barrier(screen="screen_tr_readingbook", mode=0)
 
-    $ items = list(filter(lambda x: type(x).kind=='书本' and type(x) not in p.itemcd, p.items))
+    $ items = list(filter(lambda x: x.kind=='书本' and type(x) not in p.itemcd, p.items))
 
     #modal True
     zorder 200
@@ -20,7 +20,7 @@ screen screen_tr_readingbook(player):
                 frame:
                     background None
                     yalign 0.001
-                    textbutton '{size=+10}阅读书籍{/size}':
+                    textbutton _('{size=+10}阅读书籍{/size}'):
                         text_style "gameUI"
                         xoffset -5
                         yoffset -5
@@ -48,7 +48,7 @@ screen screen_tr_readingbook(player):
 screen screen_tr_readingbook_show(player, items):
     vbox:
         xsize 640
-        $typename = '当前可阅读的书本'
+        $typename = _('当前可阅读的书本')
         $typei = itemKindInfo('书本', 'i')
         $typea = itemKindInfo('书本', 'a')
         hbox:
@@ -76,8 +76,8 @@ screen screen_tr_readingbook_show(player, items):
                     frame:
                         background None
                         textbutton ite_name text_style "white":
-                            action [Hide("info"),Show(screen="info_confirm", text='选择',act=[Function(player.rtn, ite), Return()], pp=renpy.get_mouse_pos(), t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=type(ite).ad)]
-                            hovered [Show(screen="info", t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=type(ite).ad)]
+                            action [Hide("info"),Show(screen="info_confirm", text=_('选择'),act=[Function(player.rtn, ite), Return()], pp=renpy.get_mouse_pos(), t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=ite.ad)]
+                            hovered [Show(screen="info", t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=ite.ad)]
                             unhovered Hide("info")
                             background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
@@ -88,10 +88,10 @@ screen screen_tr_readingbook_show(player, items):
         textbutton ''
 
 
-screen screen_tr_readingbook_confirm(player, i="确定不选择书本吗？这将会导致本日程直接结束。", width=400, pp=renpy.get_mouse_pos()):
+screen screen_tr_readingbook_confirm(player, i=_("确定不选择书本吗？这将会导致本日程直接结束。"), width=400, pp=renpy.get_mouse_pos()):
     use barrier(screen="screen_tr_readingbook_confirm")
     style_prefix "info"
-    zorder 400
+    zorder 1000
     $p = pp
     if p[0] < 1500:
         $xc = 0.0

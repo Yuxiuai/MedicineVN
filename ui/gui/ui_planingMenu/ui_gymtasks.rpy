@@ -7,7 +7,7 @@ screen screen_gymtasks(player):
     $ gymtasks[0].remove(NoSport)
 
     #modal True
-    zorder 200
+    zorder 600
     drag:
         xcenter 0.503
         ycenter 0.48
@@ -28,24 +28,24 @@ screen screen_gymtasks(player):
                         vbox:
                         #xoffset -15
                         #yoffset -10
-                            textbutton '{size=+10}健身日程安排{/size}':
+                            textbutton _('{size=+10}健身日程安排{/size}'):
                                 xoffset -15
                                 yoffset -10
                                 text_style "gameUI"
                             null height 350
-                            textbutton '设置':
+                            textbutton _('设置'):
                                 xoffset -10
                                 yoffset -10
                                 text_style "white"
                             frame:
                                 background None
-                                textbutton '显示所有日程' text_style "gameUI":
+                                textbutton _('显示所有日程') text_style "gameUI":
                                     action [ToggleLocalVariable("show_all_task", True, False), Hide("info"), Hide("info3")]
                                     activate_sound audio.cursor
                                     xfill True
 
                                 if show_all_task:
-                                    imagebutton idle "gui/phone/right_.png":
+                                    imagebutton idle "gui/right_.png":
                                         xalign 0.9
                                 
 
@@ -113,18 +113,18 @@ screen gymtasks_show(player, gymtasks, show_all_task):
 
         xsize 460
         default isFold = {
-            '可解锁的日程':False,
-            '无难度':False,
-            '低难度':False,
-            '中难度':False,
-            '高难度':False
+            _('可解锁的日程'):False,
+            _('无难度'):False,
+            _('低难度'):False,
+            _('中难度'):False,
+            _('高难度'):False
         }
 
         if UnlockedButCanUnlock:
             $UnlockedButCanUnlock.sort(key=lambda x: x.id)
-            $typename = '可解锁的日程'
-            $typei = '该分类下的日程为达成了解锁条件但没解锁的日程。'
-            $typea = '为什么我做一件事也要去解锁？难道我在身体素质不达标之前连跑步都做不到吗？'
+            $typename = _('可解锁的日程')
+            $typei = _('该分类下的日程为达成了解锁条件但没解锁的日程。')
+            $typea = _('为什么我做一件事也要去解锁？难道我在身体素质不达标之前连跑步都做不到吗？')
 
 
             hbox:
@@ -132,10 +132,10 @@ screen gymtasks_show(player, gymtasks, show_all_task):
                 textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                     if isFold[typename] == False:
                         action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以折叠该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
                     else:
                         action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以展开该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
                     unhovered Hide("info")
                     xfill True
                     xalign 1.0
@@ -164,10 +164,10 @@ screen gymtasks_show(player, gymtasks, show_all_task):
                 textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                     if isFold[typename] == False:
                         action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以折叠该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
                     else:
                         action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以展开该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
                     unhovered Hide("info")
                     xfill True
                     xalign 1.0
@@ -199,12 +199,12 @@ screen print_single_gymtasks(ite, player):
 
         $ type_info = ''
         if ite.kind != None:
-            $ type_info = '\n\n'+ite.kind
+            $ type_info = _('\n\n')+ite.kind
         frame:
             background None
             if ite.checkAvailable(player, player.today, player.findNoSport()) != True:
 
-                $error_info = '无法安排该健身日程！\n' + ite.checkAvailable(player, player.today, player.findNoSport())
+                $error_info = _('无法安排该健身日程！\n') + ite.checkAvailable(player, player.today, player.findNoSport())
 
                 $locked_name = "？？？"
                 $locked_info = "？？？？？？？？\n？？？？？？？？？？？"
@@ -215,8 +215,8 @@ screen print_single_gymtasks(ite, player):
                 $show_a = ite.ad if ite.isUnlocked(player) else locked_info
 
                 textbutton show_name text_style "grey":
-                    action [Hide("info"), Show(screen="info_confirm", text='解锁健身日程',act=Function(ite.unlockClass, player), pp=renpy.get_mouse_pos(), t=show_name, i=show_info + red('\n\n' +error_info), a=show_a)]
-                    hovered Show(screen="info", t=show_name, i=show_info + red('\n\n' +error_info), a=show_a)
+                    action [Hide("info"), Show(screen="info_confirm", text=_('解锁健身日程'),act=Function(ite.unlockClass, player), pp=renpy.get_mouse_pos(), t=show_name, i=show_info + red(_('\n\n') +error_info), a=show_a)]
+                    hovered Show(screen="info", t=show_name, i=show_info + red(_('\n\n') +error_info), a=show_a)
                     unhovered Hide("info")
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
@@ -225,7 +225,7 @@ screen print_single_gymtasks(ite, player):
             else:
 
                 textbutton ite_name text_style "white":
-                    action [Hide("info"), Show(screen="info_confirm",text='添加到健身日程',act=Function(player.setgymtask, ite), pp=renpy.get_mouse_pos(), t=ite_name, i=ite.info + type_info, a=ite.ad)]
+                    action [Hide("info"), Show(screen="info_confirm",text=_('添加到健身日程'),act=Function(player.setgymtask, ite), pp=renpy.get_mouse_pos(), t=ite_name, i=ite.info + type_info, a=ite.ad)]
                     hovered Show(screen="info", t=ite_name, i=ite.info + type_info, a=ite.ad)
                     unhovered Hide("info")
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -235,16 +235,16 @@ screen print_single_gymtasks(ite, player):
     null height 2
 
 screen gymplan_show(player):
-    $times = ('{size=-5}时段1{/size}', '{size=-5}时段2{/size}', '{size=-5}时段3{/size}')
+    $times = (_('{size=-5}时段1{/size}'), _('{size=-5}时段2{/size}'), _('{size=-5}时段3{/size}'))
 
 
     vbox:
         xsize 460
         for i in range(3):
-            $ ctc_info = '\n\n单击以取消该健身日程安排。' if player.gymplan[i].name != '未安排健身日程' else '\n\n在右侧选择要安排在该时间段的健身日程。'
+            $ ctc_info = _('\n\n单击以取消该健身日程安排。') if player.gymplan[i].name != _('未安排健身日程') else _('\n\n在右侧选择要安排在该时间段的健身日程。')
             $ type_info = ''
             if player.gymplan[i].kind != None:
-                $ type_info = '\n\n'+player.gymplan[i].kind
+                $ type_info = _('\n\n')+player.gymplan[i].kind
 
             textbutton times[i] text_style "white":
                 action NullAction()

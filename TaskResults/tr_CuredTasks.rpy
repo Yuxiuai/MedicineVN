@@ -40,7 +40,7 @@ label CuredWork_result:
     if p.cured >= 84:
         $p.time = curedsettime(p.times)
         jump curedRoutine
-    jump TaskExecuting
+    jump before_operate_screen_label
 
 
 label CuredRest_beginning:
@@ -73,7 +73,7 @@ label CuredRest_result:
     if p.cured >= 84:
         $p.time = curedsettime(p.times)
         jump curedRoutine
-    jump TaskExecuting
+    jump before_operate_screen_label
 
 label CuredHosp_beginning:
     $p.onOutside = True
@@ -105,4 +105,4 @@ label CuredHosp_result:
     if p.cured >= 84:
         $p.time = curedsettime(p.times)
         jump curedRoutine
-    jump TaskExecuting
+    jump before_operate_screen_label

@@ -35,10 +35,10 @@ init python early:
 
     class DespairWaiting(DespairTask):
         id = 100
-        name = '等待'
-        kind = '日程'
-        info = '恢复少量精神状态。'
-        ad = '没人会救你们的。'
+        name = _('等待')
+        kind = _('日程')
+        info = _('恢复少量精神状态。')
+        ad = _('没人会救你们的。')
 
         @classmethod
         def executeTask(cls, player):
@@ -46,10 +46,10 @@ init python early:
             
             
             if reco >0:
-                Notice.add('恢复了%s点精神状态。' % reco)
+                Notice.add(_('恢复了%s点精神状态。') % reco)
                 player.mental += reco
             else:
-                Notice.add('并没有恢复精神状态。')
+                Notice.add(_('并没有恢复精神状态。'))
             
 
             player.updateAfterTask(cls)
@@ -59,10 +59,10 @@ init python early:
 
     class DespairObserve(DespairTask):
         id = 101
-        name = '观察状况'
-        kind = '日程'
-        info = '检查对方的状态，或是聊聊天。'
-        ad = '放任他的死亡对你也没有害处，你不是一直讨厌他吗？'
+        name = _('观察状况')
+        kind = _('日程')
+        info = _('检查对方的状态，或是聊聊天。')
+        ad = _('放任他的死亡对你也没有害处，你不是一直讨厌他吗？')
 
         @classmethod
         def executeTask(cls, player):
@@ -73,10 +73,10 @@ init python early:
 
     class DespairDistribute(DespairTask):
         id = 102
-        name = '分发药物'
-        kind = '日程'
-        info = '对他使用药物以减轻对方的痛苦。'
-        ad = '你只有这些药了，而他只是个将死之人，分给他的话，你很可能撑不到救援哦？'
+        name = _('分发药物')
+        kind = _('日程')
+        info = _('对他使用药物以减轻对方的痛苦。')
+        ad = _('你只有这些药了，而他只是个将死之人，分给他的话，你很可能撑不到救援哦？')
             
         @classmethod
         def executeTask(cls, player):            

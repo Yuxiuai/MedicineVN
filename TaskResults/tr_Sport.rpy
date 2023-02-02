@@ -1,4 +1,5 @@
 label DefaultSport_beginning:
+    $ p.onOutside = True
     if p.times==3:
         scene morningrun with fade
         "虽然还想睡懒觉，但是Pathos医生说晨跑对恢复很有作用……"
@@ -29,7 +30,8 @@ label DefaultSport_result_exce:
     "今天的空气真清新啊……慢慢走在路上感觉什么疲劳都消失了。"
     "或许之后应该像那些老人一样选个环境好的地方散散步。"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label DefaultSport_result_good:
     if p.times==4:
@@ -42,7 +44,8 @@ label DefaultSport_result_good:
     "像是去往一个未知的目的地一样。"
     "放松……至少从社畜的环境走出来了，走出来总是好的。"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label DefaultSport_result_norm:
     if p.times==4:
@@ -55,7 +58,8 @@ label DefaultSport_result_norm:
     "大概就是为了动一动。"
     "走路其实也很累，而且我应该有段时间不活动了，走完这段路就回去吧，脚底都变热了。"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label DefaultSport_result_bad:
     if p.times==4:
@@ -69,15 +73,17 @@ label DefaultSport_result_bad:
     "或许根本就是走路这件事不适合我，应该交给那些更健壮的人，交给街上那些那些比我健康多少倍的人。"
     "真糟糕……"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 
 
 
 label JoggingSport_beginning:
-    if p.times==4:
+    $ p.onOutside = True
+    if p.times==3:
         scene morningrun with fade
-    elif p.times==8:
+    elif p.times==7:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
@@ -99,7 +105,8 @@ label JoggingSport_result_exce:
     "好帅……这个……裆部好鼓……那个好壮……要是能被他按在床上……"
     "不对，我是来锻炼身体的！"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label JoggingSport_result_good:
     if p.times==4:
@@ -112,7 +119,8 @@ label JoggingSport_result_good:
     "还算流畅地绕着公园跑了一圈，能感觉到身上的毛都因为出汗黏在一起了……"
     "回家美美地冲个凉——"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label JoggingSport_result_norm:
     if p.times==4:
@@ -125,7 +133,8 @@ label JoggingSport_result_norm:
     "上喘的感觉让我想起了高中的1000米……"
     "没想到现在的我也能慢悠悠地跑起来……不过身体真的很累啊……我需要休息一下，喘喘气……"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label JoggingSport_result_bad:
     if p.times==4:
@@ -139,15 +148,17 @@ label JoggingSport_result_bad:
     "为什么会有人在跑道上放块砖头啊！"
     "脚好痛……慢慢走回去吧……"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 
 
 
 label FastrunSport_beginning:
-    if p.times==4:
+    $ p.onOutside = True
+    if p.times==3:
         scene morningrun with fade
-    elif p.times==8:
+    elif p.times==7:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
@@ -168,7 +179,8 @@ label FastrunSport_result_exce:
     "跑起来！跑起来！原来跑这么快也不赖嘛，吹在身上的风和平时完全不一样。"
     "简直能让人忘记任何压力，脑袋也不是那么痛了。"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label FastrunSport_result_good:
     if p.times==4:
@@ -181,7 +193,8 @@ label FastrunSport_result_good:
     "还行……至少我不会被别人说是蜗牛……好像也没有人对于评价我这件事感兴趣……"
     "不过我速度还是挺快的嘛，虽然不知道有什么用处……但是建立信心总是好的！"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label FastrunSport_result_norm:
     if p.times==4:
@@ -194,7 +207,8 @@ label FastrunSport_result_norm:
     "这种速度感让我想起了高中的50米接力。"
     "太累了，感觉身上都是汗……得去洗澡了，感觉有什么不太妙的味道。"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label FastrunSport_result_bad:
     if p.times==4:
@@ -205,12 +219,14 @@ label FastrunSport_result_bad:
         scene nightrun with fade
     $Notice.show()
     "摔倒了！"
-    "不是一般的痛，甚至膝盖都擦破了一些"
+    "不是一般的痛，甚至膝盖都擦破了一些……"
     "周围也没什么人能帮忙……看来得去买双氧水消消毒……"
     $p.times+=1
-    jump TaskExecuting
+    $ p.onOutside = False
+    jump after_executing_task_label
 
 label BadmintonClass_beginning:
+    $ p.onOutside = True
     if p.hal_p == 50:
         scene court with fade
         jump Halluke_hidden_plot2
@@ -220,7 +236,7 @@ label BadmintonClass_beginning:
         "虽然带了球拍来，但总觉得没什么动力。"
         "还是回去吧。"
         $p.times+=2
-        jump TaskExecuting
+        jump after_executing_task_label
 
     scene gym with fade
     "……"
@@ -281,7 +297,7 @@ label StretchingSport_result_exce:
     "很久以前，大概读书的时候才会有的活动，真的让人很怀念年轻的时候。"
     "大概连病都没有现在这么严重。"
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 label StretchingSport_result_good:
     scene livingroom with fade
@@ -290,7 +306,7 @@ label StretchingSport_result_good:
     "很久以前，大概读书的时候才会有的活动，真的让人很怀念年轻的时候。"
     "大概连病都没有现在这么严重。"
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 label StretchingSport_result_norm:
     scene livingroom with fade
@@ -299,7 +315,7 @@ label StretchingSport_result_norm:
     "本来运动就浑身酸痛，现在感觉更难受了……"
     "好吧，有点夸张了，总之感觉舒服多了……"
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 label StretchingSport_result_bad:
     scene livingroom with fade
@@ -308,4 +324,4 @@ label StretchingSport_result_bad:
     "本来运动就浑身酸痛，现在感觉更难受了……"
     "好吧，有点夸张了，总之感觉舒服多了……"
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label

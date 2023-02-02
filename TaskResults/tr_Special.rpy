@@ -2,6 +2,7 @@ label GoOutside_beginning:
     scene livingroom with fade
     play music audio.sliceoflife fadein 5
     "去哪玩呢？"
+    $ p.onOutside = True
     $p.times+=1
     call screen screen_explore_map(p)
 
@@ -14,20 +15,28 @@ label GoOutside_result:
     if rra(p, 25):
         $Relaxation.add(p)
     stop music fadeout 5
+    
+    if p.times==4:
+        scene morningrun with fade
+    elif p.times==8:
+        scene afternoonrun with fade
+    else:
+        scene nightrun with fade
+    "回去的路上……"
     $p.times+=1
-    scene livingroom with fade
-    "回家了……"
+    $ p.onOutside = False
     $Notice.show()
-    jump TaskExecuting
+    jump after_executing_task_label
     #jump GoOutside_beginning
 
 label TestTask_beginning:
     $p.times += 2
     $p.updateAfterTask(TestTask)
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label HallukeTask1_beginning:
+    $ p.onOutside = True
     scene court with fade
     "我把随身携带的东西放到窗台边。"
     "Halluke已经提前占据了一个球网的位置，此时他正像往常那样拎着球拍盯着我。"
@@ -44,6 +53,7 @@ label HallukeTask1_result:
 
 
 label HallukeTask2_beginning:
+    $ p.onOutside = True
     $p.times+=1
     $HallukeTask2.executeTask(p)
 
@@ -80,7 +90,7 @@ label AcolasTask1_loop:
     menu:
         "继续做吗？"
         "继续":
-            if int(p.st()[0])+1 >= 6:
+            if int(p.st()[0]) == 6:
                 "不……我不能再继续了……我需要睡眠……"
                 jump AcolasTask1_result
             else:
@@ -101,6 +111,7 @@ label AcolasTask1_loop:
         $p.dateChange()
         $p.times = 12
         $p.stime(1, rd(1, 60))
+        $p.staylate = True
     stop music fadeout 3
     $AcolasTask1.executeTask(p)
 
@@ -130,18 +141,19 @@ label AcolasTask2_loop:
         $p.dateChange()
         $p.times = 12
         $p.stime(1, rd(1, 60))
+        $p.staylate = True
     stop music fadeout 3
     $AcolasTask1.executeTask(p)
 
 label AcolasTask1_end:
+    scene workarea with fade
+    $Notice.show()
     "稍微熬下夜也不是不能做完……"
     "这样就不会让他失望了吧。"
     $p.times+=1
-    if 6 < p.st()[0] < 15:
+    if 5 <= int(p.st()[0]) < 15:
         "已经天亮了么……"
-        $p.times = 2
-        jump beforeCircle
-    jump TaskExecuting
+    jump after_executing_task_label
 
 label AcolasTask1_result:
     scene workarea with fade
@@ -149,7 +161,7 @@ label AcolasTask1_result:
     "头极度地疼。"
     "就到这里吧，我真的没法再进行下去了。"
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 label AcolasTask2_beginning:
     $p.times+=1

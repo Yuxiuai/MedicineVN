@@ -199,3 +199,70 @@ init python:
 
 transform setcolor:
     matrixcolor SaturationMatrix(value=getcolor())
+
+transform blurr_concentration(p):
+    alpha (1-(-0.048 * p.cured + 5))
+
+transform disso:
+    alpha 0.0
+    easein 0.2 alpha 1
+
+transform toyduck:
+    
+    parallel:
+        easein 0.2 xzoom 1.3
+    parallel:
+        easein 0.2 yzoom 0.8
+    parallel:
+        easein 0.2 yoffset 10
+
+    block:
+        parallel:
+            easein 0.2 xzoom 1.0
+        parallel:
+            easein 0.2 yzoom 1.0
+        parallel:
+            easein 0.2 xoffset 0
+        parallel:
+            easein 0.2 yoffset 0
+
+transform toyduck2:
+    parallel:
+        easein 0.2 xzoom 1.3
+    parallel:
+        easein 0.2 yzoom 0.8
+    parallel:
+        easein 0.2 yoffset 10
+    
+
+    block:
+        parallel:
+            easein 0.2 xzoom 1.0
+        parallel:
+            easein 0.2 yzoom 1.0
+        parallel:
+            easein 0.2 xoffset 0
+        parallel:
+            easein 0.2 yoffset 0
+
+transform med_bottle():
+    matrixcolor SaturationMatrix(value=getcolor())
+    alpha 0.0
+    easein 0.2 alpha 1
+    
+    on hover:
+        easein 0.2 yoffset -50
+    on idle:
+        easein 0.2 yoffset 0
+
+transform med_bottle_shadow():
+    alpha 0.0
+    easein 0.2 alpha 1
+
+    on hover:
+        easein 0.2 zoom 0.8
+    on idle:
+        easein 0.2 zoom 1.0
+
+transform tzoom(z):
+    zoom z

@@ -11,7 +11,7 @@ init python early:
         def unlock(cls, a):
             if a not in persistent.guide:
                 import time
-                persistent.guide[a] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+                persistent.guide[a] = time.strftime(_('%Y.%m.%d %H:%M:%S'),time.localtime(time.time()))
 
         @classmethod
         def done(cls):
@@ -51,7 +51,7 @@ init python early:
         def unlock(cls, a):
             if a not in persistent.guide:
                 import time
-                persistent.guide[a] = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+                persistent.guide[a] = time.strftime(_('%Y.%m.%d %H:%M:%S'),time.localtime(time.time()))
 
         @classmethod
         def done(cls):

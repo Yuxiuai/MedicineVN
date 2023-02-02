@@ -19,6 +19,7 @@ label explore_bookshop:
             allbooks.remove(BookGameModule2)
         if len(allbooks) == 0:
             Achievement302.achieve()
+            Achievement.show()
             Notice.show()
     if temp > p.money:
         zaster"一共是这些钱哦，请保管好书籍——"
@@ -45,7 +46,7 @@ screen screen_explore_buybook(player):
         if BookGameModule2 in allbooks and not GameModule2.has(p):
             allbooks.remove(BookGameModule2)
 
-        items = list(filter(lambda x: x not in [type(x) for x in list(filter(lambda x: type(x).kind=='书本', p.items))], allbooks))
+        items = list(filter(lambda x: x not in [type(x) for x in list(filter(lambda x: x.kind=='书本', p.items))], allbooks))
         items.sort(key=lambda x: x.id)
 
     #modal True
@@ -91,6 +92,12 @@ screen screen_explore_buybook(player):
                                 null height 10
 
                                 use screen_buylist(player, items, p=0.85, d=40, n='未收藏的书本')
+
+                                if Achievement306.has():
+                                    null height 10
+
+                                    use screen_buylist(player, [CactusCheat], p=2, d=40, n='其他书籍')
+                                
 
                                 null height 30
                                 textbutton ''

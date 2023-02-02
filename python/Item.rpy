@@ -11,10 +11,11 @@ init python early:
         reuse = True
         info = None
         ad = None
+        
 
         def __init__(self, player):
             self.amounts = 1
-            self.du = type(self).maxDu
+            self.du = self.maxDu
             self.broken = False
             self.star = False
             self.gotWeek = player.week
@@ -35,64 +36,73 @@ init python early:
 
         def getPrefixInfo(self, player):
 
-            if type(self).maxCd == -1 or self.broken or type(self).maxCd == -1:
-                cd_info = '不可使用  '
+            if self.maxCd == -1 or self.broken or self.maxCd == -1:
+                cd_info = _('不可使用  ')
             elif type(self) not in player.itemcd:
-                if type(self).reuse:
-                    cd_info = '可重复使用  '
+                if self.reuse:
+                    cd_info = _('可重复使用  ')
                 else:
-                    cd_info = '使用后消耗  '
+                    cd_info = _('使用后消耗  ')
             else:
-                cd_info = '可使用时间：'+str(player.itemcd[type(self)])+'天后  '
+                cd_info = _('可使用时间：')+str(player.itemcd[type(self)])+_('天后  ')
 
-            if type(self).maxDu == -1:
-                du_info = '不会损坏  '
-            elif type(self).maxCd==-1:
+            if self.maxDu == -1:
+                du_info = _('不会损坏  ')
+            elif self.maxCd==-1:
                 if self.broken:
-                    du_info = '已损坏  '
+                    du_info = _('已损坏  ')
                 elif self.du == 1:
-                    du_info = '即将损坏：明天  '
+                    du_info = _('即将损坏：明天  ')
                 else:
-                    du_info = '即将损坏：'+str(self.du)+'天后  '
+                    du_info = _('即将损坏：')+str(self.du)+_('天后  ')
             else:
                 if self.broken:
-                    du_info = '已变质  '
+                    du_info = _('已变质  ')
                 elif self.du == 1:
-                    du_info = '即将变质：明天  '
+                    du_info = _('即将变质：明天  ')
                 else:
-                    du_info = '即将变质：'+str(self.du)+'天后  '
+                    du_info = _('即将变质：')+str(self.du)+_('天后  ')
 
-            return '数量：'+str(self.amounts)+ '\n' + cd_info + '\n'+du_info+ '\n'
-        
+            return _('数量：')+str(self.amounts)+ '\n' + cd_info + '\n'+du_info+ '\n'
+
+        @classmethod
+        def icon(cls):
+            return 'gui/items/100.png'
+
+
+
+
+
         @classmethod
         def getPrincipalInfo(cls):
-            type_info = '\n\n' + cls.kind
+            type_info = _('\n\n') + cls.kind
 
             if cls.isUnique:
                 if not cls.has(p):
-                    uni_info = '\n唯一\n\n{color=#fde827}未拥有{/color}'
+                    uni_info = _('\n唯一\n\n{color=#fde827}未拥有{/color}')
                 else:
-                    uni_info = '\n唯一'
+                    uni_info = _('\n唯一')
             else:
                 uni_info = ''
 
             return cls.info + type_info + uni_info
 
         def getSuffixInfo(self):
-            return '\n\n获取日期：第%s周的%s' % (self.gotWeek, weekdayFormat(self.gotDay))
+            return _('\n\n获取日期：第%s周的%s') % (self.gotWeek, weekdayFormat(self.gotDay))
 
         def timeUpdate(self, player):
             if self.du:
                 if self.du > 0:
                     self.du -= 1
                 if self.du == 0:
-                    Notice.add(type(self).name + '已过期！')
+                    Notice.add(self.name + _('已过期！'))
                     self.broken = True
                     self.timeUpAction(player)
                     self.disableAction(player)
-                    if self.kind == '收藏品' and type(self) != GymTicket:
+                    if self.kind == _('收藏品') and type(self) != GymTicket:
                         Trash.add(player)
                         player.items.remove(self)
+                    
                 
             
 
@@ -143,7 +153,7 @@ init python early:
             for i in range(times):
                 self.subStackAction(player)
                 self.amounts -= 1
-                if self.amounts == 0:
+                if self.amounts <= 0:
                     self.remove(player)
                     return
 
@@ -172,16 +182,16 @@ init python early:
             if cls.isUnique and cls.has(player):
                 if cls.maxDu >0:
                     cls.get(player).du = cls.maxDu
-                    Notice.add('已有%s，刷新了损坏期限！' % cls.name)
+                    Notice.add(_('已有%s，刷新了损坏期限！') % cls.name)
                 else:
-                    Notice.add('已有%s，无法再次获取！' % cls.name)
+                    Notice.add(_('已有%s，无法再次获取！') % cls.name)
             elif not cls.hasByItem(player, newItem):  # 是否存在，如果不存在
-                Notice.add('获得新物品：%s！' % cls.name)
+                Notice.add(_('获得新物品：%s！') % cls.name)
                 newItem.addStackAction(player)
                 newItem.enableAction(player)
                 player.items.append(newItem)
             else:
-                #Notice.add('获得%s：%s！' % (cls.kind, cls.name))
+                #Notice.add(_('获得%s：%s！') % (cls.kind, cls.name))
                 oldItem = cls.getByItem(player, newItem)
                 oldItem.addStackAction(player)
                 oldItem.amounts += 1
@@ -192,19 +202,19 @@ init python early:
             pass
 
         def checkAvailable(self, player):
-            if type(self).maxCd == -1:
-                return '物品不可被使用！'
+            if self.maxCd == -1:
+                return _('物品不可被使用！')
             if self.broken:
-                return '物品已过期！不可被使用！'
+                return _('物品已过期！不可被使用！')
             if type(self) not in player.itemcd:
                 return True
             else:
-                return '物品仍在冷却时间中！'
+                return _('物品仍在冷却时间中！')
 
         def sound(self):
-            if self.kind in ('食物', '普通药物', '实验药物'):
+            if self.kind in (_('食物'), _('普通药物'), _('实验药物')):
                 renpy.sound.play(audio.itemdrink)
-            elif self.kind in ('手稿', '书本'):
+            elif self.kind in (_('手稿'), _('书本')):
                 renpy.sound.play(audio.itempaper)
             else:
                 renpy.sound.play(audio.itemdefault)
@@ -215,14 +225,14 @@ init python early:
             else:
                 self.sound()
                 Stat.record(player, type(self))
-                Notice.add('已使用物品：'+ type(self).name)
-                if type(self).maxCd>0:
-                    player.itemcd[type(self)] = type(self).maxCd 
+                Notice.add(_('已使用物品：')+ self.name)
+                if self.maxCd>0:
+                    player.itemcd[type(self)] = self.maxCd 
                 self.useItemAction(player)
-                if not type(self).reuse:
+                if not self.reuse:
                     self.sub(player)
                 if renpy.music.get_playing() == audio.enjoysuffering and player.mental > 20:
-                    routineMusic(player)
+                    routine_music(player)
                 if player.mental > 20:
                     blackmask(player)
             Notice.show()
@@ -230,7 +240,7 @@ init python early:
         def quit(self, player, times=1):
             if times == 0:
                 return
-            Notice.add('已丢弃'+ str(times) +'个物品：'+ type(self).name)
+            Notice.add(_('已丢弃')+ str(times) +_('个物品：')+ self.name)
             Notice.show()
             self.sub(player, times)
             
@@ -241,24 +251,24 @@ init python early:
 
     def itemKindInfo(kind, mode):
         d = {
-            '置顶i':'置顶道具\n\n你可以在物品的详细信息界面将物品置顶以方便使用。',
-            '置顶a':'\n也算是某种意义上的物品日程表了……今天的矿泉水喝了吗？',
-            '实验药物i':'实验药物\n\n药效十分迅速，在吞下药物的瞬间即可止痛，但副作用巨大，而且价格时刻都在飙升，也作为国内稀缺的药物，不过你只需要知道这东西能救你的命就可以。',
-            '实验药物a':'\n为什么只有Pathos医生才有这样的药？话说这些药片里面的具体成分到底是什么，是从哪里来的，为什么一周后就不能吃了……',
-            '普通药物i':'普通药物\n\n具有一定的效果，但总体上不如专用的实验药物，妥善使用也许会比实验药物更有帮助。即便副作用不高，但别忘了你只是个普通的人。',
-            '普通药物a':'\n不吃安眠药就睡不好觉，这日子什么时候能到头？',
-            '书本i':'书本\n\n在阿斯卡隆书店购买获得，阅读后可获得能够逆转局面的效果，但你不会短时间对同一本书燃起阅读欲望，请谨慎使用吧。',
-            '书本a':'\n为什么我不能天天都看，明明我想看？这种无形的束缚到底是怎么回事？',
-            '手稿i':'手稿\n\n阅读部分书本后获得，和书本差别不大，但阅读不需要回合，良好使用的话说不定有神奇的效果。',
-            '手稿a':'\n喜欢我组合拳吗？',
-            '工具i':'工具\n\n可重复使用的道具，而且能带来不错的效果。更像是“速读状态下的书籍”。',
-            '工具a':'\n有人说收藏品怎么可以使用呢？于是出现了这个分类。我只不过是关心你们，如果出的书越来越多，你们该读不过来了。',
-            '食物i':'食物\n\n部分食物可以随时使用，但部分食物只能午餐时间使用，可以恢复较多精神状态且有不同的效果。',
-            '食物a':'\n如果不点外卖的话，午休时间我就只能吃公司提供的免费工作餐了，倒不是多难吃，就是那东西只是被烹饪到仅仅是能吃的地步……',
-            '收藏品i':'收藏品\n\n带有不同的效果，拥有则永久提升能力，某些特殊的收藏品还会影响游戏结局。',
-            '收藏品a':'\n59……这个数字到底是什么？',
-            '文稿i':'文稿\n\n未完成的文稿可以在日程中完成，而已完成的文稿可以发布到网上增加人气，也可以交付委托来获得大量金钱。',
-            '文稿a':'\n挖了坑我就不填，就是玩——'
+            _('置顶i'):_('置顶道具\n\n你可以在物品的详细信息界面将物品置顶以方便使用。'),
+            _('置顶a'):_('\n也算是某种意义上的物品日程表了……今天的矿泉水喝了吗？'),
+            _('实验药物i'):_('实验药物\n\n药效十分迅速，在吞下药物的瞬间即可止痛，但副作用巨大，而且价格时刻都在飙升，也作为国内稀缺的药物，不过你只需要知道这东西能救你的命就可以。'),
+            _('实验药物a'):_('\n为什么只有Pathos医生才有这样的药？话说这些药片里面的具体成分到底是什么，是从哪里来的，为什么一周后就不能吃了……'),
+            _('普通药物i'):_('普通药物\n\n具有一定的效果，但总体上不如专用的实验药物，妥善使用也许会比实验药物更有帮助。即便副作用不高，但别忘了你只是个普通的人。'),
+            _('普通药物a'):_('\n不吃安眠药就睡不好觉，这日子什么时候能到头？'),
+            _('书本i'):_('书本\n\n在阿斯卡隆书店购买获得，阅读后可获得能够逆转局面的效果，但你不会短时间对同一本书燃起阅读欲望，请谨慎使用吧。'),
+            _('书本a'):_('\n为什么我不能天天都看，明明我想看？这种无形的束缚到底是怎么回事？'),
+            _('手稿i'):_('手稿\n\n阅读部分书本后获得，和书本差别不大，但阅读不需要回合，良好使用的话说不定有神奇的效果。'),
+            _('手稿a'):_('\n喜欢我组合拳吗？'),
+            _('工具i'):_('工具\n\n可重复使用的道具，而且能带来不错的效果。更像是“速读状态下的书籍”。'),
+            _('工具a'):_('\n有人说收藏品怎么可以使用呢？于是出现了这个分类。我只不过是关心你们，如果出的书越来越多，你们该读不过来了。'),
+            _('食物i'):_('食物\n\n可以恢复较多精神状态，且有不同的效果。使用食物会获得饱腹，有饱腹效果还使用食物就会大幅降低本次恢复效果甚至变为扣除精神状态，频繁使用食物也会逐渐降低食物的恢复效果。'),
+            _('食物a'):_('\n如果不点外卖的话，午休时间我就只能吃公司提供的免费工作餐了，倒不是多难吃，就是那东西只是被烹饪到仅仅是能吃的地步……'),
+            _('收藏品i'):_('收藏品\n\n带有不同的效果，拥有则永久提升能力，某些特殊的收藏品还会影响游戏结局。'),
+            _('收藏品a'):_('\n59……这个数字到底是什么？'),
+            _('文稿i'):_('文稿\n\n未完成的文稿可以在日程中完成，而已完成的文稿可以发布到网上增加人气，也可以交付委托来获得大量金钱。'),
+            _('文稿a'):_('\n挖了坑我就不填，就是玩——')
         }
         return d[kind+mode]
 
@@ -282,24 +292,24 @@ init python early:
             else:
                 item.quit(player, 1)
         else:
-            showNotice(['该物品不能被丢弃！'])
+            showNotice([_('该物品不能被丢弃！')])
 
     def buy(player, item, nums=1, money=0):
         if player.money < money * nums:
-            Notice.add('你的钱不够。')
+            Notice.add(_('你的钱不够。'))
         else:
             player.money -= money * nums
-            Notice.add('购买成功！花费%s元购买了%s个%s！' % (money* nums, nums, item.name))
+            Notice.add(_('购买成功！花费%s元购买了%s个%s！') % (money* nums, nums, item.name))
             item.add(player, nums)
         Notice.show()
 
     def buyAndUse(player, item, nums=1, money=0):
         if player.money < money * nums:
-            Notice.add('你的钱不够。')
+            Notice.add(_('你的钱不够。'))
             Notice.show()
         else:
             player.money -= money * nums
-            Notice.add('购买成功！花费%s元购买了%s个%s！' % (money* nums, nums, item.name))
+            Notice.add(_('购买成功！花费%s元购买了%s个%s！') % (money* nums, nums, item.name))
             item.add(player, nums)
             item.get(player).use(player)
         

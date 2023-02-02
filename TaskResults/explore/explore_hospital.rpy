@@ -384,16 +384,14 @@ screen screen_buyMed(player):
 
     python:
         
-        otherMed = list(filter(lambda x: x.kind == '普通药物', ALLITEMS))
-
-        if not GameDifficulty1.has(player):
-            otherMed.remove(DrugVitamin)
-            otherMed.remove(DrugStomach)
-            otherMed.remove(DrugAmphetamine)
-            otherMed.remove(DrugEtizolam)
-            otherMed.remove(DrugUnknown)
-
-        otherMed.sort(key=lambda x:x.id)
+        commonmeds = (DrugHypnotic, DrugColdrex, DrugIbuprofen, DrugAntibiotic, DrugAntidepressant)
+        
+        if GameDifficulty1.has(player):
+            prescription = (DrugVitamin, DrugStomach, DrugAmphetamine, DrugEtizolam, DrugUnknown)
+        elif GameDifficulty5.has(player):
+            prescription = (DrugAspirin, Drugdextropropoxyphene, DrugMethylphenidate)
+        else:
+            prescription = []
 
         med = [MedicineA]
         if player.sol_p>=1:
@@ -434,17 +432,22 @@ screen screen_buyMed(player):
                         viewport:
                             mousewheel True
                             draggable True
-                            if len(med) + len(otherMed)>8:
+                            if len(med) + len(commonmeds) +len(prescription)>9:
                                 scrollbars "vertical"
                             
                             vbox:
                                 if player.today == 5:
                                     if ExaminationReport.has(player):
-                                        use screen_buylist(player, med, p=0.85, d=0, ds=False)
+                                        use screen_buylist(player, med, p=0.85, d=0, ds=False, n='实验药物')
+                                        null height 10
                                     else:
-                                        use screen_buylist(player, med, p=1, d=0, ds=False)
-                                    null height 10
-                                use screen_buylist(player, otherMed, p=-1, d=15, ds=False)
+                                        use screen_buylist(player, med, p=1, d=0, ds=False, n='实验药物')
+                                        null height 10
+
+                                use screen_buylist(player, commonmeds, p=-1, d=15, ds=False, n='普通药物')
+                                null height 10
+
+                                use screen_buylist(player, prescription, p=-1, d=25, ds=False, n='处方药')
                                 null height 30
                                 textbutton ''
                     

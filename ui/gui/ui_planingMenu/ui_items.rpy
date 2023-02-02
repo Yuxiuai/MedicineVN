@@ -5,7 +5,7 @@ screen screen_items(player):
     $ items = sliceArr(player.items)
 
     #modal True
-    zorder 200
+    zorder 600
     drag:
         xcenter 0.5
         ycenter 0.48
@@ -18,7 +18,7 @@ screen screen_items(player):
                 frame:
                     background None
                     yalign 0.001
-                    textbutton '{size=+10}库存{/size}':
+                    textbutton _('{size=+10}库存{/size}'):
                         text_style "gameUI"
                         xoffset -5
                         yoffset -5
@@ -44,25 +44,21 @@ screen screen_items(player):
                             use items_show(player, items)
     
     key 'K_ESCAPE' action [Hide("screen_items",transition=dissolve),Hide("info")]
-    key 'q' action [Hide("screen_items",transition=dissolve),Hide("info")]
-    key 'w' action [Hide("screen_items",transition=dissolve),Hide("info")]
-    key 'e' action [Hide("screen_items",transition=dissolve),Hide("info")]
-    key 'r' action [Hide("screen_items",transition=dissolve),Hide("info")]
                     
 
 screen items_show(player, items):
     vbox:
         xsize 640
         default isFold = {
-            '置顶':False,
-            '实验药物':False,
-            '普通药物':False,
-            '书本':False,
-            '手稿':False,
-            '食物':False,
-            '工具':False,
-            '收藏品':False,
-            '文稿':False
+            _('置顶'):False,
+            _('实验药物'):False,
+            _('普通药物'):False,
+            _('书本'):False,
+            _('手稿'):False,
+            _('食物'):False,
+            _('工具'):False,
+            _('收藏品'):False,
+            _('文稿'):False
         }
 
         $staritems = list(filter(lambda x: x.star == True, player.items))
@@ -73,10 +69,10 @@ screen items_show(player, items):
             
 
             hbox:
-                if isFold['置顶'] == False:
-                    textbutton '{size=-5}置顶{/size}' text_style "white":
-                        action [SetDict(isFold, '置顶', True),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以折叠该类物品。', a=typea)
+                if isFold[_('置顶')] == False:
+                    textbutton _('{size=-5}置顶{/size}') text_style "white":
+                        action [SetDict(isFold, _('置顶'), True),Hide("info")]
+                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类物品。'), a=typea)
                         unhovered Hide("info")
                         xfill True
                         xalign 1.0
@@ -90,9 +86,9 @@ screen items_show(player, items):
 
                 else:
 
-                    textbutton '{size=-5}置顶{/size}' text_style "white":
-                        action [SetDict(isFold, '置顶', False),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以展开该类物品。', a=typea)
+                    textbutton _('{size=-5}置顶{/size}') text_style "white":
+                        action [SetDict(isFold, _('置顶'), False),Hide("info")]
+                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类物品。'), a=typea)
                         unhovered Hide("info")
                         xfill True
                         xalign 1.0
@@ -105,7 +101,7 @@ screen items_show(player, items):
                         yoffset 10
                         at reverse
                     
-            if isFold['置顶'] == False:
+            if isFold[_('置顶')] == False:
                 vbox:
 
                     for ite in staritems:
@@ -113,22 +109,13 @@ screen items_show(player, items):
                             background None
                             ysize 60
                             xfill True
-                            $ite_name = type(ite).name
-                            $ite_pre = ite.getPrefixInfo(player)
-                            $ite_main = ite.getPrincipalInfo()
-                            if type(ite).kind == '实验药物':
-                                $ite_main = ite_main+'\n'+type(ite).getBenefit(player)
-                            $ite_suf = ite.getSuffixInfo()
-                            $ite_ad = type(ite).ad if type(ite) not in (FinishedCommission, UnfinishedCommission) else ite.comm.inputs
-                            if ite_ad is None:
-                                $ite_ad = ''
                             $showstyle = 'grey' if type(ite) in player.itemcd else "white"
                             frame:
                                 background None
-                                textbutton ite_name text_style showstyle:
-                                    action [Hide("info"),Show(screen="item_use", player=player, item=ite, pp=renpy.get_mouse_pos(), t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=ite_ad)]
-                                    hovered [Show(screen="info", t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=ite_ad)]
-                                    unhovered Hide("info")
+                                textbutton ite.name text_style showstyle:
+                                    action [Hide("info"),Show(screen="item_use", player=player, item=ite, pp=renpy.get_mouse_pos())]
+                                    hovered [Show(screen="info_i", player=player, item=ite)]
+                                    unhovered Hide("info_i")
                                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                     activate_sound audio.cursor
                                     xfill True
@@ -150,7 +137,7 @@ screen items_show(player, items):
                 if isFold[typename] == False:
                     textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                         action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以折叠该类物品。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类物品。'), a=typea)
                         unhovered Hide("info")
                         xfill True
                         xalign 1.0
@@ -166,7 +153,7 @@ screen items_show(player, items):
 
                     textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                         action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以展开该类物品。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类物品。'), a=typea)
                         unhovered Hide("info")
                         xfill True
                         xalign 1.0
@@ -187,22 +174,13 @@ screen items_show(player, items):
                             background None
                             ysize 60
                             xfill True
-                            $ite_name = type(ite).name
-                            $ite_pre = ite.getPrefixInfo(player)
-                            $ite_main = ite.getPrincipalInfo()
-                            if type(ite).kind == '实验药物':
-                                $ite_main = ite_main+'\n'+type(ite).getBenefit(player)
-                            $ite_suf = ite.getSuffixInfo()
-                            $ite_ad = type(ite).ad if type(ite) not in (FinishedCommission, UnfinishedCommission) else ite.comm.inputs
-                            if ite_ad is None:
-                                $ite_ad = ''
                             $showstyle = 'grey' if type(ite) in player.itemcd else "white"
                             frame:
                                 background None
-                                textbutton ite_name text_style showstyle:
-                                    action [Hide("info"),Show(screen="item_use", player=player, item=ite, pp=renpy.get_mouse_pos(), t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=ite_ad)]
-                                    hovered [Show(screen="info", t=ite_name, i=ite_pre+'\n'+ite_main+ite_suf, a=ite_ad)]
-                                    unhovered Hide("info")
+                                textbutton ite.name text_style showstyle:
+                                    action [Hide("info"),Show(screen="item_use", player=player, item=ite, pp=renpy.get_mouse_pos())]
+                                    hovered [Show(screen="info_i", player=player, item=ite)]
+                                    unhovered Hide("info_i")
                                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                     activate_sound audio.cursor
                                     xfill True
@@ -215,28 +193,119 @@ screen items_show(player, items):
         null height 30
         textbutton ''
 
-screen item_use(player, item, pp, t=None, i=None, a=None, width=400):
+screen info_i(player, item, width=400, pp=renpy.get_mouse_pos()):
+    
     style_prefix "info"
-    use barrier(screen="item_use")
-    zorder 3000
-    $p = pp
-    $yc = 0.0 if p[1] < 540 else 1.0
-    if p[0] < 1500:
-        $xc = 0.0
-        $trans = trans_toLeft
-    else:
-        $xc = 1.0
-        $trans = trans_toRight
+    zorder 1000
+
+    python:
+        item.name = type(item).name
+        ite_pre = item.getPrefixInfo(player)
+        ite_main = item.getPrincipalInfo()
+        if type(item) in (MedicineA, MedicineB, MedicineC, MedicineD):
+            ite_main = '%s\n\n{color=#fde827}%s{/color}' % (ite_main, type(item).getrecoveryinfo(player))
+        ite_suf = item.getSuffixInfo()
+        ite_ad = item.ad if type(item) not in (FinishedCommission, UnfinishedCommission) else item.comm.inputs
+        if ite_ad is None:
+            ite_ad = ''
+
+        t=item.name
+        i=ite_pre+'\n'+ite_main+ite_suf
+        a=ite_ad
+
+    
+        (xc,trans) = (0.0,trans_toLeft) if pp[0] < 1500 else (1.0,trans_toRight)
+        yc = 0.0 if pp[1] < 540 else 1.0
+        if width == 400:
+            if a:
+                if len(i) + len(a) > 150:
+                    width = 600
+            else:
+                if len(i) > 100:
+                    width = 600
     frame:
-        pos p
+        pos pp
         padding (15, 15)
         xanchor xc
         yanchor yc
         at trans()
+
+        
+
         vbox:
-            align p
+            align pp
+                
+
             if t is not None:
-                label t+'\n':
+                label '[t!t]\n':
+                    text_style "info_text"
+                    xsize width
+            if i is not None:
+                label '{size=-2}[i!t]{/size}':
+                    text_style "info_text"
+                    xsize width
+            if a is not None:
+                null height 16
+                label '{i}[a!t]{/i}':
+                    text_style "admonition_text"
+                    xsize width
+    #frame:
+    #    pos pp
+    #    padding (15, 15)
+    #    xanchor xc
+    #    yanchor yc
+    #    background None
+    #    at trans()
+        #imagebutton idle ite.icon():
+        #    xpos width - 100
+    
+
+
+screen item_use(player, item, pp, width=400):
+    style_prefix "info"
+    zorder 1000
+    use barrier(screen="item_use")
+    python:
+        item.name = type(item).name
+        ite_pre = item.getPrefixInfo(player)
+        ite_main = item.getPrincipalInfo()
+        if type(item) in (MedicineA, MedicineB, MedicineC, MedicineD):
+            ite_main = '%s\n\n{color=#fde827}%s{/color}' % (ite_main, type(item).getrecoveryinfo(player))
+        ite_suf = item.getSuffixInfo()
+        ite_ad = item.ad if type(item) not in (FinishedCommission, UnfinishedCommission) else item.comm.inputs
+        if ite_ad is None:
+            ite_ad = ''
+
+        t=item.name
+        i=ite_pre+'\n'+ite_main+ite_suf
+        a=ite_ad
+
+    
+        (xc,trans) = (0.0,trans_toLeft) if pp[0] < 1500 else (1.0,trans_toRight)
+        yc = 0.0 if pp[1] < 540 else 1.0
+        if width == 400:
+            if a:
+                if len(i) + len(a) > 150:
+                    width = 600
+            else:
+                if len(i) > 100:
+                    width = 600
+    frame:
+        pos pp
+        padding (15, 15)
+        xanchor xc
+        yanchor yc
+        at trans()
+        #frame:
+        #    xalign 0.98
+        #    yalign 0.02
+        #    imagebutton idle ite.icon()
+
+        vbox:
+            align pp
+            
+            if t is not None:
+                label '[t!t]\n':
                     text_style "info_text"
                     xsize width
             if i is not None:
@@ -246,7 +315,7 @@ screen item_use(player, item, pp, t=None, i=None, a=None, width=400):
                     xsize width
             if a is not None:
                 null height 13
-                label '{i}' + a + '{/i}':
+                label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
 
@@ -260,7 +329,7 @@ screen item_use(player, item, pp, t=None, i=None, a=None, width=400):
                         action [Hide("item_use"), Function(ui_itemUse, item=item, player=player)]
                         activate_sound audio.cursor 
 
-                elif BookQuickReadEffect.has(player) and player.canRead >= 0 and item.kind == '书本':
+                elif BookQuickReadEffect.has(player) and player.canRead >= 0 and item.kind == _('书本'):
                     textbutton _("{color=#ffff00}{size=-3}速读{/size}{/color}"):
                         action [Hide("item_use"), Function(ui_itemUse, item=item, player=player)]
                         activate_sound audio.cursor
@@ -279,7 +348,7 @@ screen item_use(player, item, pp, t=None, i=None, a=None, width=400):
                     
                         textbutton _("{size=-3}交稿{/size}"):
                             if item.comm.broken:
-                                action [Hide("item_use"), Function(showNotice, messages=['委托已过期，无法交付。'])]
+                                action [Hide("item_use"), Function(showNotice, messages=[_('委托已过期，无法交付。')])]
                             else:
                                 action [Hide("item_use"), Function(item.getReward, player=player)]
                             activate_sound audio.cursor

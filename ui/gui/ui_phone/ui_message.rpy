@@ -3,7 +3,7 @@ screen screen_phone_message_address(player):
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     
 
     frame:
@@ -31,13 +31,13 @@ screen screen_phone_message_address(player):
                         background None
                         imagebutton idle "gui/phone/address/Pathos.png":
                             action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who='Pathos', player=player), Function(Message.see, player, 'Pathos', 'Pathos')]
-                            hovered Show(screen="info", i='Pathos\n总喜欢摆着臭脸但却偶尔让人觉得可爱的主治医师。', a='臭猪b，不想听到他声音。')
+                            hovered Show(screen="info", i=_('Pathos\n总喜欢摆着臭脸但却偶尔让人觉得可爱的主治医师。'), a=_('臭猪b，不想听到他声音。'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Pathos"):
+                        textbutton "Pathos":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -58,14 +58,14 @@ screen screen_phone_message_address(player):
                         xfill True
                         background None
                         imagebutton idle "gui/phone/address/Acolas.png":
-                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who='Acolas', player=player), Function(Message.see, player, 'Acolas', 'Acolas')]
-                            hovered Show(screen="info", i='Acolas\n负责很多项目的技术总监，私底下和工作中完全不同的帅气黑狼。', a='老公')
+                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who="Acolas", player=player), Function(Message.see, player, "Acolas", "Acolas")]
+                            hovered Show(screen="info", i=_('Acolas\n负责很多项目的技术总监，私底下和工作中完全不同的帅气黑狼。'), a=_('老公'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Acolas"):
+                        textbutton "Acolas":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -87,13 +87,13 @@ screen screen_phone_message_address(player):
                         background None
                         imagebutton idle "gui/phone/address/Halluke.png":
                             action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who='Halluke', player=player), Function(Message.see, player, 'Halluke', 'Halluke')]
-                            hovered Show(screen="info", i='Halluke\n就读于A市大学，不擅长表达的白熊大学生。', a='老婆')
+                            hovered Show(screen="info", i=_('Halluke\n就读于A市大学，不擅长表达的白熊大学生。'), a=_('老婆'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Halluke"):
+                        textbutton "Halluke":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -114,19 +114,19 @@ screen screen_phone_message_address(player):
                         xfill True
                         background None
                         imagebutton idle "gui/phone/address/Depline.png":
-                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who='Depline', player=player), Function(Message.see, player, 'Depline', 'Depline')]
-                            hovered Show(screen="info", i='Depline\n莓博上的赤松Akamatsu，喜欢画画、远足的赤狐自由画师。', a='神')
+                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who=_('Depline'), player=player), Function(Message.see, player, _('Depline'), _('Depline'))]
+                            hovered Show(screen="info", i=_('Depline\n莓博上的赤松Akamatsu，喜欢画画、远足的赤狐自由画师。'), a=_('神'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Depline"):
+                        textbutton "Depline":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
                             yalign 0.5
-                        if Message.hasNew(player, 'Depline'):
+                        if Message.hasNew(player, _('Depline')):
                             $icon = "gui/phone/message/new_%s.png"
                         else:
                             $icon = "gui/phone/message/talk_%s.png"
@@ -154,7 +154,7 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
 
     default send = ''
 
@@ -177,7 +177,7 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
             ysize 40
             background None
 
-            textbutton '{size=-10}{color=#000000}' + who + '{/size}{/color}':
+            textbutton _('{size=-10}{color=#000000}') + who + _('{/size}{/color}'):
                 xalign 0.5
         frame:
             ypos 0.14
@@ -205,13 +205,13 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
                                 xalign ali
                                 background Frame("gui/style/white_hover_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                 vbox:
-                                    text '{color=#000000}{size=-17}{font=C.ttf}'+i.fro+'{/font}{/color}{/size}':
+                                    text _('{color=#000000}{size=-17}{font=C.ttf}')+i.fro+_('{/font}{/color}{/size}'):
                                         xalign ali
                                     null height 1
-                                    text '{color=#000000}{size=-16}'+i.what+'{/color}{/size}':
+                                    text _('{color=#000000}{size=-16}')+i.what+_('{/color}{/size}'):
                                         xalign ali
                                     null height 5
-                                    text '{color=#000000}{size=-17}'+i.info()+'{/color}{/size}':
+                                    text _('{color=#000000}{size=-17}')+i.info()+_('{/color}{/size}'):
                                         xalign ali
 
 
@@ -231,12 +231,15 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
             
                 input:
                     value ScreenVariableInputValue("send")
-                    style "white"
+                    #style "white"
                     xsize 290
                     xalign 0.0
                     yalign 0.0
-                    length 100
+                    length 45
                     exclude "\"\'[]{}%$@?!#^&*\(\)"
+                    color '#000000'
+                    size 19
+                    
 
         frame:
             background None
@@ -244,7 +247,9 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
             ypos 0.77
             imagebutton auto "gui/phone/message/send_%s.png":
                 action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
+                #alternate Function(Message.allret, player)
                 hover_sound audio.cursor
+                activate_sound audio.message
 
         frame:
             background None
@@ -254,6 +259,6 @@ screen screen_phone_message_weixin(who, player, trans=trans_Down()):
                 action [Hide("screen_phone_message_weixin"),Hide("info"),Show(screen="screen_phone_message_address", player=player), Function(Message.see, player, who, who)]
                 hover_sound audio.cursor
 
-    key 'K_RETURN' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
-    key 'K_KP_ENTER' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
+    key 'K_RETURN' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None), Play("audio", audio.message)]
+    key 'K_KP_ENTER' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None), Play("audio", audio.message)]
     key 'K_ESCAPE' action [Hide("screen_phone_message_weixin"),Hide("info"),Show(screen="screen_phone_message_address", player=player), Function(Message.see, player, who, who)]

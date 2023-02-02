@@ -5,7 +5,7 @@ screen screen_effects(player):
     $ effects = sliceArr(player.effects)
 
     #modal True
-    zorder 200
+    zorder 600
     drag:
         xcenter 0.5
         ycenter 0.48
@@ -18,7 +18,7 @@ screen screen_effects(player):
                 frame:
                     background None
                     yalign 0.001
-                    textbutton '{size=+10}角色效果{/size}':
+                    textbutton _('{size=+10}角色效果{/size}'):
                         text_style "gameUI"
                         xoffset -5
                         yoffset -5
@@ -43,22 +43,18 @@ screen screen_effects(player):
                             use effects_show(player, effects)
     
     key 'K_ESCAPE' action [Hide("screen_effects",transition=dissolve),Hide("info")]
-    key 'q' action [Hide("screen_effects",transition=dissolve),Hide("info")]
-    key 'w' action [Hide("screen_effects",transition=dissolve),Hide("info")]
-    key 'e' action [Hide("screen_effects",transition=dissolve),Hide("info")]
-    key 'r' action [Hide("screen_effects",transition=dissolve),Hide("info")]
                     
 
 screen effects_show(player, effects):
     vbox:
         xsize 640
         default isFold = {
-            '天气':False,
-            '状态':False,
-            '增益':False,
-            '药物反应':False,
-            '学识':False,
-            '伤痕':False
+            _('天气'):False,
+            _('状态'):False,
+            _('增益'):False,
+            _('药物反应'):False,
+            _('学识'):False,
+            _('伤痕'):False
         }
         for i in effects:
             $typename = type(i[0]).kind
@@ -68,7 +64,7 @@ screen effects_show(player, effects):
                 if isFold[typename] == False:
                     textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                         action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以折叠该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
                         unhovered Hide("info")
                         xfill True
                         xalign 1.0
@@ -83,7 +79,7 @@ screen effects_show(player, effects):
 
                     textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                         action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以展开该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
                         unhovered Hide("info")
                         xfill True
                         xalign 1.0
@@ -110,8 +106,8 @@ screen effects_show(player, effects):
                             frame:
                                 background None
                                 textbutton ite.name text_style "white":
-                                    action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), t=type(ite).name, i=ite_pre+ite_main + ite_suf, a=type(ite).ad)]
-                                    hovered Show(screen="info", t=type(ite).name, i=ite_pre+ite_main + ite_suf, a=type(ite).ad)
+                                    action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), t=type(ite).name, i=ite_pre+ite_main + ite_suf, a=ite.ad)]
+                                    hovered Show(screen="info", t=type(ite).name, i=ite_pre+ite_main + ite_suf, a=ite.ad)
                                     unhovered Hide("info")
                                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                                     activate_sound audio.cursor

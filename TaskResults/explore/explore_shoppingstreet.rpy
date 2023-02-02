@@ -1,21 +1,9 @@
-label explore_shop:
-    $temp = ra(p, 1, 9)
-    $jumplabel = 'explore_shop_' + str(temp)
-    $renpy.jump(jumplabel)
-
 label explore_shop_1:
     scene arcade with fade
-    "进入了一家新开的游戏厅。"
+    "进入了游戏厅。"
     "你对大多数游戏都不感兴趣，不过你注意到了一排抓娃娃机。"
     "价格为10元一次。"
     "试试手气？"
-    if 1 in p.visitedStore:
-        menu:
-            "娃娃机。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
         
     jump explore_shop_1_catch
     
@@ -26,7 +14,7 @@ label explore_shop_1_catch:
         "夹一次" if p.money>10:
             scene toys with dissolve
             $p.money -= 10
-            $temp=rd(1,10)
+            $temp=rd(1,8)
             $p.visitedStore.add(1)
             if temp==1:
                 "你看着夹子缓缓下落，张开爪子，抓住那只黑色的有点像你认识的那个医生一样的娃娃。"
@@ -60,7 +48,7 @@ label explore_shop_1_catch:
                 $p.severity += 0.01
                 $showNotice(['提升了1点严重程度。'])
                 pass
-            elif temp==6 or temp==7:
+            elif temp==6:
                 "你看着夹子缓缓下落，张开爪子，抓住那只黑色的有点像你认识的那个医生一样的娃娃。"
                 "娃娃被夹子夹住，挪到空中……"
                 "夹子正在夹着娃娃，缓缓移动到出口上方……"
@@ -87,14 +75,7 @@ label explore_shop_1_catch:
 
 label explore_shop_2:
     scene store with fade
-    "去小卖店买点零食吃好了……"
-    if 2 in p.visitedStore:
-        menu:
-            "小卖店。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
+    "去零食店买点零食吃好了……"
     $temp = p.money
     call screen screen_explore_store(p)
     $p.visitedStore.add(2)
@@ -149,11 +130,12 @@ screen screen_explore_store(player):
                                     drinks.append(CitrusJuice)
                                 cookie = [SolitusCookie]
                                 if Achievement401.has():
-                                    cookie.append(PathosCookie)
                                     cookie.append(DecayCookie)
-                                if Achievement501.has():
+                                if Achievement402.has():
+                                    cookie.append(PathosCookie)
+                                if Achievement107.has():
                                     cookie.append(AcolasCookie)
-                                if Achievement502.has():
+                                if Achievement106.has():
                                     cookie.append(HallukeCookie)
                             vbox:
                                 use screen_buylist(player, [StreetFood9, StreetFood10], p=0.2, d=15, n='货架1')
@@ -168,13 +150,6 @@ label explore_shop_3:
     scene foodstand with dissolve
     "逛到了当地有名的小吃街。"
     "随便买点小吃好了……"
-    if 3 in p.visitedStore:
-        menu:
-            "小吃街。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
 
     $temp = p.money
     call screen screen_explore_buystreetfood(p)
@@ -234,13 +209,6 @@ label explore_shop_4:
     scene giftshop with fade
     "逛到了一家看起来很豪华的礼品店。"
     "进去瞅瞅。"
-    if 4 in p.visitedStore:
-        menu:
-            "礼品店。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
     $temp = p.money
     call screen screen_explore_buystreetgift(p)
     $p.visitedStore.add(4)
@@ -291,7 +259,13 @@ screen screen_explore_buystreetgift(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [Humidifier, MusicBox, ClockTower, TomatoBrooch], p=1.5, d=30, n='礼品')
+                                use screen_buylist(player, [Humidifier, MusicBox, ClockTower, TomatoBrooch, ToyDuck], p=1.5, d=30, n='礼品')
+                                if Achievement400.has() and not Sandglass.has(player):
+                                    null height 10
+                                    use screen_buylist(player, [Sandglass], p=1.0, d=30, n='？？？')
+                                if Achievement401.has() and not ChaoticPendulum.has(player):
+                                    null height 10
+                                    use screen_buylist(player, [ChaoticPendulum], p=1.0, d=30, n='？？？')
                                 null height 30
                                 textbutton ''
 
@@ -299,13 +273,6 @@ screen screen_explore_buystreetgift(player):
 label explore_shop_5:
     scene cafe with fade
     "难得出门，喝点新鲜的咖啡好了。"
-    if 5 in p.visitedStore:
-        menu:
-            "咖啡馆。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
     $temp = p.money
     call screen screen_explore_buycoffee(p)
     $p.visitedStore.add(5)
@@ -355,21 +322,17 @@ screen screen_explore_buycoffee(player):
                             mousewheel True
                             draggable True
                             #scrollbars "vertical"
-                            use screen_buylist(player, [StreetFood5, StreetFood6, StreetFood7, StreetFood8], p=0.4, d=30, n='咖啡')
-                            null height 30
-                            textbutton ''
+                            vbox:
+                                use screen_buylist(player, [StreetFood5, StreetFood6, StreetFood7, StreetFood8], p=0.4, d=30, n='咖啡')
+                                null height 10
+                                use screen_buylist(player, [CreamCake, StrawberryCake, OrangeCake], p=0.4, d=20, n='蛋糕')
+                                null height 30
+                                textbutton ''
 
 label explore_shop_6:
     scene flowershop with fade
     "这里之前有一家花店吗？"
     "进去瞅瞅。"
-    if 6 in p.visitedStore:
-        menu:
-            "花店。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
     $temp = p.money
     call screen screen_explore_buystreetflower(p)
     $p.visitedStore.add(6)
@@ -420,20 +383,21 @@ screen screen_explore_buystreetflower(player):
                             mousewheel True
                             draggable True
                             #scrollbars "vertical"
-                            use screen_buylist(player, [Flower1, Flower2, Flower3], p=0.6, d=30, n='鲜花')
-                            null height 30
-                            textbutton ''
+                            vbox:
+                                use screen_buylist(player, [Flower1, Flower2, Flower3], p=0.6, d=30, n='鲜花')
+                                null height 10
+
+                                if not Cactus.has(player) and not WellCactus.has(player):
+                                    use screen_buylist(player, [Cactus], p=0.5, d=30, n='仙人掌')
+                                    null height 10
+                                    
+                                use screen_buylist(player, [CactusFood], p=0.35, d=30, n='仙人掌相关')
+                                null height 30
+                                textbutton ''
 
 label explore_shop_7:
     scene store with fade
     "街尾有一家新开的工具店，进去看看？"
-    if 7 in p.visitedStore:
-        menu:
-            "工具店。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
     $temp = p.money
     call screen screen_explore_store2(p)
     $p.visitedStore.add(7)
@@ -496,13 +460,6 @@ label explore_shop_8:
     scene store with fade
     "是之前去过的文体用品店……？"
     "进去看看吧。"
-    if 8 in p.visitedStore:
-        menu:
-            "文体商店。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
     $temp = p.money
     call screen screen_explore_store3(p)
     $p.visitedStore.add(8)
@@ -553,67 +510,3 @@ screen screen_explore_store3(player):
                                 use screen_buylist(player, [BadmintonRacket, Sneakers, NotePad, FileFolder], p=0.8, d=20, n='货架1')
                                 null height 30
                                 textbutton ''
-
-
-label explore_shop_9:
-    scene cakeshop with fade
-    "是新开的蛋糕店。"
-    if 9 in p.visitedStore:
-        menu:
-            "蛋糕店。"
-            "就去这里":
-                pass
-            "再去其他地方看看":
-                jump explore_shop
-    $temp = p.money
-    call screen screen_explore_buycake(p)
-    $p.visitedStore.add(9)
-    if p.money==temp:
-        "算了，都太贵了。"
-    else:
-        "就当是犒劳自己努力工作吧！"
-    jump GoOutside_result
-
-
-screen screen_explore_buycake(player):
-    #tag gamegui
-    use barrier(screen="screen_explore_buycake", mode=0)
-
-    #modal True
-    zorder 200
-    drag:
-        xcenter 0.5
-        ycenter 0.48
-        frame:
-            at trans_toRight()
-            style "translucent_frame"
-            xsize 700
-            ysize 800
-            vbox:
-                frame:
-                    background None
-                    yalign 0.001
-                    textbutton '{size=+10}蛋糕店{/size}':
-                        text_style "gameUI"
-                        xoffset -5
-                        yoffset -5
-                        action NullAction()
-
-                    imagebutton auto "gui/exit_%s.png":
-                        xalign 1.0
-                        action [Hide("screen_explore_buycake"), Return()]
-
-                    frame:
-                        background None
-                        ysize 700
-                        xsize 650
-                        ypos 60
-                        xpos 25
-
-                        viewport:
-                            mousewheel True
-                            draggable True
-                            #scrollbars "vertical"
-                            use screen_buylist(player, [CreamCake, StrawberryCake, OrangeCake], p=0.4, d=20, n='蛋糕')
-                            null height 30
-                            textbutton ''

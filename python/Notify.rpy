@@ -42,7 +42,7 @@ init python early:
 
 screen screen_notify(messages):
 
-    zorder 100
+    zorder 3000
     style_prefix "info"
 
     vbox:

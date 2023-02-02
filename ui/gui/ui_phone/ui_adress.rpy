@@ -3,7 +3,7 @@ screen screen_phone_address(player):
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     
 
     frame:
@@ -36,7 +36,7 @@ screen screen_phone_address(player):
                     background None
                     imagebutton idle "gui/phone/address/parents.png":
                         action [Hide("info"),Hide("screen_phone_address"),Show(screen="screen_phone_address_profile",who=0, player=player)]
-                        hovered Show(screen="info", i='你的父母。\n\n虽然你们很久都不通一次电话，但如果你手头很紧，也许可以和你的父母借一点钱。', a='虽然并没有发生过不好的回忆，但……')
+                        hovered Show(screen="info", i=_('你的父母。\n\n虽然你们很久都不通一次电话，但如果你手头很紧，也许可以和你的父母借一点钱。'), a=_('虽然并没有发生过不好的回忆，但……'))
                         unhovered Hide("info")  
                         background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                         activate_sound audio.cursor
@@ -56,13 +56,13 @@ screen screen_phone_address(player):
                         background None
                         imagebutton idle "gui/phone/address/Pathos.png":
                             action [Hide("info"),Hide("screen_phone_address"),Show(screen="screen_phone_address_profile",who=1, player=player)]
-                            hovered Show(screen="info", i='Pathos\n总喜欢摆着臭脸但却偶尔让人觉得可爱的主治医师。', a='臭猪b，不想听到他声音。')
+                            hovered Show(screen="info", i=_('Pathos\n总喜欢摆着臭脸但却偶尔让人觉得可爱的主治医师。'), a=_('臭猪b，不想听到他声音。'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Pathos"):
+                        textbutton "Pathos":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -76,13 +76,13 @@ screen screen_phone_address(player):
                         background None
                         imagebutton idle "gui/phone/address/Arnel.png":
                             action [Hide("info"),Hide("screen_phone_address"),Show(screen="screen_phone_address_profile",who=2, player=player)]
-                            hovered Show(screen="info", i='Arnel\n经常抓你偷懒睡觉的俊俏白狼部门主管，如果需要请假就给他打电话。', a='好想请假好想请假好想请假好想请假好想请假好想请假……')
+                            hovered Show(screen="info", i=_('Arnel\n经常抓你偷懒睡觉的俊俏白狼部门主管，如果需要请假就给他打电话。'), a=_('好想请假好想请假好想请假好想请假好想请假好想请假……'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Arnel"):
+                        textbutton "Arnel":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -96,13 +96,13 @@ screen screen_phone_address(player):
                         background None
                         imagebutton idle "gui/phone/address/Acolas.png":
                             action [Hide("info"),Hide("screen_phone_address"),Show(screen="screen_phone_address_profile",who=3, player=player)]
-                            hovered Show(screen="info", i='Acolas\n负责很多项目的技术总监，私底下和工作中完全不同的帅气黑狼。', a='老公')
+                            hovered Show(screen="info", i=_('Acolas\n负责很多项目的技术总监，私底下和工作中完全不同的帅气黑狼。'), a=_('老公'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Acolas"):
+                        textbutton "Acolas":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -116,13 +116,13 @@ screen screen_phone_address(player):
                         background None
                         imagebutton idle "gui/phone/address/Halluke.png":
                             action [Hide("info"),Hide("screen_phone_address"),Show(screen="screen_phone_address_profile",who=4, player=player)]
-                            hovered Show(screen="info", i='Halluke\n就读于A市大学，不擅长表达的白熊大学生。', a='老婆')
+                            hovered Show(screen="info", i=_('Halluke\n就读于A市大学，不擅长表达的白熊大学生。'), a=_('老婆'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Halluke"):
+                        textbutton "Halluke":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -136,13 +136,13 @@ screen screen_phone_address(player):
                         background None
                         imagebutton idle "gui/phone/address/Depline.png":
                             action [Hide("info"),Hide("screen_phone_address"),Show(screen="screen_phone_address_profile",who=5, player=player)]
-                            hovered Show(screen="info", i='Depline\n莓博上的赤松Akamatsu，喜欢画画、远足的赤狐自由画师。', a='神')
+                            hovered Show(screen="info", i=_('Depline\n莓博上的赤松Akamatsu，喜欢画画、远足的赤狐自由画师。'), a=_('神'))
                             unhovered Hide("info")  
                             background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Depline"):
+                        textbutton "Depline":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -166,10 +166,10 @@ screen screen_phone_address_profile(who, player):
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
 
     $ infolist = [
-        ['父母',"gui/phone/address/parents_profile.png", 'call_parents'],
+        [_('父母'),"gui/phone/address/parents_profile.png", 'call_parents'],
         ['Pathos',"gui/phone/address/pathos_profile.png", 'call_Pathos'],
         ['Arnel',"gui/phone/address/arnel_profile.png", 'call_Arnel'],
         ['Acolas',"gui/phone/address/acolas_profile.png", 'call_Acolas'],
@@ -200,7 +200,7 @@ screen screen_phone_address_profile(who, player):
             ysize 40
             background None
 
-            textbutton '{size=-10}{color=#000000}' + infolist[who][0] + '{/size}{/color}':
+            textbutton _('{size=-10}{color=#000000}') + infolist[who][0] + _('{/size}{/color}'):
                 xalign 0.5
                 xoffset 0.28
 
@@ -210,7 +210,7 @@ screen screen_phone_address_profile(who, player):
             $calllabel = infolist[who][2]
             imagebutton idle "gui/phone/address/call_btn.png":
                 action [Hide("info"),Hide("screen_phone_bg"),Hide("screen_phone_address_profile"), Jump(calllabel)]
-                hovered Show(screen="info", i='给' + infolist[who][0] + '打电话', width = 200)
+                hovered Show(screen="info", i=_('给') + infolist[who][0] + _('打电话'), width = 200)
                 unhovered Hide("info")  
                 background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                 activate_sound audio.cursor
@@ -218,13 +218,13 @@ screen screen_phone_address_profile(who, player):
                 yalign 0.5
                 xoffset 5
 
-            #textbutton '{color=ffffff}1XX XXXX XXXX' text_style "white"
+            #textbutton _('{color=ffffff}1XX XXXX XXXX') text_style "white"
                 
                 #imagebutton auto "gui/phone/address/call_%s.png":
                 #    #action [Hide("info"),Hide("screen_phone_address_profile",transition=dissolve),Hide("screen_phone_address",transition=dissolve),Call("call_parents")]
                 #    action NullAction()
                 #    hover_sound audio.cursor
-                #    hovered Show(screen="info", i='', a='')
+                #    hovered Show(screen="info", i=_('', a=')')
                 #    unhovered Hide("info") 
 
 

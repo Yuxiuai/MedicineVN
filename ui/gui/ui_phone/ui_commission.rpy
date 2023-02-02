@@ -5,7 +5,7 @@ screen screen_phone_commission(player):
     default page = 'receive'
     
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     frame:
         at trans_app(-150, 170)
         background None
@@ -61,7 +61,7 @@ screen screen_phone_commission(player):
                                 xfill True
                                 ysize 40
                                 textbutton i.name:
-                                    action Show(screen="info_confirm", text='接稿', act=[Function(player.receiveComm, comm=i)], pp=renpy.get_mouse_pos(),i=i.commInfo())
+                                    action Show(screen="info_confirm", text=_('接稿'), act=[Function(player.receiveComm, comm=i)], pp=renpy.get_mouse_pos(),i=i.commInfo())
                                     hover_sound audio.cursor
                                     hovered Show(screen="info",i=i.commInfo())
                                     unhovered Hide("info")  
@@ -87,7 +87,7 @@ screen screen_phone_commission(player):
                     hbox:
                         xalign 0.5
                         spacing 4
-                        textbutton '     接稿':
+                        textbutton _('     接稿'):
                             action NullAction()
                             hover_sound audio.cursor
                             background Frame("gui/style/grey_s_hover_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -95,7 +95,7 @@ screen screen_phone_commission(player):
                             xsize 120
                             yfill True
                         
-                        textbutton '     交稿':
+                        textbutton _('     交稿'):
                             action SetLocalVariable("page", 'submission')
                             hover_sound audio.cursor 
                             background Frame("gui/style/grey_s_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -103,7 +103,7 @@ screen screen_phone_commission(player):
                             xsize 120
                             yfill True
                         
-                        textbutton '     退出':
+                        textbutton _('     退出'):
                             action [Hide("screen_phone_commission"),Hide("info"),Show(screen="screen_phone", player=player)]
                             hover_sound audio.cursor 
                             background Frame("gui/style/grey_s_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -169,7 +169,7 @@ screen screen_phone_commission(player):
                         xalign 0.5
                         spacing 4
 
-                        textbutton '     接稿':
+                        textbutton _('     接稿'):
                             action SetLocalVariable("page", 'receive')
                             hover_sound audio.cursor 
                             background Frame("gui/style/grey_s_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -177,7 +177,7 @@ screen screen_phone_commission(player):
                             xsize 120
                             yfill True
 
-                        textbutton '     交稿':
+                        textbutton _('     交稿'):
                             action NullAction()
                             hover_sound audio.cursor 
                             background Frame("gui/style/grey_s_hover_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -186,7 +186,7 @@ screen screen_phone_commission(player):
                             yfill True
                             
 
-                        textbutton '     退出':
+                        textbutton _('     退出'):
                             action [Hide("screen_phone_commission"),Hide("info"),Show(screen="screen_phone", player=player)]
                             hover_sound audio.cursor
                             background Frame("gui/style/grey_s_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -199,8 +199,15 @@ screen screen_phone_commission(player):
 
 screen comm_use(player, item, i=None, a=None, width=400, pp=renpy.get_mouse_pos()):
     use barrier(screen="comm_use")
+    if width == 400:
+        if a:
+            if len(i) + len(a) > 150:
+                $width = 600
+        else:
+            if len(i) > 100:
+                $width = 600
     style_prefix "info"
-    zorder 400
+    zorder 1000
     $p = pp
     if p[0] < 1500:
         $xc = 0.0
@@ -219,14 +226,13 @@ screen comm_use(player, item, i=None, a=None, width=400, pp=renpy.get_mouse_pos(
         vbox:
             align pp
             if i is not None:
-                label '{size=-2}' + i + '{/size}':
+                label '{size=-2}[i!t]{/size}':
                     text_style "info_text"
                     xsize width
                 
             if a is not None:
-                $a = '{i}' + a
                 null height 13
-                label _(a):
+                label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
             null height 30

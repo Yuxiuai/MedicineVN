@@ -28,6 +28,7 @@ init python:
 
         player.finalStageDays = 0
         player.plan = [NoTask, NoTask, NoTask]
+        player.plancheck = [False, False, False]
 
         player.aco_p = -1
         player.hal_p = -1
@@ -41,6 +42,7 @@ init python:
 
 label before_earthquake:
     $ renpy.block_rollback()
+    stop music
     if p.mental < 5:
         $p.mental = 60.0
     scene black
@@ -416,57 +418,50 @@ label earthquake:
 
 
 label despair_execution:  
-    $routineMusic(p)
+    $routine_music(p)
     if p.times <= 2:
         $renpy.sound.stop(channel="chara_voice")
-        call screen screen_index(p)
+        $p.plancheck = [False, False, False]
+        call screen screen_operate(p)
         hide screen info
         hide screen info2
         hide screen info3
         $p.times = 3
         jump despair_execution
     elif p.times == 3:
-        $ Stat.record(p,p.plan[0])
-        $ labelname = p.plan[0].__name__ + '_beginning'
-        $ renpy.jump(labelname)
+        $donextplan(p)
     elif p.times == 5:
         scene ruins with fade
         "……头好疼……"
         "要不要吃点药……"
-        call screen screen_index(p)
+        call screen screen_operate(p)
         hide screen info
         hide screen info2
         hide screen info3
         scene ruins with fade
         "……下一件事。"
-        $p.times += 1
         jump despair_execution
     elif p.times == 6:
-        $ Stat.record(p,p.plan[1])
-        $ labelname = p.plan[1].__name__ + '_beginning'
-        $ renpy.jump(labelname)
+        $donextplan(p)
     elif p.times == 8:
         scene ruins with fade
         "……好疼……"
         "再不吃药……肯定要晕过去了……"
-        call screen screen_index(p)
+        call screen screen_operate(p)
         hide screen info
         hide screen info2
         hide screen info3
         scene ruins with fade
         "……呼……哈……呼……"
-        $p.times += 1
         jump despair_execution
     elif p.times == 9:
-        $ Stat.record(p,p.plan[2])
-        $ labelname = p.plan[2].__name__ + '_beginning'
-        $ renpy.jump(labelname)
+        $donextplan(p)
     elif p.times == 11:
         scene ruins with fade
         $Notice.show()
         "……又渴又饿，头还这么疼……我是不是快死了？……"
         "……不……还不能放弃……至少……"
-        call screen screen_index(p)
+        call screen screen_operate(p)
         hide screen info
         hide screen info2
         hide screen info3
@@ -673,10 +668,10 @@ label DespairObserve_result:
     if r == 7:
         "也许……也许他正痛苦着吧？也许……也许该放弃？……"
     if p.p2:
-        $temp = Despair.getS(p.p2)
+        $temp = Despair.getstack(p.p2)
         if temp>=4:
             $Despair.get(p.p2).sub(p.p2, int(temp/2))
-            $temp = Despair.getS(p.p2)
+            $temp = Despair.getstack(p.p2)
         "*[p.p2.name]当前的精神状态为[p.p2.mental]，绝望等级为[temp]*"
         
     else:
@@ -996,6 +991,7 @@ label despair_end:
     scene black with fade
     if p.finalStageDays >= 20:
         $Achievement602.achieve()
+        $Achievement.show()
     if p.finalStageDays >= 7:
         "……"
         "是震动。"

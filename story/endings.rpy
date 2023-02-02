@@ -36,6 +36,7 @@ label ending0:
     show screen freeze(5)
     pause
     $Achievement100.achieve()
+    $Achievement.show()
     $Notice.show()
     "{color=#FF0000}Bad Ending 0.\n——愿令人怀念的新生的你，能有一个好的结局。{/color}" 
     $end_plot()
@@ -96,6 +97,7 @@ label ending1:
     show screen freeze(5)
     pause
     $Achievement101.achieve()
+    $Achievement.show()
     $Notice.show()
     "{color=#FF0000}Bad Ending 1.\n——死亡是最好的解药。{/color}" 
     $end_plot()
@@ -153,6 +155,7 @@ label ending2:
     stop music fadeout 10
     pause
     $Achievement102.achieve()
+    $Achievement.show()
     $Notice.show()
     "{color=#FF0000}Bad Ending 2.\n——你失去了活着的权利。{/color}"
     $end_plot()
@@ -201,14 +204,15 @@ label ne:
     show screen freeze(3)
     pause
     stop music fadeout 5
+    $Achievement400.achieve()
+    $Achievement.reachAnyEnd(p)
+    $Notice.show()
+    $Achievement.show()
     "{color=#9500ff}Normal End.\n——希望我们已经死去，那样我们就将不会彼此吞食。{/color}" 
     if replaying:
         jump afterreplay
     $persistent.ne = True
     $persistent.lastend = 'ne'
-    $Achievement400.achieve()
-    $Achievement.reachAnyEnd(p)
-    $Notice.show()
     $end_plot()
     
     return
@@ -294,14 +298,15 @@ label te:
     show screen freeze(3)
     pause
     stop music fadeout 5
+    $Achievement401.achieve()
+    $Achievement.reachAnyEnd(p)
+    $Notice.show()
+    $Achievement.show()
     "{color=#9500ff}True End.\n——在列车中，我牵着你的尸体的手，一同走到车厢尽头。{/color}" 
     if replaying:
         jump afterreplay
     $persistent.te = True
     $persistent.lastend = 'te'
-    $Achievement401.achieve()
-    $Achievement.reachAnyEnd(p)
-    $Notice.show()
     $end_plot()
     return
 
@@ -483,19 +488,23 @@ label CE:
     play music audio.ihavelosteverything
     show pathos smile_mouth with dissolve
     "注视着我的黑色狮子微笑着向我伸出了手。"
-    "于是我不再思考，握住他的手，离开了天台。"
-    scene black
-    show screen freeze(5)
+    "于是我不再思考，只是握住他的手，任由他带我去任何地方。"
+    scene black with dissolve
+    "是的，不重要了，什么都不重要了。"
+    "无论我丢掉了什么，无论活着有多么痛苦。"
+    "只要有他，那么一切都不重要了。"
+    show screen freeze(2)
     pause
+    $Achievement402.achieve()
+    $Achievement.reachAnyEnd(p)
+    $Notice.show()
+    $Achievement.show()
     "{color=#9500ff}Cured End.\n——即使我被焚烧，我依然如此愉快。{/color}" 
     $end_plot()
     if replaying:
         jump afterreplay
     $persistent.ce = True
     $persistent.lastend = 'ce'
-    $Achievement402.achieve()
-    $Achievement.reachAnyEnd(p)
-    $Notice.show()
     jump credits
 
 label earthquakeBE:
@@ -539,6 +548,7 @@ label earthquakeBE:
     show screen freeze(3)
     pause
     $Achievement103.achieve()
+    $Achievement.show()
     $Notice.show()
     "{color=#FF0000}Bad Ending 3.\n——这只是一场噩梦，而你很快就会醒来。{/color}"
     $end_plot()
@@ -579,6 +589,7 @@ label despairBE:
     show screen freeze(3)
     pause
     $Achievement104.achieve()
+    $Achievement.show()
     $Notice.show()
     "{color=#FF0000}Bad Ending 4.\n——潮起潮落，银色的月光抹去我的足迹。{/color}"
     $end_plot()
@@ -638,9 +649,10 @@ label CuredBE:
     play music audio.beep
     show solitus_g
     call screen cfreeze(3)
+    $Achievement105.achieve()
+    $Achievement.show()
+    $Notice.show()
     "{color=#ff0000}Bad Ending 5.\n——我的意愿锁于桎梏之中，只有你的时间一分一秒地流逝。{/color}" 
     if replaying:
         jump afterreplay
-    $Achievement105.achieve()
-    $Notice.show()
     return

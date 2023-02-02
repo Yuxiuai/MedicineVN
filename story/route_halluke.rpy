@@ -1,14 +1,16 @@
 label halluke_plot_judge_1:  # 羽毛球课程
     if persistent.nocharacterplot or p.hal_p == -1:
         $p.times+=1
-        jump TaskExecuting
-        
+        $ p.onOutside = False
+        jump after_executing_task_label
+
     if p.hal_p > 6:
         scene court with fade
         "解散之后，Halluke便和之前一样，冲到某个还没有被占用的球网边，随后看向我。"
         "那就和他一起打球打到下课吧？"
         $p.times+=1
-        jump TaskExecuting
+        $ p.onOutside = False
+        jump after_executing_task_label
 
     $jumplabel = 'halluke_route_' + str(p.hal_p)
     $renpy.jump(jumplabel)
@@ -17,7 +19,8 @@ label halluke_plot_judge_1:  # 羽毛球课程
 label halluke_plot_judge_2:  # 和Halluke打羽毛球
     if persistent.nocharacterplot:
         $p.times+=1
-        jump TaskExecuting
+        $ p.onOutside = False
+        jump after_executing_task_label
     
     if p.hal_p > 9:
         scene court with fade
@@ -28,7 +31,8 @@ label halluke_plot_judge_2:  # 和Halluke打羽毛球
         "可能我还需要时间吧……明明之前的我也是这样厚脸皮的啊……"
         "到底是哪里不对劲呢……"
         $p.times+=1
-        jump TaskExecuting
+        $ p.onOutside = False
+        jump after_executing_task_label
 
     $jumplabel = 'halluke_route_' + str(p.hal_p)
     $renpy.jump(jumplabel)
@@ -87,8 +91,8 @@ label halluke_route_0:
             "我转身看向身后。"
             "上次来上课的时候我都没有注意，原来一整个羽毛球场并不都是给我们这个老师负责的班级的。"
             "而是平分给这三个班级的。"
-
             pass
+            
     show halluke smile_eyes smile_mouth smile_eyebrow
     with dissolve
     "我眯起眼睛，突然发现那个小家伙正站在其他班级的球网处，和另一些人打球。"
@@ -160,7 +164,7 @@ label halluke_route_0:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -279,7 +283,7 @@ label halluke_route_1:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label halluke_route_2:
@@ -368,7 +372,7 @@ label halluke_route_2:
     "他那手上的动作像是甩了下阳具上的残尿，像每个男人结束排泄一样。"
     show halluke normal with dissolve
     "而后他便在洗手池那里冲了下手便走了，只有我硬挺着鸡巴独自呆在隔间里喘气。"
-    $Erection.get(p).end(p)
+    $Erection.clearByType(p)
     scene black with fade
     "…"
     "我扯下张纸巾，苦大仇深地擦干净糊了我一手的精液。"
@@ -396,7 +400,7 @@ label halluke_route_2:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -512,7 +516,7 @@ label halluke_route_3:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -627,7 +631,7 @@ label halluke_route_4:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -744,7 +748,7 @@ label halluke_route_5:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label halluke_route_6:
@@ -910,7 +914,7 @@ label halluke_route_6:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label halluke_route_7:
@@ -999,7 +1003,7 @@ label halluke_route_7:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -1131,12 +1135,14 @@ label halluke_route_8:
     $sh()
     show halluke smile_mouth with dissolve
     "我喘口气。虽然裆部还在隐隐作痛，但和我的头疼一比也不算什么了。"
+    if p.hal_p == 8:
+        $HallukeItem1.add(p)
+        $Notice.show()
     "我将抢来的旧护膝放进背包里，拿起球拍准备继续战斗。"
     "…"
     stop music fadeout 4
 
     if p.hal_p == 8:
-        $HallukeItem1.add(p)
         $p.hal_p = 9
     $end_plot()
     if replaying:
@@ -1152,7 +1158,7 @@ label halluke_route_8:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -1287,6 +1293,7 @@ label halluke_route_9:
     $p.times+=1
     scene nightrun with fade
     $p.onOutside = True
+    "准备回去了。"
     scene black with dissolve
     "……"
     play sound unlocking
@@ -1294,7 +1301,7 @@ label halluke_route_9:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label halluke_route_11:
@@ -1633,6 +1640,7 @@ label halluke_route_11:
                 if p.aco_p >= 98:
                     $Achievement301.achieve()
                 $HallukeTask1.lock(p)
+                $Achievement.show()
                 $Notice.show()
     
     if not replaying:
@@ -1673,6 +1681,7 @@ label halluke_route_11:
     if not replaying:
         $p.stime()
         $p.times+=2
+        $p.plancheck[2] = True
     $end_plot()
     if replaying:
         jump afterreplay
@@ -1686,7 +1695,7 @@ label halluke_route_11:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label halluke_route_12:
@@ -1864,7 +1873,9 @@ label halluke_route_12:
     if replaying:
         jump afterreplay
     $p.times+=1
-    $HallukeTask2.lock(p)
+    scene nightrun with fade
+    $p.onOutside = True
+    "准备回去了。"
     scene black with dissolve
     "……"
     play sound unlocking
@@ -1872,7 +1883,7 @@ label halluke_route_12:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label halluke_route_13:
@@ -2288,7 +2299,7 @@ label Halluke_hidden_plot1:
     $sh()
     play sound audio.interruption
     "他挂断了电话。"
-    $routineMusic(p)
+    $routine_music(p)
     "刀子嘴豆腐心…至少在我印象里，我每次请假，虽然他嘴上一直在骂我，实际上也没有哪次是不允许我离开的。"
     "我突然有点感动，是因为我为了他，为了我所爱的人，做了一些我平时不敢去做的事吗？"
     "这种心中的澎湃感，是因为我正在做着正确的事吗？"
@@ -2296,8 +2307,8 @@ label Halluke_hidden_plot1:
     $p.onVacation = True
     $p.stime(55)
     $p.hal_p = 50
-    $p.checkTask()
-    $routineMusic(p)
+    $p.morning_checkTask()
+    $routine_music(p)
     "我离开公司，回到了家中。"
     "等吃过午饭之后就像之前那样去球场帮他吧。"
     
@@ -2403,6 +2414,7 @@ label Halluke_hidden_plot2:
     $HallukeTask1.lock(p)
     $HallukeTask2.lock(p)
     $Achievement505.achieve()
+    $Achievement.show()
     scene black with dissolve
     "……"
     play sound unlocking
@@ -2410,7 +2422,7 @@ label Halluke_hidden_plot2:
     play sound audio.button
     scene livingroom
     $p.onOutside = False
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 

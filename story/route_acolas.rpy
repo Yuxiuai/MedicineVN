@@ -1,14 +1,14 @@
 label acolas_plot_judge:  # 羽毛球课程
     if persistent.nocharacterplot or p.aco_p == -1:
         $p.times+=1
-        jump TaskExecuting
+        jump after_executing_task_label
         
     #if p.hal_p > 6:
     #    scene court with fade
     #    "解散之后，acolas便和之前一样，冲到某个还没有被占用的球网边，随后看向我。"
     #    "那就和他一起打球打到下课吧？"
     #    $p.times+=1
-    #    jump TaskExecuting
+    #    jump after_executing_task_label
     if p.aco_p not in (7, 8, 12, 99):
         $jumplabel = 'acolas_route_' + str(p.aco_p)
         $renpy.jump(jumplabel)
@@ -18,7 +18,7 @@ label acolas_plot_judge:  # 羽毛球课程
             $AcolasTask2.unlock(p)
             $Message.new(p, 'Acolas', 'Acolas', '好消息！\n医生说我可能今天就可以出院了，你似乎还没来过我家吧？来玩一玩吧？周六的下午我有空哦。\n我家就在亚斯塔禄大街的恩多尔芬小区，54栋3112，到了楼下直接说我的名字就可以，服务生会带你上来的。\n除此之外我还想问你一些其他的东西，等你来了再和你说。', pos='a')
         $p.times+=1
-        jump TaskExecuting
+        jump after_executing_task_label
 
 
 
@@ -86,8 +86,10 @@ label acolas_route_0:
         $p.aco_p = 1
     if replaying:
         jump afterreplay
+    $p.onVacation = False
+    $p.onOutside = True
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 label acolas_route_1:
     $start_plot()
@@ -254,8 +256,10 @@ label acolas_route_1:
         $p.aco_p = 2
     if replaying:
         jump afterreplay
+    $p.onVacation = False
+    $p.onOutside = True
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -443,6 +447,10 @@ label acolas_route_2:
     stop music fadeout 5
     "他的尾巴摇来摇去的，像只被夸奖了的大狗一样。"
     "…"
+    if not replaying:
+        $p.onVacation = False
+        $p.onOutside = True
+        $p.times+=1
     scene nightrun with fade
     "离开了公司。"
     "夏天的夜晚有些闷热。"
@@ -463,13 +471,15 @@ label acolas_route_2:
         $p.aco_p = 3
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
 label acolas_route_3:
-    $ p.onOutside = True
+    if not replaying:
+        $p.times+=1
+        $p.onVacation = False
+        $p.onOutside = True
     $start_plot()
     stop music fadeout 3
     scene hotpot with fade
@@ -666,12 +676,9 @@ label acolas_route_3:
         $Notice.show()
         $AcolasTask1.unlock(p)
         $p.aco_p = 4
-    if p.onOutside:
-        $p.onOutside = False
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -758,15 +765,17 @@ label acolas_route_4:
     $end_plot()
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label acolas_route_5:
-    $ p.onOutside = True
+    if not replaying:
+        $p.times+=1
+        $p.onVacation = False
+        $p.onOutside = True
     $start_plot()
     stop music fadeout 5
-    scene acocafe with fade
+    scene cafe with fade
     play music audio.enjoymentoffood fadein 3
     "今天会议结束得很早，于是在下班之后，就被这只灰狼强行拽到他的车上去了。"
     "他开车，载着我来到了这个地方。"
@@ -881,12 +890,10 @@ label acolas_route_5:
     if p.aco_p == 5:
         $p.aco_p = 6
         $AcolasItem3.add(p)
-    if p.onOutside:
-        $p.onOutside = False
+        $Notice.show()
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -913,19 +920,18 @@ label acolas_route_6:
         $p.aco_p = 7
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label acolas_route_7:
-    $ p.onOutside = True
+    if not replaying:
+        $p.onOutside = True
     $start_plot()
     stop music fadeout 5
-    scene hospital with fade
+    scene hospital_corridor with dissolve
     "我来到了这里。"
     "A市市立医院，我们已经是老朋友了。"
     "但这次我并不是为了取药，而是为了别人。"
-    scene hospital_corridor with dissolve
     "消毒水的气味就像扎根在鼻腔里一般令人犯呕，但医院作为汇集了整个城市的细菌病毒感染源的地方，他们不这么做也没什么别的办法了。"
     "我的脚踩在瓷砖地板上，即便我并没有用多大力气去走，但寂静的走廊像是将我的脚步声以回音的形式放大了数倍。"
     "我该对他说些什么？"
@@ -995,15 +1001,16 @@ label acolas_route_7:
     if p.aco_p == 7:
         $Message.new(p, 'Acolas', 'Acolas', '我刚睡醒就看到你正好从我的病房里跑出去，我叫你你没听见……\n总之谢谢你来看我，我差不多下周就能出院了。', pos='b')
         $p.aco_p = 8
-    if p.onOutside:
-        $p.onOutside = False
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    $ p.times+=1
+    $p.onOutside = False
+    jump after_executing_task_label
 
 
 label acolas_route_8:
+    if not replaying:
+        $p.onOutside = True
     $start_plot()
     stop music fadeout 5
     scene acohall with fade
@@ -1174,6 +1181,7 @@ label acolas_route_8:
     "他并没有看我。"
     stop music fadeout 5
     "我低头，离开了这个地方。"
+    $p.times+=1
     scene black with fade
     "…"
     "是我的错…吗？"
@@ -1188,7 +1196,7 @@ label acolas_route_8:
     if replaying:
         jump afterreplay
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -1293,8 +1301,7 @@ label acolas_route_9:
         $p.aco_p = 10
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label acolas_route_10:
@@ -1412,8 +1419,7 @@ label acolas_route_10:
         $p.aco_p = 11
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 
@@ -1448,6 +1454,8 @@ label acolas_route_11:
     "仍然启动着的电风扇倒在地上，朝着斜上方旋转着扇叶。纸质文件像鸡窝的羽毛一样散落的满地都是，显示屏的屏幕倒扣在桌子上，键盘也丢在地上。"
     "而Acolas则头朝下地趴在地上，一动不动。"
     "…"
+    if not replaying:
+        $p.times+=1
     scene black
     call screen cfreeze(3)
     "头疼，头真的很疼。"
@@ -1566,8 +1574,7 @@ label acolas_route_11:
         $p.route = 'a'
     if replaying:
         jump afterreplay
-    $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label acolas_route_11_1:
@@ -1584,10 +1591,11 @@ label acolas_route_11_1:
         if p.hal_p == 99:
             $Achievement301.achieve()
         $Notice.show()
+        $Achievement.show()
     if replaying:
         jump afterreplay
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label acolas_route_12:
@@ -1976,7 +1984,7 @@ label acolas_route_98:
     if replaying:
         jump afterreplay
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 
 label Acolas_hidden_plot1:
@@ -2022,9 +2030,10 @@ label Acolas_hidden_plot1:
         if AcolasItem3.has(p):
             $AcolasItem3.get(p).remove(p)
         $AcolasItem4.add(p)
+        $Notice.show()
         $p.aco_p = 50
     $p.times+=1
-    jump TaskExecuting
+    jump after_executing_task_label
 
 label Acolas_hidden_plot2:
     $blackmask(p)
@@ -2115,6 +2124,7 @@ label Acolas_hidden_plot2:
     show screen freeze(3)
     pause
     $Achievement504.achieve()
+    $Achievement.show()
     $Notice.show()
     "{color=#FF0000}Bad Ending ？\n——踏入乌托邦的大门。{/color}"
     return

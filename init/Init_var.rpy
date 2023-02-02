@@ -1,5 +1,5 @@
 init -20:
-    default persistent.savefile = [None, None, [None, None, None, None, None, None, None, None, None, None]]
+    default persistent.savefile = [None, None, None, [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]]
 
     
 
@@ -7,6 +7,7 @@ init -20:
     default persistent.beforename = ''
 
     default persistent.nowaiting = False
+    default persistent.noloading = False
     default persistent.nosplash = False
     default persistent.nocharacterplot = False
     default persistent.nomedicine = False
@@ -14,12 +15,15 @@ init -20:
 
 
     default persistent.PreciseDisplay = False
+    default persistent.PreciseMedDisplay = False
     default persistent.notifyDuration = 5
     default persistent.PreciseDisplayAbilities = False
     default persistent.PreciseDisplayGoal = False
+    default persistent.AutoQuitBrokenItem = False
     default persistent.quickAlarm = False
     default persistent.disablecharactervoice = False
     default persistent.unlockplan = False
+    default persistent.keepskippingafteroperate = False
 
 
 
@@ -37,11 +41,15 @@ init -20:
 
     default persistent.achievements = {}
     default persistent.runtime = 0
+    
+    default persistent.highestscore = 0
+    default persistent.gametimes = 0
 
     define p = None
     define replaying = False
     define replaying_times = None
-    define replaying_labelname = None
+
+    default persistent.loadslot = None
 
 
 
@@ -67,10 +75,12 @@ init python:
     ALLITEMS = getSubclasses(Item)
     ALLITEMS.remove(UnfinishedCommission)
     ALLITEMS.remove(FinishedCommission)
-    ALLACHIEVEMENTS = getSubclasses(Achievement)
+    ALLACHIEVEMENTS = list(filter(lambda x: not x.hide, getSubclasses(Achievement)))
+    ALLHIDEACHIEVEMENTS = list(filter(lambda x: x.hide, getSubclasses(Achievement)))
     ALLTASKS = getSubclasses(Task)
     ALLGYMTASKS = getSubclasses(GymTask)
     ALLBOOKS = getSubclasses(BookBase)
+    PLAYER_DIR = dir(Player())
 
    
 

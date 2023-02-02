@@ -12,12 +12,10 @@ screen screen_tasks(player):
             tasks = sliceArr(ALLTASKS)
             if not persistent.unlocktesttask:
                 del tasks[0]
-        
-        if AcolasItem4.has(player) and not config.developer:
-            player.checkTask()
+
 
     #modal True
-    zorder 200
+    zorder 600
     drag:
         xcenter 0.503
         ycenter 0.48
@@ -38,24 +36,24 @@ screen screen_tasks(player):
                         vbox:
                         #xoffset -15
                         #yoffset -10
-                            textbutton '{size=+10}日程安排{/size}':
+                            textbutton _('{size=+10}日程安排{/size}'):
                                 xoffset -15
                                 yoffset -10
                                 text_style "gameUI"
                             null height 350
-                            textbutton '设置':
+                            textbutton _('设置'):
                                 xoffset -10
                                 yoffset -10
                                 text_style "white"
                             frame:
                                 background None
-                                textbutton '显示所有日程' text_style "gameUI":
+                                textbutton _('显示所有日程') text_style "gameUI":
                                     action [ToggleLocalVariable("show_all_task", True, False), Hide("info"), Hide("info3")]
                                     activate_sound audio.cursor
                                     xfill True
 
                                 if show_all_task:
-                                    imagebutton idle "gui/phone/right_.png":
+                                    imagebutton idle "gui/right_.png":
                                         xalign 0.9
                                         
 
@@ -98,10 +96,6 @@ screen screen_tasks(player):
                         ysize 40
     
     key 'K_ESCAPE' action [Hide("screen_tasks",transition=dissolve),Hide("info"),Hide("info3")]
-    key 'q' action [Hide("screen_tasks",transition=dissolve),Hide("info"),Hide("info3")]
-    key 'w' action [Hide("screen_tasks",transition=dissolve),Hide("info"),Hide("info3")]
-    key 'e' action [Hide("screen_tasks",transition=dissolve),Hide("info"),Hide("info3")]
-    key 'r' action [Hide("screen_tasks",transition=dissolve),Hide("info"),Hide("info3")]
 
         
                 
@@ -130,22 +124,22 @@ screen tasks_show(player, tasks, show_all_task):
 
         xsize 460
         default isFold = {
-            '测试类':False,
-            '可解锁的日程':False,
-            '工作类':False,
-            '运动类':False,
-            '写作类':False,
-            '休息类':False,
-            '特殊类':False,
-            '日程':False
+            _('测试类'):False,
+            _('可解锁的日程'):False,
+            _('工作类'):False,
+            _('运动类'):False,
+            _('写作类'):False,
+            _('休息类'):False,
+            _('特殊类'):False,
+            _('日程'):False
         }
 
 
         if UnlockedButCanUnlock:
             $UnlockedButCanUnlock.sort(key=lambda x: x.id)
-            $typename = '可解锁的日程'
-            $typei = '该分类下的日程为达成了解锁条件但没解锁的日程。'
-            $typea = '为什么我做一件事也要去解锁？难道我在身体素质不达标之前连跑步都做不到吗？'
+            $typename = _('可解锁的日程')
+            $typei = _('该分类下的日程为达成了解锁条件但没解锁的日程。')
+            $typea = _('为什么我做一件事也要去解锁？难道我在身体素质不达标之前连跑步都做不到吗？')
 
 
             hbox:
@@ -153,10 +147,10 @@ screen tasks_show(player, tasks, show_all_task):
                 textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                     if isFold[typename] == False:
                         action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以折叠该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
                     else:
                         action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+'\n\n单击以展开该类日程。', a=typea)
+                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
                     unhovered Hide("info")
                     xfill True
                     xalign 1.0
@@ -177,7 +171,7 @@ screen tasks_show(player, tasks, show_all_task):
 
         for i in tasks:
             $i.sort(key=LockedTaskInLowPriority)
-            $typename = '测试类'
+            $typename = _('测试类')
             if i[0].kind!=None:
                 $typename = i[0].kind
                 $typei = taskKindInfo(typename, 'i')
@@ -186,10 +180,10 @@ screen tasks_show(player, tasks, show_all_task):
                     textbutton '{size=-5}'+typename+'{/size}' text_style "white":
                         if isFold[typename] == False:
                             action [SetDict(isFold, typename, True),Hide("info")]
-                            hovered Show(screen="info", i=typei+'\n\n单击以折叠该类日程。', a=typea)
+                            hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
                         else:
                             action [SetDict(isFold, typename, False),Hide("info")]
-                            hovered Show(screen="info", i=typei+'\n\n单击以展开该类日程。', a=typea)
+                            hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
                         unhovered Hide("info")
                         xfill True
                         xalign 1.0
@@ -223,17 +217,17 @@ screen print_single_tasks(ite, player):
         $ite_name = ite.name
 
         if ite.hasplot(player):
-            $ plot_info = red('\n\n会触发新剧情！')
+            $ plot_info = red(_('\n\n会触发新剧情！'))
         else:
             $ plot_info = ''
         $ type_info = ''
         if ite.kind != None:
-            $ type_info = '\n\n'+ite.kind
+            $ type_info = _('\n\n')+ite.kind
         frame:
             background None
             if ite.checkAvailable(player, player.today, player.findNoTask()) != True:
 
-                $error_info = '无法安排该日程！\n' + ite.checkAvailable(player, player.today, player.findNoTask())
+                $error_info = _('无法安排该日程！\n') + ite.checkAvailable(player, player.today, player.findNoTask())
 
                 $locked_name = "？？？"
                 $locked_info = "？？？？？？？？\n？？？？？？？？？？？"
@@ -244,8 +238,8 @@ screen print_single_tasks(ite, player):
                 $show_a = ite.ad if ite.isUnlocked(player) else locked_info
 
                 textbutton show_name text_style "grey":
-                    action [Hide("info"), Show(screen="task_unlock", player=player, item=ite, pp=renpy.get_mouse_pos(), t=show_name, i=show_info + red('\n\n' +error_info), a=show_a)]
-                    hovered Show(screen="info", t=show_name, i=show_info + red('\n\n' +error_info), a=show_a)
+                    action [Hide("info"), Show(screen="task_unlock", player=player, item=ite, pp=renpy.get_mouse_pos(), t=show_name, i=show_info + red(_('\n\n') +error_info), a=show_a)]
+                    hovered Show(screen="info", t=show_name, i=show_info + red(_('\n\n') +error_info), a=show_a)
                     unhovered Hide("info")
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                     xfill True
@@ -254,10 +248,10 @@ screen print_single_tasks(ite, player):
             else:
 
                 textbutton ite_name text_style "white":
-                    if lock:
-                        action Function(showNotice, ['你已经定好日程了，你不想再随意调整。'])
+                    if lock and player.findNoTask() == 2 and player.plan[2] != NoTask:
+                        action Function(showNotice, [_('你已经定好日程了，你不想再随意调整。')])
                     else:
-                        action [Hide("info"), Show(screen="info_confirm", text='添加日程', act=Function(player.setTask, ite), pp=renpy.get_mouse_pos(), t=ite_name, i=ite.info + type_info + plot_info, a=ite.ad)]
+                        action [Hide("info"), Show(screen="info_confirm", text=_('添加日程'), act=Function(player.setTask, ite), pp=renpy.get_mouse_pos(), t=ite_name, i=ite.info + type_info + plot_info, a=ite.ad)]
                     hovered Show(screen="info", t=ite_name, i=ite.info + type_info + plot_info, a=ite.ad)
                     unhovered Hide("info")
                     background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
@@ -270,17 +264,17 @@ screen plan_show(player):
     $lock = True
     if player.times <= 2 or GameDifficulty1.has(player) or persistent.unlockplan:
         $lock = False
-    $times = ('{size=-5}上午{/size}', '{size=-5}下午{/size}', '{size=-5}夜晚{/size}')
+    $times = (_('{size=-5}上午{/size}'), _('{size=-5}下午{/size}'), _('{size=-5}夜晚{/size}'))
 
 
     vbox:
         xsize 460
         for i in range(3):
-            $ plot_info = red('\n\n会触发新剧情！') if player.plan[i].hasplot(player) else ''
-            $ ctc_info = '\n\n单击以取消该日程安排。' if player.plan[i].name != '未安排' else '\n\n在右侧选择要安排在该时间段的日程。'
+            $ plot_info = red(_('\n\n会触发新剧情！')) if player.plan[i].hasplot(player) else ''
+            $ ctc_info = _('\n\n单击以取消该日程安排。') if player.plan[i].name != _('未安排') else _('\n\n在右侧选择要安排在该时间段的日程。')
             $ type_info = ''
             if player.plan[i].kind != None:
-                $ type_info = '\n\n'+player.plan[i].kind
+                $ type_info = _('\n\n')+player.plan[i].kind
 
             textbutton times[i] text_style "white":
                 action NullAction()
@@ -293,11 +287,15 @@ screen plan_show(player):
                 xsize 330
                 frame:
                     background None
-                    textbutton player.plan[i].name text_style "white":
+                    if player.plancheck[i]:
+                        $showtaskname = _('{s}%s{/s}') % player.plan[i].name
+                    else:
+                        $showtaskname = player.plan[i].name
+                    textbutton showtaskname text_style "white":
                         if lock:
-                            action Function(showNotice, ['你已经定好日程了，你不想再随意调整。'])
+                            action Function(showNotice, [_('你已经定好日程了，你不想再随意调整。')])
                         elif player.hal_p == 50 and player.today == 6 and i == 1 and player.plan[1] == BadmintonClass:
-                            action Function(showNotice, ['我就是为了这个才请假的。'])
+                            action Function(showNotice, [_('我就是为了这个才请假的。')])
                         else:
                             action [Hide("info"), Function(player.removeTask, i)]
                         hovered Show(screen="info", t=player.plan[i].name, i=player.plan[i].info+type_info + ctc_info+ plot_info, a=player.plan[i].ad)
@@ -316,6 +314,13 @@ screen task_use(player, item, pp, t=None, i=None, a=None, width=400):
     zorder 3000
     $p = pp
     $yc = 0.0 if p[1] < 540 else 1.0
+    if width == 400:
+        if a:
+            if len(i) + len(a) > 150:
+                $width = 600
+        else:
+            if len(i) > 100:
+                $width = 600
     if p[0] < 1500:
         $xc = 0.0
         $trans = trans_toLeft
@@ -331,7 +336,7 @@ screen task_use(player, item, pp, t=None, i=None, a=None, width=400):
         vbox:
             align p
             if t is not None:
-                label t+'\n':
+                label '[t!t]\n':
                     text_style "info_text"
                     xsize width
             if i is not None:
@@ -341,7 +346,7 @@ screen task_use(player, item, pp, t=None, i=None, a=None, width=400):
                     xsize width
             if a is not None:
                 null height 13
-                label '{i}' + a + '{/i}':
+                label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
 
@@ -371,6 +376,13 @@ screen task_unlock(player, item, pp, t=None, i=None, a=None, width=400):
     else:
         $xc = 1.0
         $trans = trans_toRight
+    if width == 400:
+        if a:
+            if len(i) + len(a) > 150:
+                $width = 600
+        else:
+            if len(i) > 100:
+                $width = 600
     frame:
         pos p
         padding (15, 15)
@@ -380,7 +392,7 @@ screen task_unlock(player, item, pp, t=None, i=None, a=None, width=400):
         vbox:
             align p
             if t is not None:
-                label t+'\n':
+                label '[t!t]\n':
                     text_style "info_text"
                     xsize width
             if i is not None:
@@ -390,7 +402,7 @@ screen task_unlock(player, item, pp, t=None, i=None, a=None, width=400):
                     xsize width
             if a is not None:
                 null height 13
-                label '{i}' + a + '{/i}':
+                label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
 
@@ -398,7 +410,7 @@ screen task_unlock(player, item, pp, t=None, i=None, a=None, width=400):
             hbox:
                 xalign 0.5
                 spacing 40
-                #$error_info = '无法解锁该日程！\n' + item.unlockClass(player, player.today, player.findNoTask())
+                #$error_info = _('无法解锁该日程！\n') + item.unlockClass(player, player.today, player.findNoTask())
                 if not item.isUnlocked(player):
                     textbutton _("{size=-3}解锁日程{/size}"):
                         action [Function(item.unlockClass, player), Hide("task_unlock")]
@@ -447,24 +459,24 @@ screen tutorial_screen_tasks(player):
                         vbox:
                         #xoffset -15
                         #yoffset -10
-                            textbutton '{size=+10}日程安排{/size}':
+                            textbutton _('{size=+10}日程安排{/size}'):
                                 xoffset -15
                                 yoffset -10
                                 text_style "gameUI"
                             null height 350
-                            textbutton '设置':
+                            textbutton _('设置'):
                                 xoffset -10
                                 yoffset -10
                                 text_style "white"
                             frame:
                                 background None
-                                textbutton '显示所有日程' text_style "gameUI":
+                                textbutton _('显示所有日程') text_style "gameUI":
                                     action [ToggleLocalVariable("show_all_task", True, False), Hide("info"), Hide("info3")]
                                     activate_sound audio.cursor
                                     xfill True
 
                                 if show_all_task:
-                                    imagebutton idle "gui/phone/right_.png":
+                                    imagebutton idle "gui/right_.png":
                                         xalign 0.9
                                         
 

@@ -4,7 +4,7 @@ label afterload:
     $ replaying = False
     call hide_all_screens from _call_hide_all_screens_1
     call loading from _call_loading_3
-    $routineMusic(p)
+    $routine_music(p)
     if Despair.has(p):
         jump despair_wakeup
     if p.hal_p == 15 or p.aco_p == 14:

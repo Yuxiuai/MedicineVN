@@ -2,10 +2,10 @@ init python early:
     class Stat:
 
         basenames = {
-            'Task': (1,"{size=-5}进行过的日程{/size}"),
-            'Effect': (2,"{size=-5}获得过的效果{/size}"),
-            'Item': (3,"{size=-5}使用过的道具{/size}"),
-            'object': (99,"{size=-5}其他{/size}"),
+            'Task': (1,_("{size=-5}进行过的日程{/size}")),
+            'Effect': (2,_("{size=-5}获得过的效果{/size}")),
+            'Item': (3,_("{size=-5}使用过的道具{/size}")),
+            'object': (99,_("{size=-5}其他{/size}")),
             'None': (100,"{size=-5}????{/size}")
         }
         

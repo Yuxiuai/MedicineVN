@@ -16,7 +16,7 @@ label alarmCircle_pro:
     if persistent.nomedicine:
         stop music
         show screen screen_dashboard(p)
-        jump beforeCircle
+        jump beforeCircle_pro
     if not persistent.quickAlarm:
         $pause(2)
     menu:
@@ -37,7 +37,9 @@ label medicineTake_pro:
         "吃药":
             if p.meds() >0:
                 $temp = p.mental
+                scene cupboard at setcolor with dissolve
                 call screen screen_useMed(p)
+                scene bedroom at setcolor with dissolve
                 if p.mental != temp:
                     "我拿起桌边早就提前盛好水的玻璃杯，将药瓶中的药物吞下。"
                     "……"
@@ -638,4 +640,4 @@ label beforeDay:
         "液晶屏幕正对着我的眼球放出刺目的光。"
         "我的视线注视着正中央的时刻数字，还有日期。"
         "又到周一了啊。"
-    jump beforeCircle
+    jump before_go_out

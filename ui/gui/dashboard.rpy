@@ -1,5 +1,5 @@
 screen screen_dashboard(player):
-    #tag gamegui
+    zorder 500
     use screen_dashboard_calendar(player)
     use screen_dashboard_medicine(player)
     use screen_dashboard_severity(player)
@@ -8,14 +8,14 @@ screen screen_dashboard(player):
 
 screen screen_dashboard_calendar(player):
     style_prefix "gameUI"
-    zorder 100
+    zorder 500
     $ weekday = weekdayFormat(player.today)
     $ cons = player.aggravationConsumption()
-    $ info = '\n消耗倍率：' + num_str(player.deteriorateConsumption, rev = True)
-    $ info2 = '\n过夜预计消耗的精神状态约为：' + str(cons)
-    $ ad = '时间正在一刻不停地流逝，无可避免的死亡正在前方等待，而悔恨和不甘正在堆积。'
+    $ info = _('\n消耗倍率：') + num_str(player.deteriorateConsumption, rev = True)
+    $ info2 = _('\n过夜预计消耗的精神状态约为：') + str(cons)
+    $ ad = _('时间正在一刻不停地流逝，无可避免的死亡正在前方等待，而悔恨和不甘正在堆积。')
     if Despair.has(player):
-        $ ad = "即将抵达的死亡。"
+        $ ad = _("即将抵达的死亡。")
 
     vbox:
         xpos 0.02
@@ -30,7 +30,7 @@ screen screen_dashboard_calendar(player):
             $wea_info = weather.info
         $wea_ad = weather.ad
         if player.cured > 0:
-            $ poz = '？？？'
+            $ poz = _('？？？')
         elif player.onOutside:
             $ poz = _('在外面')
         elif player.onVacation:
@@ -39,11 +39,11 @@ screen screen_dashboard_calendar(player):
             $ poz = _('在公司')
         
         if config.developer:
-            $ poz += '\n时间段：%s' % player.times
+            $ poz += _('\n时间段：%s') % player.times
 
         
 
-        $wea_t = '本日天气为：' + wea_name +'\n预计明日天气为：' + player.newMorningWeather(True).name
+        $wea_t = _('本日天气为：') + wea_name +_('\n预计明日天气为：') + player.newMorningWeather(True).name
         if Despair.has(player):
             textbutton _("废墟下的第[player.finalStageDays]天")xalign 0.0:
                 at trans_Down(0.2)
@@ -54,19 +54,19 @@ screen screen_dashboard_calendar(player):
                 text_style "gameUI"
                 hover_sound audio.cursor
         else:
-            $showing = "[player.mon]月[player.day]日  第[player.week]周  [wea_name]\n[weekday]  [showHour]:[showMin]  [poz]"
+            $showing = _("[player.mon]月[player.day]日  第[player.week]周  [wea_name]\n[weekday]  [showHour]:[showMin]  [poz]")
             if _preferences.language == 'english':
                 $eng_month = {1:'Jan.', 2:'Feb.', 3:'Mar.', 4:'Apr.', 5:'May', 6:'Jun.', 7:'Jul', 8:'Aug.', 9:'Sept.', 10:'Oct.', 11:'Nov.', 12:'Dec.'}
                 $eng_day = {1:'Monday', 2:'Tuesday', 3:'Wednesday', 4:'Thursday', 5:'Friday', 6:'Saturday', 7:'Sunday'}
                 if player.mon in eng_month:
                     $showmonth = eng_month[player.mon]
                 else:
-                    $showmonth = '???'
+                    $showmonh = '???'
                 if player.today in eng_day:
                     $showday = eng_day[player.mon]
                 else:
                     $showday = '???'
-                $showing = "[player.day]  [showmonth]  Week [player.week]  [wea_name]\n[showday]  [showHour]:[showMin]  [poz!t]"
+                $showing = _("[player.day]  [showmonth]  Week [player.week]  [wea_name]\n[showday]  [showHour]:[showMin]  [poz!t]")
             textbutton showing xalign 0.0:
                 at trans_Down(0.2)
                 #action Function(allE, player=player)
@@ -79,11 +79,11 @@ screen screen_dashboard_calendar(player):
 
 screen screen_dashboard_medicine(player):
     style_prefix "gameUI"
-    zorder 100
+    zorder 500
     $ hasMed = False
     $ tim = 0.2
     $ drugReco = int(player.basicRecovery * player.drugRecovery * 100)
-    $ quickuse_info = '点击可快捷使用。'
+    $ quickuse_info = _('\n点击可快捷使用。')
     vbox:
         xalign 0.98
         yalign 0.02
@@ -91,12 +91,12 @@ screen screen_dashboard_medicine(player):
         if MedicineA.has(player):
             $tim += 0.05
             $ hasMed = True
-            $ info1 = '预计恢复'+str(MedicineA.expectedReco(player))+'点精神状态。'+MedicineA.getResInfo(player)+ quickuse_info
+            $ info1 = MedicineA.getinfo(player) + quickuse_info
             $ ad1 = MedicineA.ad
             textbutton str(MedicineA.get(player).amounts) + _("    药物{font=arial.ttf}α{/font}"):
                 at med_menu(tim)
                 if not Despair.has(p):
-                    action [Show(screen="info_confirm",text='使用',act=[Function(quickUse, item=MedicineA, player=player), Hide("info")],i=info1,a=ad1, pp=renpy.get_mouse_pos()), Hide("info")]
+                    action [Show(screen="info_confirm",text=_('使用'),act=[Function(quickUse, item=MedicineA, player=player), Hide("info")],i=info1,a=ad1, pp=renpy.get_mouse_pos()), Hide("info")]
                 else:
                     action NullAction()
                 hovered Show(screen="info",i=info1,a=ad1)
@@ -113,12 +113,12 @@ screen screen_dashboard_medicine(player):
         if MedicineB.has(player):
             $tim += 0.05
             $ hasMed = True
-            $ info2 = '预计恢复'+str(MedicineB.expectedReco(player))+'点精神状态。'+MedicineB.getResInfo(player)+ quickuse_info
+            $ info2 = MedicineB.getinfo(player) + quickuse_info
             $ ad2 = MedicineB.ad
             textbutton str(MedicineB.get(player).amounts) + _("    药物{font=arial.ttf}β{/font}"):
                 at med_menu(tim)
                 if not Despair.has(p):
-                    action [Show(screen="info_confirm",text='使用',act=[Function(quickUse, item=MedicineB, player=player), Hide("info")],i=info2,a=ad2, pp=renpy.get_mouse_pos()), Hide("info")]
+                    action [Show(screen="info_confirm",text=_('使用'),act=[Function(quickUse, item=MedicineB, player=player), Hide("info")],i=info2,a=ad2, pp=renpy.get_mouse_pos()), Hide("info")]
                 else:
                     action NullAction()
                 hovered Show(screen="info",i=info2,a=ad2)
@@ -133,12 +133,12 @@ screen screen_dashboard_medicine(player):
         if MedicineC.has(player):
             $tim += 0.05
             $ hasMed = True
-            $ info3 = '预计总共恢复'+str(MedicineC.expectedReco(player))+'点精神状态。' +MedicineC.getResInfo(player)+ quickuse_info
+            $ info3 = MedicineC.getinfo(player) + quickuse_info
             $ ad3 = MedicineC.ad
             textbutton str(MedicineC.get(player).amounts) + _("    药物{font=arial.ttf}γ{/font}"):
                 at med_menu(tim)
                 if not Despair.has(p):
-                    action [Show(screen="info_confirm",text='使用',act=[Function(quickUse, item=MedicineC, player=player), Hide("info")],i=info3,a=ad3, pp=renpy.get_mouse_pos()), Hide("info")]
+                    action [Show(screen="info_confirm",text=_('使用'),act=[Function(quickUse, item=MedicineC, player=player), Hide("info")],i=info3,a=ad3, pp=renpy.get_mouse_pos()), Hide("info")]
                 else:
                     action NullAction()
                 hovered Show(screen="info",i=info3,a=ad3)
@@ -153,12 +153,11 @@ screen screen_dashboard_medicine(player):
         if MedicineD.has(player):
             $ hasMed = True
             $tim += 0.05
-            $ info4 = '预计恢复'+glitchtext(5)+'点精神状态。' + MedicineD.getResInfo(player)+ quickuse_info
             $ ad4 = MedicineD.ad
             textbutton str(MedicineD.get(player).amounts) + _("    药物{font=arial.ttf}δ{/font}"):
                 at med_menu(tim)
-                action [Show(screen="info_confirm",text='使用',act=[Function(quickUse, item=MedicineD, player=player), Hide("info")], i=info4,a=ad4, pp=renpy.get_mouse_pos()), Hide("info")]
-                hovered Show(screen="info",i=info4,a=ad4)
+                action [Show(screen="info_confirm",width=401,text=_('使用'),act=[Function(quickUse, item=MedicineD, player=player), Hide("info")], i=MedicineD.getinfo(player) + quickuse_info,a=ad4, pp=renpy.get_mouse_pos()), Hide("info")]
+                hovered Show(screen="info",width=401,i=MedicineD.getinfo(player) + quickuse_info,a=ad4)
                 unhovered Hide("info")
                 text_style "medd_text"
                 xalign 1.0
@@ -177,17 +176,17 @@ screen screen_dashboard_medicine(player):
 screen screen_dashboard_severity(player):
     style_prefix "gameUI"
     python:
-        info0 = '衡量当前对疼痛忍耐度的重要指标。\n\n耗费精力时会消耗，做一些休息的事时则会恢复。\n当早晨起床时所有实验药物都被消耗，且精神状态低于0时，游戏结束。'
-        info1 = '\n\n基础精神状态消耗倍率：' + num_str(Task.getConsScale(player),rev=True)
-        info2 = '\n基础精神状态恢复倍率：' + num_str(Task.getRecoScale(player))
-        ad = '你天生罹患的偏头痛似乎没有办法治愈，药效随着时间流逝正在减弱。\n如果你没有在疼痛突破防线之前咽下药物，那么也许你便再也没有机会见到第二天的太阳了。'
+        info0 = _('衡量当前对疼痛忍耐度的重要指标。\n\n耗费精力时会消耗，做一些休息的事时则会恢复。\n当早晨起床时所有实验药物都被消耗，且精神状态低于0时，游戏结束。')
+        info1 = _('\n\n基础精神状态消耗倍率：') + num_str(Task.getConsScale(player),rev=True)
+        info2 = _('\n基础精神状态恢复倍率：') + num_str(Task.getRecoScale(player))
+        ad = _('你天生罹患的偏头痛似乎没有办法治愈，药效随着时间流逝正在减弱。\n如果你没有在疼痛突破防线之前咽下药物，那么也许你便再也没有机会见到第二天的太阳了。')
         p2men = ''
         if config.developer and player.p2:
-            p2men = '<' + str(player.p2.mental) + '><' + str(Despair.getS(player.p2))+ '>'
+            p2men = _('<') + str(player.p2.mental) + _('><') + str(Despair.getstack(player.p2))+ _('>')
         if BookUndeadEffect.has(player) and player.mental < 0:
             player.mental = 0.0
 
-    zorder 100
+    zorder 500
     vbox:
         xcenter 0.5
         ypos 0.02
@@ -205,7 +204,7 @@ default prog_mode = 1
 screen screen_dashboard_abilities(player):
     style_prefix "gameUI"
     $showtime = 0.2
-    zorder 100
+    zorder 500
     vbox:
         xpos 0.02
         ypos 0.13
@@ -213,14 +212,14 @@ screen screen_dashboard_abilities(player):
         vbox:
             label _("基础") text_style "gameL":
                 at trans_toRight(0.2)
-            $ info = '今日种子：' + str(player.seed)# + '\n当前Safe指数：' + str(player.safe)
-            $ info1 = '\n\n专注度可以使日程的获得更好的结果以获得更多的能力提升。\n\n基础专注度修正：' + num_str(Task.getConcScale(player), '++')
-            $ info2 = '\n\n使用不同的食物会影响不同的恢复效率。\n\n食物恢复效率：' + num_str(player.useFoodScale())
-            $ info3 = '\n药物恢复效率：' + num_str(player.useDrugScale())
+            $ info = _('今日种子：') + str(player.seed)# + _('\n当前Safe指数：') + str(player.safe)
+            $ info1 = _('\n\n专注度可以使日程的获得更好结果的概率上升。\n\n基础专注度修正：') + num_str(Task.getConcScale(player), '++')
+            $ info2 = _('\n\n使用食物和药物的恢复效率。\n\n基础食物恢复效率：%s\n最终食物恢复效率：%s') % (num_str(1-player.fooduse*0.005), num_str(player.useFoodScale()))
+            $ info3 = _('\n药物恢复效率：') + num_str(player.useDrugScale())
             if player.name == 'Solitus':
-                $ad = '我的名字，非常适合我。'
+                $ad = _('我的名字，非常适合我。')
             else:
-                $ad = '别人称呼我的方式，即便我并不喜欢这个名字。'
+                $ad = _('别人称呼我的方式，即便我并不喜欢这个名字。')
             textbutton player.name:
                 at trans_toRight(showtime)
                 action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=info+info1+info2+info3, a=ad)]
@@ -235,39 +234,39 @@ screen screen_dashboard_abilities(player):
                 at trans_toRight(showtime)
             $meds = player.meds()
             if player.money < 300:
-                $ info_money = '我没有钱了，我只能努力工作然后祈祷自己会不在这个期间被公司开除。'
+                $ info_money = _('我没有钱了，我只能努力工作然后祈祷自己会不在这个期间被公司开除。')
             elif player.money > 1000 and meds > 0:
-                $ info_money = '我已经买过这周要吃的药了，这些空闲的钱应该能让我美美过上一周。'
+                $ info_money = _('我已经买过这周要吃的药了，这些空闲的钱应该能让我美美过上一周。')
             elif player.money < 1500 and meds == 0:
-                $ info_money = '这些钱……足够我买药吗？'
+                $ info_money = _('这些钱……足够我买药吗？')
             elif player.money < 3000 and meds == 0:
-                $ info_money = '呼，我喜欢发工资的感觉，但这些钱马上就会被购买药物的开销消耗殆尽。'
+                $ info_money = _('呼，我喜欢发工资的感觉，但这些钱马上就会被购买药物的开销消耗殆尽。')
             elif player.money > player.price * 8:
-                $ info_money = '也许这次我可以不用把所有的钱拿来买药。'
+                $ info_money = _('也许这次我可以不用把所有的钱拿来买药。')
             else:
-                $ info_money = '这些钱能买些什么呢……'
+                $ info_money = _('这些钱能买些什么呢……')
             $showtime += 0.05
             textbutton _("所持金钱 ") + str(player.money):
                 at trans_toRight(showtime)
-                action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i='购买药物和其他能够保障生存的东西。', a=info_money)]
-                hovered Show(screen="info",i='购买药物和其他能够保障生存的东西。', a=info_money)
+                action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=_('购买药物和其他能够保障生存的东西。'), a=info_money)]
+                hovered Show(screen="info",i=_('购买药物和其他能够保障生存的东西。'), a=info_money)
                 unhovered Hide("info")
                 text_style "gameUI"
                 hover_sound audio.cursor
             $showtime += 0.05
             textbutton _("药物价格 ") + str(player.price):
                 at trans_toRight(showtime)
-                action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i='下周药价涨价幅度：' + str(player.priceIncrease) + '%', a='努力赚钱，要么就被疯涨的药价压倒。')]
-                hovered Show(screen="info", i='下周药价涨价幅度：' + str(player.priceIncrease) + '%', a='努力赚钱，要么就被疯涨的药价压倒。')
+                action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=_('下周药价涨价幅度：') + str(player.priceIncrease) + '%', a=_('努力赚钱，要么就被疯涨的药价压倒。'))]
+                hovered Show(screen="info", i=_('下周药价涨价幅度：') + str(player.priceIncrease) + '%', a=_('努力赚钱，要么就被疯涨的药价压倒。'))
                 unhovered Hide("info")
                 text_style "gameUI"
                 hover_sound audio.cursor
             $showtime += 0.05
             $paid_info, wages_info = player.calWorkPaid()
-            $paid_info = '\n\n预计获得收入：' + str(paid_info)
-            $wages_info = '\n预计下周工资：' + str(wages_info)
-            $w_info = '每周在发过工资后都会根据工作能力和上周的工作完成度加薪。' + paid_info + wages_info
-            $w_a = '偶尔我也想着，如果我再也不需要买药的话，那这些钱够我吃多少好吃的，玩多少好玩的呢？'
+            $paid_info = _('\n\n预计获得收入：') + str(paid_info)
+            $wages_info = _('\n预计下周工资：') + str(wages_info)
+            $w_info = _('每周在发过工资后都会根据工作能力和上周的工作完成度加薪。') + paid_info + wages_info
+            $w_a = _('偶尔我也想着，如果我再也不需要买药的话，那这些钱够我吃多少好吃的，玩多少好玩的呢？')
             textbutton _("本周工资 ") + str(player.wages):
                 at trans_toRight(showtime)
                 action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=w_info, a=w_a)]
@@ -278,28 +277,28 @@ screen screen_dashboard_abilities(player):
             
             #textbutton _("工作目标 ") + str(player.goal):
             #    action NullAction()
-            #    hovered Show(screen="info", i='工作速度加成：' + str(int((player.workSpeed-1) * 100)) + '%', a='就算我再努力工作，估计也是在这个小破职位，永远也不会升职。')
+            #    hovered Show(screen="info", i=_('工作速度加成：') + str(int((player.workSpeed-1) * 100)) + '%', a=_('就算我再努力工作，估计也是在这个小破职位，永远也不会升职。'))
             #    unhovered Hide("info")
             #    text_style "gameUI"  # 判定升职后修改
             
             $per = player.achievedGoal/player.goal
             if per == 0:
-                $ info_acg = '又是新的一周，看看这周我要被分配哪些工作……'
+                $ info_acg = _('又是新的一周，看看这周我要被分配哪些工作……')
             elif per < 0.3 and player.today < 3:
-                $ info_acg = '这周才刚开始我就累了。'
+                $ info_acg = _('这周才刚开始我就累了。')
             elif per < 0.4 and player.today < 5:
-                $ info_acg = '完了，这绝对做不完了……'
+                $ info_acg = _('完了，这绝对做不完了……')
             elif per < 0.9 and player.today < 5:
-                $ info_acg = '糟糕……我是不是摸鱼摸太多了……不会做不完工作吧……'
+                $ info_acg = _('糟糕……我是不是摸鱼摸太多了……不会做不完工作吧……')
             elif per >= 1 and player.today < 5:
-                $ info_acg = '这周也是勉强糊弄过去了，总之发工资前都可以狂摸鱼啦！'
+                $ info_acg = _('这周也是勉强糊弄过去了，总之发工资前都可以狂摸鱼啦！')
             else:
-                $ info_acg = '偶尔回头看看自己做的工作，也很有成就感就是了……'
+                $ info_acg = _('偶尔回头看看自己做的工作，也很有成就感就是了……')
             $showtime += 0.05
-            $info_goal = '如果在周五之前没有达到100%以上，只会获得一半的每周工资。\n如果超过了120%，则会获得更多的工资和加薪。'
-            $showgoal = "工作进度 " + str(int(per*100)) + '%'
+            $info_goal = _('如果在周五之前没有达到100%以上，只会获得一半的每周工资。\n如果超过了120%，则会获得更多的工资和加薪。')
+            $showgoal = _("工作进度 ") + str(int(per*100)) + '%'
             if persistent.PreciseDisplayGoal:
-                $showgoal = "工作进度 " + str(player.achievedGoal) + ' / ' + str(player.goal) + " (" + str(int(per*100)) + '%)'
+                $showgoal = _("工作进度 ") + str(player.achievedGoal) + ' / ' + str(player.goal) + " (" + str(int(per*100)) + '%)'
 
             textbutton showgoal:
                 at trans_toRight(showtime)
@@ -310,15 +309,15 @@ screen screen_dashboard_abilities(player):
                 hover_sound audio.cursor
 
             if player.popularity < 1500:
-                $ info_po = '这辈子都没想过我这个只会写点黄文的家伙也有人喜欢……'
+                $ info_po = _('这辈子都没想过我这个只会写点黄文的家伙也有人喜欢……')
             elif player.popularity < 5000:
-                $ info_po = '诶……意外有很多人喜欢我呢……我不会就此成名出书吧——好吧，我至少应该先不死……'
+                $ info_po = _('诶……意外有很多人喜欢我呢……我不会就此成名出书吧——好吧，我至少应该先不死……')
             elif player.popularity < 10000:
-                $ info_po = '居然已经超过5000多粉丝了吗……'
+                $ info_po = _('居然已经超过5000多粉丝了吗……')
             elif player.popularity >= 10000:
-                $ info_po = '已经有这么多人喜欢我写的作品了……我真的很感动，不为了我，也为了认可我文章的人继续活着。'
+                $ info_po = _('已经有这么多人喜欢我写的作品了……我真的很感动，不为了我，也为了认可我文章的人继续活着。')
             $showtime += 0.05
-            $info_por = '平台人气会提升每早在平台上收到打赏的概率和金额。\n\n写作后产生的已完成的文稿，写作时消耗的{color=#ffff00}灵感{/color}越多，上传文稿获得的粉丝越多。\n\n{color=#ff0000}上传的文稿消耗的灵感低于10层时会掉粉！{/color}\n\n粉丝数最低为1000。'
+            $info_por = _('平台人气会提升每早在平台上收到打赏的概率和金额。\n\n写作后产生的已完成的文稿，写作时消耗的{color=#ffff00}灵感{/color}越多，上传文稿获得的粉丝越多。\n\n{color=#ff0000}上传的文稿消耗的灵感较低时会掉粉！{/color}\n\n粉丝数最低为1000。')
             textbutton _("平台人气 ") + str(player.popularity):
                 at trans_toRight(showtime)
                 action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=info_por, a=info_po)]
@@ -332,9 +331,9 @@ screen screen_dashboard_abilities(player):
             label _("状态") text_style "gameL":
                 at trans_toRight(showtime)
 
-            $ sev_info0 = '衡量病情是否严重的重要指标。\n\n严重程度会对所有日程的精神状态消耗、恢复和专注度造成负面影响，也会提升睡眠消耗的精神状态。\n\n基础严重程度：' + str(player.severity) +'('+ num_str(player.severityRegarded, '+', rev=True) + ')'
-            $ sev_info_details  = '\n\n精神状态消耗修正：' + num_str(player.sev(),l='**', rev=True) + '\n精神状态恢复修正：' + num_str(1/player.sev(),l='**') + '\n专注度修正：' + num_str(1/player.sev(),l='**')
-            $ sev_ad = '光是呼吸都会加剧你的头痛，在你出生那一刻就已经不配存在于这个世界上了。' if player.sev() != 0.01 else '你再也不用受头疼的折磨了，可代价是什么？'
+            $ sev_info0 = _('衡量病情是否严重的重要指标。\n\n严重程度会对所有日程的精神状态消耗、恢复和专注度造成负面影响，也会提升睡眠消耗的精神状态。\n\n基础严重程度：') + str(player.severity) +'('+ num_str(max(player.severityRegarded, 0.2), '+', rev=True) + ')'
+            $ sev_info_details  = _('\n\n精神状态消耗修正：') + num_str(player.sev(),l='**', rev=True) + _('\n精神状态恢复修正：') + num_str(1/player.sev(),l='**') + _('\n专注度修正：') + num_str(1/player.sev(),l='**')
+            $ sev_ad = _('光是呼吸都会加剧你的头痛，在你出生那一刻就已经不配存在于这个世界上了。') if player.sev() != 0.01 else _('你再也不用受头疼的折磨了，可代价是什么？')
             $showtime += 0.05
             if player.severityRegarded > 1.0:
                 $fun = red
@@ -342,9 +341,9 @@ screen screen_dashboard_abilities(player):
                 $fun = green
             else:
                 $fun = str
-            $showsev = "严重程度 " + fun(r2(player.severity * player.severityRegarded))
+            $showsev = _("严重程度 ") + fun(r2(player.sev()))
             if persistent.PreciseDisplayAbilities:
-                $showsev += ' (' + str(player.severity) + ')'
+                $showsev += ' (%s)' % r2(player.severity)
             textbutton showsev:
                 at trans_toRight(showtime)
                 action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=sev_info0+sev_info_details, a=sev_ad)]
@@ -353,9 +352,10 @@ screen screen_dashboard_abilities(player):
                 text_style "gameUI"
                 hover_sound audio.cursor
 
-            $ wor_info0 = '你的利用价值所在。\n\n提升工作完成的工作量以及工作的专注度。\n\n基础工作能力：' + str(player.working) +'('+ num_str(player.workingRegarded, '+') + ')'
-            $ wor_info_details = '\n\n工作速度：' + str(int((player.workSpeed-1) * 100)) + '%\n工作类日程专注度修正：' + num_str(15 * player.wor() - 20, '++')
-            $ wor_ad = '几乎是我唯一的稳定赚钱方式，我一定不能丢掉这份工作。'
+            $ wor_info0 = _('你的利用价值所在。\n\n提升工作完成的工作量以及工作的专注度。\n\n基础工作能力：') + str(player.working) +'('+ num_str(player.workingRegarded, '+') + ')'
+            $ wor_info_details = _('\n\n额外工作速度：') + str(int((player.workSpeed-1) * 100)) + _('%\n工作类日程专注度修正：') + num_str(15 * player.wor() - 20, '++')
+            $ wor_info_details += _('\n\n当你通过日程获取工作能力时会根据加成提升更多的能力点数。\n工作能力获取加成：%s') % num_str(int(player.workingGain*100), '++', '')
+            $ wor_ad = _('几乎是我唯一的稳定赚钱方式，我一定不能丢掉这份工作。')
             $showtime += 0.05
             if player.workingRegarded > 1.0:
                 $fun = green
@@ -363,9 +363,9 @@ screen screen_dashboard_abilities(player):
                 $fun = red
             else:
                 $fun = str
-            $showwor = "工作能力 " + fun(player.wor())
+            $showwor = _("工作能力 ") + fun(player.wor())
             if persistent.PreciseDisplayAbilities:
-                $showwor += ' (' + str(player.working) + ')'
+                $showwor += ' (%s)' % r2(player.working)
             textbutton showwor:
                 at trans_toRight(showtime)
                 action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=wor_info0+wor_info_details, a=wor_ad)]
@@ -375,12 +375,13 @@ screen screen_dashboard_abilities(player):
                 hover_sound audio.cursor
                 
 
-            $ phy_info0 = '衡量身体强壮度和坚韧性的指标。\n\n对所有精神状态相关的数值造成正面影响，也会降低睡眠消耗的精神状态。\n\n基础身体素质：'+str(player.physical) +'('+ num_str(player.physicalRegarded, '+') + ')'
+            $ phy_info0 = _('衡量身体强壮度和坚韧性的指标。\n\n对所有精神状态相关的数值造成正面影响，也会降低睡眠消耗的精神状态。\n\n基础身体素质：%s(%s)') % (player.physical, num_str(player.physicalRegarded, '+'))
             if p.phy() < 3:
-                $ phy_info_details = '\n\n精神状态消耗修正：'+ num_str(player.phyCons(), rev=True,l='**') + '\n精神状态恢复修正：' + num_str(player.phyReco(),l='**')+ '\n运动类日程专注度修正：' + num_str(20 * player.phy() - 30, '++')
+                $ phy_info_details = _('\n\n精神状态消耗修正：%s\n精神状态恢复修正：%s\n运动类日程专注度修正：%s') % (num_str(player.phyCons(), rev=True,l='**'), num_str(player.phyReco(),l='**'), num_str(20 * player.phy() - 30, '++'))
             else:
-                $ phy_info_details = '\n\n精神状态消耗修正：'+ num_str(player.phyCons(), rev=True,l='**') + '（最大值）\n精神状态恢复修正：' + num_str(player.phyReco(),l='**') + '（最大值）' + '\n运动类日程专注度修正：' + num_str(20 * player.phy() - 30, '++')
-            $ phy_ad = '虽然不具备把自己练到浑身都是肌肉的程度，但我的主治医师Pathos说运动可以缓解头疼，现在看来也确实是这样。'
+                $ phy_info_details = _('\n\n精神状态消耗修正：%s（最大值）\n精神状态恢复修正：%s（最大值）\n运动类日程专注度修正：%s') % (num_str(player.phyCons(), rev=True,l='**'), num_str(player.phyReco(),l='**'), num_str(20 * player.phy() - 30, '++'))
+            $ phy_info_details += _('\n\n当你通过日程获取身体素质时会根据加成提升更多的能力点数。\n身体素质获取加成：%s') % num_str(int(player.physicalGain*100), '++', '')
+            $ phy_ad = _('虽然没法把自己练到浑身都是肌肉的程度，但我的主治医师Pathos说运动可以缓解头疼，现在看来也确实是这样。')
             $showtime += 0.05
             if player.physicalRegarded > 1.0:
                 $fun = green
@@ -389,9 +390,9 @@ screen screen_dashboard_abilities(player):
             else:
                 $fun = str
 
-            $showphy = "身体素质 " + fun(player.phy())
+            $showphy = _("身体素质 ") + fun(player.phy())
             if persistent.PreciseDisplayAbilities:
-                $showphy += ' (' + str(player.physical) + ')'
+                $showphy += ' (%s)' % r2(player.physical)
 
             textbutton showphy:
                 at trans_toRight(showtime)
@@ -401,12 +402,13 @@ screen screen_dashboard_abilities(player):
                 text_style "gameUI"
                 hover_sound audio.cursor
 
-            $ wri_info0 = '衡量文字功底、文学欣赏水平和专注程度的指标。\n\n对专注度造成正面影响，满足需要更高水平的委托的要求，提升委托文稿的价值。\n\n基础写作技巧：'+str(player.writing) +'('+ num_str(player.writingRegarded, '+') + ')'
+            $ wri_info0 = _('衡量文字功底、文学欣赏水平和专注程度的指标。\n\n对专注度造成正面影响，满足需要更高水平的委托的要求，提升委托文稿的价值。\n\n基础写作技巧：')+str(player.writing) +'('+ num_str(player.writingRegarded, '+') + ')'
             if p.wri() < 3:
-                $ wri_info_details = '\n\n专注度修正：' + num_str(player.wriConc(), '++')+ '\n写作类日程专注度修正：' + num_str(7 * player.wri() - 10, '++')
+                $ wri_info_details = _('\n\n专注度修正：') + num_str(player.wriConc(), '++')+ _('\n写作类日程专注度修正：') + num_str(7 * player.wri() - 10, '++')
             else:
-                $ wri_info_details = '\n\n专注度修正：' + num_str(player.wriConc(), '++') + '（最大值）\n写作类日程专注度修正：' + num_str(7 * player.wri() - 10, '++')
-            $ wri_ad = '写作几乎是我唯一的爱好了，把心里的痛苦写出来的感觉真的很棒。'
+                $ wri_info_details = _('\n\n专注度修正：') + num_str(player.wriConc(), '++') + _('（最大值）\n写作类日程专注度修正：') + num_str(7 * player.wri() - 10, '++')
+            $ wri_info_details += _('\n\n当你通过日程获取写作能力时会根据加成提升更多的能力点数。\n写作能力获取加成：%s') % num_str(int(player.writingGain*100), '++', '')
+            $ wri_ad = _('写作几乎是我唯一的爱好了，把心里的痛苦写出来的感觉真的很棒。')
 
             $showtime += 0.05
             if player.writingRegarded > 1.0:
@@ -416,9 +418,9 @@ screen screen_dashboard_abilities(player):
             else:
                 $fun = str
 
-            $showwri = "写作技巧 " + fun(player.wri())
+            $showwri = _("写作技巧 ") + fun(player.wri())
             if persistent.PreciseDisplayAbilities:
-                $showwri += ' (' + str(player.writing) + ')'
+                $showwri += ' (%s)' % r2(player.writing)
             
             textbutton showwri:
                 at trans_toRight(showtime)
@@ -431,26 +433,33 @@ screen screen_dashboard_abilities(player):
 
 screen screen_dashboard_effects(player):
     style_prefix "gameUI"
-    zorder 100
-    $ effects = sliceArr(player.effects)
-    $ del effects[0]
-    if LifeIsColorless.has(player):
-        $ effects = [[LifeIsColorless.get(p)]]
+    zorder 400
+    python:
+        if len(player.effects) >=50:
+            Achievement310.achieve()
+            Achievement.show()
+        if LifeIsColorless.has(player):
+            effects = [[LifeIsColorless.get(p)]]
+        else:
+            effects = sliceArr(player.effects)
+            del effects[0]
+        
     frame:
         background None
         ypos 0.2
-        xsize 500
+        xsize 550
         xalign 1.0
+        modal False
         viewport:
-            draggable True
+            #draggable True
             mousewheel True
             ysize 530
             if len(player.effects)>24:
                 scrollbars "vertical"
             vbox:
-                xsize 455
+                xsize 500
                 for i in effects:
-                    $typename = type(i[0]).kind
+                    $typename = i[0].kind
                     $typei = effectKindInfo(typename, 'i')
                     $typea = effectKindInfo(typename, 'a')
                     textbutton typename text_style "gameL":
@@ -465,31 +474,33 @@ screen screen_dashboard_effects(player):
                         hover_sound audio.cursor
                     vbox:
                         xalign 1.0
-                        $l = len(i)
-                        if type(i[0]).kind == '学识':
-                            $col = 1
-                        elif type(i[0]).kind == '药物反应':
-                            $col = 2
-                        else:
-                            $col = 3
+                        python:
+                            l = len(i)
+                            if type(i[0]).kind == '学识':
+                                col = 1
+                            elif type(i[0]).kind == '药物反应':
+                                col = 2
+                            else:
+                                col = 3
                         for j in range(int(l/col+1)):
                             
                             hbox:
                                 xalign 1.0
                                 for k in range(min(col, l-j*col)):
-                                    $eff = i[j*col+k]
+                                    python:
+                                        eff = i[j*col+k]
 
-                                    $stackinfo = '' if eff.stacks in (0,1) else '*' +str(eff.stacks)
-                                    if eff.stacks == 0:
-                                        $colorinfo = '{color=#b3b3b3}{s}'
-                                    elif eff.duration == 1 and type(eff).maxDuration!=1:
-                                        $colorinfo = '{color=#F08080}'
-                                    else:
-                                        $colorinfo = ''
-                                    if colorinfo != '':
-                                        $stackinfo += '{/color}'
+                                        stackinfo = '' if eff.stacks in (0,1) else '*' +str(eff.stacks)
+                                        if eff.stacks == 0:
+                                            colorinfo = _('{color=#b3b3b3}{s}')
+                                        elif eff.duration == 1 and eff.maxDuration!=1:
+                                            colorinfo = _('{color=#F08080}')
+                                        else:
+                                            colorinfo = ''
+                                        if colorinfo != '':
+                                            stackinfo += _('{/color}')
 
-                                    textbutton colorinfo + type(eff).name + stackinfo  text_style "gameUI":
+                                    textbutton colorinfo + eff.name + stackinfo  text_style "gameUI":
                                         #at trans_toLeft((j*col+k)*0.05+0.25)
                                         if not LifeIsColorless.has(player):
                                             action [Show(screen="screen_effects", player=player), Hide("info_e")]

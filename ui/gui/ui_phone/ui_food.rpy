@@ -2,7 +2,7 @@ screen screen_phone_food(player):
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     
 
     frame:
@@ -49,19 +49,19 @@ screen screen_phone_food(player):
             vbox:
                 spacing 2
                 if player.times < 5:
-                    use screen_food(player, ToastFood, "早餐必备厚蛋吐司", 15, renpy.get_mouse_pos())
-                    use screen_food(player, CoffeeFood, "月巴克手冲咖啡", 10, renpy.get_mouse_pos())
-                    use screen_food(player, SaladFood, "香醋汁时蔬沙拉", 15, renpy.get_mouse_pos())
+                    use screen_food(player, ToastFood, _("早餐必备厚蛋吐司"), 15, renpy.get_mouse_pos())
+                    use screen_food(player, CoffeeFood, _("月巴克手冲咖啡"), 10, renpy.get_mouse_pos())
+                    use screen_food(player, SaladFood, _("香醋汁时蔬沙拉"), 15, renpy.get_mouse_pos())
 
                 if player.times == 5:
-                    use screen_food(player, PizzaFood, "分量满满香肠披萨", 25, renpy.get_mouse_pos())
-                    use screen_food(player, BurgerFood, "双层安格斯牛肉汉堡", 30, renpy.get_mouse_pos())
-                    use screen_food(player, BreadFood, "奶油夹心凯撒面包", 25, renpy.get_mouse_pos())
+                    use screen_food(player, PizzaFood, _("分量满满香肠披萨"), 25, renpy.get_mouse_pos())
+                    use screen_food(player, BurgerFood, _("双层安格斯牛肉汉堡"), 30, renpy.get_mouse_pos())
+                    use screen_food(player, BreadFood, _("奶油夹心凯撒面包"), 25, renpy.get_mouse_pos())
 
                 if player.times > 5:
-                    use screen_food(player, PastaFood, "那不勒斯黑椒意面", 30, renpy.get_mouse_pos())
-                    use screen_food(player, SoupFood, "超浓郁鲑鱼靓汤", 35, renpy.get_mouse_pos())
-                    use screen_food(player, SteakFood, "好吃到哇塞的战斧牛排", 55, renpy.get_mouse_pos())
+                    use screen_food(player, PastaFood, _("那不勒斯黑椒意面"), 30, renpy.get_mouse_pos())
+                    use screen_food(player, SoupFood, _("超浓郁鲑鱼靓汤"), 35, renpy.get_mouse_pos())
+                    use screen_food(player, SteakFood, _("好吃到哇塞的战斧牛排"), 55, renpy.get_mouse_pos())
 
 
         text _("{size=-5}精品烟酒特供：{/size}"):
@@ -74,8 +74,8 @@ screen screen_phone_food(player):
             background None
             vbox:
                 spacing 2
-                use screen_food(player, Cigarette, "香烟", 25, renpy.get_mouse_pos())
-                use screen_food(player, Alcohol, "梅子酒", 35, renpy.get_mouse_pos())
+                use screen_food(player, Cigarette, _("香烟"), 25, renpy.get_mouse_pos())
+                use screen_food(player, Alcohol, _("梅子酒"), 35, renpy.get_mouse_pos())
                 
         frame:
             background None
@@ -95,7 +95,7 @@ screen screen_food(player, item, name, money, pp):
         background None
         imagebutton idle "gui/phone/food/"+item.__name__+".png":
             action [Hide("info"), Show(screen="food_use", player=player, item=item, money=money, pp=renpy.get_mouse_pos(), t=name, a=item.ad)]
-            hovered Show(screen="info", t=name, i='价格：'+str(money)+'\n\n'+item.info, a=item.ad)
+            hovered Show(screen="info", t=name, i=_('价格：')+str(money)+_('\n\n')+item.info, a=item.ad)
             unhovered Hide("info")
             background Frame("gui/style/musicplayer_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
             activate_sound audio.cursor
@@ -108,7 +108,7 @@ screen screen_food(player, item, name, money, pp):
             hover_sound audio.cursor
             text_style "white"
             yalign 0.5
-        textbutton "￥"+str(money):
+        textbutton _("￥")+str(money):
             xpos 0.8
             hover_sound audio.cursor
             text_style "white"
@@ -117,10 +117,11 @@ screen screen_food(player, item, name, money, pp):
 
 screen food_use(player, item, money, t=None, a=None, width=400, pp=renpy.get_mouse_pos()):
     use barrier(screen="food_use")
+    
     style_prefix "info"
-    zorder 400
+    zorder 1000
     $p = pp
-    $i='价格：'+str(money)+'\n\n'+item.info
+    $i=_('价格：')+str(money)+_('\n\n')+item.info
     if p[0] < 1500:
         $xc = 0.0
         $trans = trans_toLeft
@@ -138,7 +139,7 @@ screen food_use(player, item, money, t=None, a=None, width=400, pp=renpy.get_mou
         vbox:
             align pp
             if t is not None:
-                label t+'\n':
+                label '[t!t]\n':
                     text_style "info_text"
                     xsize width
             if i is not None:
@@ -146,9 +147,8 @@ screen food_use(player, item, money, t=None, a=None, width=400, pp=renpy.get_mou
                     text_style "info_text"
                     xsize width
             if a is not None:
-                $a = '{i}' + a
                 null height 13
-                label _(a):
+                label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
             null height 30

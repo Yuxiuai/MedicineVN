@@ -75,6 +75,15 @@ define -500 audio.raining = "audio/sound/raining.mp3"
 define -500 audio.phonering = "audio/sound/phonering.wav"
 define -500 audio.abc = "audio/sound/abc.mp3"
 define -500 audio.slap = "audio/sound/slap.mp3"
+define -500 audio.watering = "audio/sound/watering.mp3"
+define -500 audio.cactus = "audio/sound/cactus.mp3"
+define -500 audio.opearte_inventory = "audio/sound/opearte_inventory.mp3"
+define -500 audio.opearte_phone = "audio/sound/opearte_phone.mp3"
+define -500 audio.opearte_task = "audio/sound/opearte_task.mp3"
+define -500 audio.duck = "audio/sound/duck.mp3"
+define -500 audio.pathos_1 = "audio/sound/pathos_1.mp3"
+define -500 audio.pathos_2 = "audio/sound/pathos_2.mp3"
+define -500 audio.sandglass = "audio/sound/sandglass.mp3"
 
 define -500 audio.increase = "audio/sound/increase.mp3"
 define -500 audio.decrease = "audio/sound/decrease.mp3"
@@ -88,6 +97,9 @@ define -500 audio.itemdrink = "audio/sound/item_drink.mp3"
 define -500 audio.itemeat = "audio/sound/item_eat.mp3"
 define -500 audio.itemmed = "audio/sound/item_med.mp3"
 define -500 audio.itemdefault = "audio/sound/item_default.mp3"
+
+define -500 audio.message = "audio/sound/message.mp3"
+define -500 audio.achieve = "audio/sound/achieve.mp3"
 
 define -500 audio.l1 = "audio/sound/leviathan/leviathan1.wav"
 define -500 audio.l2 = "audio/sound/leviathan/leviathan2.wav"
@@ -112,8 +124,8 @@ init python:
     mr.add(audio.themedicine, always_unlocked=True)
     mr.add(audio.solitus)
     mr.add(audio.halluke)
-    mr.add(audio.depline)
     mr.add(audio.acolas)
+    mr.add(audio.depline)
     mr.add(audio.nameyourself)
     mr.add(audio.survivingdawn)
     mr.add(audio.rareleisure)
@@ -146,29 +158,28 @@ init python:
     dictMusicCommet={
         'Acolas':'阿克拉斯\n\n也许放纵自己的自毁倾向也算是一种放纵吧。',
         'Bright Anticipations':'美好的期望\n\n最痛苦的人给予了最真诚的爱，重压之下也有美好的期望。',
-        'City Sunshine':'都市阳光\n\n这座城市也是有美好的阳光存在的，抬头看看天空吧。',
         'Concrete Jungle':'水泥森林\n\n我们需要的是真正的森林，是可以自由呼吸的森林。',
         'Depline':'德普林\n\n名气越大，内心也就越空虚，越是要用某些不正当的手段获取存在感。',
         'Halluke':'哈卢克\n\n整个世界都是一场盛大的幻觉，即便是所谓的爱。',
         'Surviving Dawn':'幸存的黎明\n\n你又一次成功地活了下来，但这是好事，还是坏事？',
-        'Impending Death':'逼近的死亡\n\n生乃一条无尽危路，唯有死在尽头停驻。',
+        'Impending Death':'逼近的死亡\n\n死非生的对立面，而作为生的一部分永存。',
         'Name Yourself':'取名\n\n欢快活泼的音乐，想必这个游戏也是一样快乐的吧？',
         'Rare Leisure':'难得的空闲时光\n\n至少你还有双休日，更多的打工人甚至全年无休。',
         'Debilitating Anxiety':'退行性焦虑\n\n你不得不做。',
         'Enjoy Suffering':'享受痛苦\n\n疼痛如同挥之不去的阴影，在脑浆的最深处蔓延扩散。',
-        'Solitus':'索利图斯\n\n存在主义和参与感，即便付出大于回报也让他感到生命的可贵。',
-        'The Medicine':'药\n\n绝望迫近之时，只有它是唯一的解药。',
+        'Solitus':'索利图斯\n\n孤独，爱，死亡，以及存在的理由。',
+        'The Medicine':'药\n\n绝望迫近之时，你正紧握着唯一的解药。',
         'Badminton Class':'羽毛球课程\n\n虽然Solitus明明可以假装自己是个游泳课的学生，不过估计他没这个胆。',
         'Slice of Life':'生活的一部分\n\nSolitus肯定希望他的周末是在床上度过的，但最好还是把他拉出去四处走走。',
         'Smells of Disinfectant':'消毒水的气味\n\n你害怕这里吗？但你不得不来。',
         'Meaningless Emotion':'无意义的感情\n\n收起无聊的自我感动吧，在他眼里你什么也不是。',
         'Infrequent Tranquility':'罕见的平和\n\n至少此刻的你不会被焦虑和劳累困扰。',
-        'The Deldrimor':'德里莫号\n\n只因爱意，你放弃了治愈的机会。',
+        'The Deldrimor':'德里莫号\n\n你放弃了治愈的机会，只为了爱。',
         'Deldrimor\'s Room':'德里莫号的客房\n\n即将迎来的便是分别。',
         'Deldrimor\'s Deck':'德里莫号的甲板\n\n我们来生再见。',
         
         'Drowned in Despair':'淹没于绝望之中\n\n绝望蚕食着你的精神，能拯救你的唯有手中的白色药片。',
-        'The Last Medicine':'仅剩的最后一片药\n\n最后的选择题。',
+        'The Last Medicine':'最后的解药\n\n最后的选择题。',
         'After Desperation':'绝望过后\n\n他已经离开了。',
         'Painful Truth':'痛苦的真相\n\n一切都是一场自我感动的想象。',
         'All\'s Fair In Love':'恋爱不择手段\n\n他是个完美的男人，你又怎么能拒绝他呢？',

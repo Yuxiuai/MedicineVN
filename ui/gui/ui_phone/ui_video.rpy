@@ -2,7 +2,7 @@ screen screen_phone_video_address(player):
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     
 
     frame:
@@ -27,8 +27,8 @@ screen screen_phone_video_address(player):
                     ysize 75
                     xfill True
                     background None
-                    $sol_i = '个人剧情'
-                    $sol_a = '《社畜福瑞重度头疼》'
+                    $sol_i = _('个人剧情')
+                    $sol_a = _('《社畜福瑞重度头疼》')
                     imagebutton idle "gui/phone/address/Solitus.png":
                         action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='solitus', player=player)]
                         hovered Show(screen="info", i=sol_i, a=sol_a)
@@ -37,20 +37,20 @@ screen screen_phone_video_address(player):
                         activate_sound audio.cursor
                         xfill True
                         yalign 0.5
-                    textbutton _("Solitus"):
+                    textbutton "Solitus":
                         xpos 0.25
                         hover_sound audio.cursor
                         text_style "white"
                         yalign 0.5
                             
                 null height 2
-                if p.sol_p > 0:
+                if p.sol_p > 0 or Achievement400.has() or Achievement402.has():
                     frame:
                         ysize 75
                         xfill True
                         background None
-                        $pa_i = '和Pathos曾发生过的故事'
-                        $pa_a = '《从小白鼠到感情PUA》'
+                        $pa_i = _('和Pathos曾发生过的故事')
+                        $pa_a = _('《从小白鼠到感情PUA》')
                         imagebutton idle "gui/phone/address/Pathos.png":
                             action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='pathos', player=player)]
                             hovered Show(screen="info", i=pa_i, a=pa_a)
@@ -59,20 +59,20 @@ screen screen_phone_video_address(player):
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Pathos"):
+                        textbutton "Pathos":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
                             yalign 0.5
                                 
                     null height 2
-                if p.aco_p > 0:
+                if p.aco_p > 0 or Achievement501.has():
                     frame:  
                         ysize 75
                         xfill True
                         background None
-                        $aco_i = '和Acolas曾发生过的故事'
-                        $aco_a = '《霸道总裁爱上我》'
+                        $aco_i = _('和Acolas曾发生过的故事')
+                        $aco_a = _('《霸道总裁爱上我》')
                         imagebutton idle "gui/phone/address/Acolas.png":
                             action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='acolas', player=player)]
                             hovered Show(screen="info", i=aco_i, a=aco_a)
@@ -81,20 +81,20 @@ screen screen_phone_video_address(player):
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Acolas"):
+                        textbutton "Acolas":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
                             yalign 0.5
 
                     null height 2
-                if p.hal_p > 0:
+                if p.hal_p > 0 or Achievement502.has():
                     frame:
                         ysize 75
                         xfill True
                         background None
-                        $hal_i = '和Halluke曾发生过的故事'
-                        $hal_a = '《社恐之间的交流》'
+                        $hal_i = _('和Halluke曾发生过的故事')
+                        $hal_a = _('《社恐之间的交流》')
                         imagebutton idle "gui/phone/address/Halluke.png":
                             action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='halluke', player=player)]
                             hovered Show(screen="info", i=hal_i, a=hal_a)
@@ -103,7 +103,7 @@ screen screen_phone_video_address(player):
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("Halluke"):
+                        textbutton "Halluke":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -116,8 +116,8 @@ screen screen_phone_video_address(player):
                         ysize 75
                         xfill True
                         background None
-                        $dep_i = '和？？？曾发生过的故事\n（当前版本尚未开放）'
-                        $dep_a = '……'
+                        $dep_i = _('和？？？曾发生过的故事\n（当前版本尚未开放）')
+                        $dep_a = _('……')
                         imagebutton idle "gui/phone/address/Depline.png":
                             #action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='depline', player=player)]
                             action NullAction()
@@ -127,7 +127,7 @@ screen screen_phone_video_address(player):
                             activate_sound audio.cursor
                             xfill True
                             yalign 0.5
-                        textbutton _("？？？"):
+                        textbutton "？？？":
                             xpos 0.25
                             hover_sound audio.cursor
                             text_style "white"
@@ -151,19 +151,19 @@ screen screen_phone_video_address(player):
 screen screen_phone_video_show(player, who='pathos'):
 
     default d_routes = {
-        'pathos':['解锁第二种药物', '解锁第三种药物'],
-        'halluke':['初次偷拍','Halluke的能力展示','厕所自慰','初次留下印象','自我怀疑',
-            '初次开口','周末约球','特别的约会','获得护膝','粉丝店的思考','',
-            '体育馆的亲吻与诉苦','对一切失去兴趣','与Halluke的轮渡酒店之一','与Halluke的轮渡酒店之二'],
-        'acolas':['电梯偶遇','性骚扰式自我介绍','道歉与游戏项目','火锅店与第一次项目','结束第一次项目',
-        '咖啡营地与第二次项目','缺席会议的Acolas','医院看望','Acolas的公寓与结束第二次项目','游戏发布与获得旧笔记',
-        'Acolas的办公室','报复性工作的Acolas','与Acolas的轮渡酒店之一','与Acolas的轮渡酒店之二'],
+        'pathos':[_('解锁第二种药物'), _('解锁第三种药物')],
+        'halluke':[_('初次偷拍'),_('Halluke的能力展示'),_('厕所自慰'),_('初次留下印象'),_('自我怀疑'),
+            _('初次开口'),_('周末约球'),_('特别的约会'),_('获得护膝'),_('粉丝店的思考'),'',
+            _('体育馆的亲吻与诉苦'),_('对一切失去兴趣'),_('与Halluke的轮渡酒店之一'),_('与Halluke的轮渡酒店之二')],
+        'acolas':[_('电梯偶遇'),_('性骚扰式自我介绍'),_('道歉与游戏项目'),_('火锅店与第一次项目'),_('结束第一次项目'),
+        _('咖啡营地与第二次项目'),_('缺席会议的Acolas'),_('医院看望'),_('Acolas的公寓与结束第二次项目'),_('游戏发布与获得旧笔记'),
+        _('Acolas的办公室'),_('报复性工作的Acolas'),_('与Acolas的轮渡酒店之一'),_('与Acolas的轮渡酒店之二')],
     }
 
     #tag gamegui
     modal True
     style_prefix "gameUI"
-    zorder 100
+    zorder 600
     frame:
         at trans_Down()
         background None
@@ -223,7 +223,7 @@ screen video_slot(player, routename, labelname):
                 background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
 
             textbutton routename text_style "white":
-                action [SetVariable("replaying", True), SetVariable("replaying_times", player.times), SetVariable("replaying_labelname", labelname), Hide("screen_phone_video_show"),Hide("screen_phone_bg"),Function(renpy.hide_screen,"screen_dashboard"), Return()]
+                action [SetVariable("replaying", True), SetVariable("replaying_times", player.times), Hide("screen_phone_video_show"),Hide("screen_phone_bg"),Function(renpy.hide_screen,"screen_dashboard"), Jump(labelname)]
                 background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                 xfill True
                 yfill True
@@ -242,7 +242,7 @@ screen screen_phone_videos(player, who, routes):
         vbox:
             xsize 330
             for i in range(len(routes)): 
-                $labelname = who + '_route_' + str(i)
+                $labelname = who + _('_route_') + str(i)
                 if renpy.has_label(labelname):
                     if renpy.seen_label(labelname):
                         use video_slot(player, routes[i], labelname)
@@ -252,17 +252,17 @@ screen screen_phone_videos(player, who, routes):
 
 screen screen_phone_videos_sol(player):
 
-    default routes = ['第一天', '第二天', '第三天', '焦虑与疲倦', '咽喉的燃烧感', '以创作发泄焦虑', '梦醒时分', '劳累', '饥饿感']
+    default routes = [_('第一天'), _('第二天'), _('第三天'), _('焦虑与疲倦'), _('咽喉的燃烧感'), _('以创作发泄焦虑'), _('梦醒时分'), _('劳累'), _('饥饿感'), _('关于自慰')]
     default endings = {
-        Achievement100:['我已经站在你世界的\n顶端了', 'ending0'], 
-        Achievement101:['世间泰坦仅允我喘息', 'ending1'], 
-        Achievement102:['深陷其足下泥泞', 'ending2'], 
-        Achievement103:['肉与肉与肉与肉的豪\n华盛宴', 'earthquakeBE'], 
-        Achievement104:['不能重启的我们只能\n前进', 'despairBE'], 
-        Achievement105:['我们的神灵从未向这\n里看过一眼', 'CuredBE'], 
-        Achievement400:['为了能够让你学会如\n何去爱', 'ne'], 
-        Achievement401:['如果能成为你就好了', 'te'], 
-        Achievement402:['我已经一无所有', 'CE']}
+        Achievement100:[_('我已经站在你世界的\n顶端了'), 'ending0'], 
+        Achievement101:[_('世间泰坦仅允我喘息'), 'ending1'], 
+        Achievement102:[_('深陷其足下泥泞'), 'ending2'], 
+        Achievement103:[_('肉与肉与肉与肉的豪\n华盛宴'), 'earthquakeBE'], 
+        Achievement104:[_('不能重启的我们只能\n前进'), 'despairBE'], 
+        Achievement105:[_('我们的神灵从未向这\n里看过一眼'), 'CuredBE'], 
+        Achievement400:[_('为了能够让你学会如\n何去爱'), 'ne'], 
+        Achievement401:[_('如果能成为你就好了'), 'te'], 
+        Achievement402:[_('我已经一无所有'), 'CE']}
 
     frame:
         background None

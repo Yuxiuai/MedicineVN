@@ -2,7 +2,7 @@ define config.name = _("药：绝望的解决手段")
 
 define gui.show_name = False
 
-define config.version = "0.4.2.1227"
+define config.version = "0.4.2.1400"
 
 define gui.about = _p("""
 """)

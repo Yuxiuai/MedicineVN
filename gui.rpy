@@ -22,7 +22,7 @@ init python:
 
 
 
-define gui.accent_color = '#4B0082'
+define gui.accent_color = '#9332b3'
 
 
 define gui.idle_color = '#ffffff'
@@ -31,7 +31,7 @@ define gui.idle_color = '#ffffff'
 define gui.idle_small_color = '#aaaaaa'
 
 
-define gui.hover_color = '#4B0082'
+define gui.hover_color = '#9332b3'
 
 
 
@@ -42,8 +42,8 @@ define gui.insensitive_color = '#8888887f'
 
 
 
-define gui.muted_color = '#3d1466'
-define gui.hover_muted_color = '#5b1e99'
+define gui.muted_color = '#5b1e97'
+define gui.hover_muted_color = '#9332b3'
 
 
 define gui.text_color = '#ffffff'

@@ -127,8 +127,28 @@ init -505 python early:
             6:'星期六', 
             7:'星期日'
         }
+ 
+        dictDayFormatENG = {
+            0:'???',
+            1:'Mon.',
+            2:'Tue.', 
+            3:'Wed.', 
+            4:'Thu.', 
+            5:'Fri.', 
+            6:'Sat.', 
+            7:'Sun.'
+        }
 
-        return dictDayFormat[day] if dictDayFormat != None else dictDayFormat[0]
+        if _preferences.language == 'english':
+            if day in dictDayFormatENG:
+                return dictDayFormatENG[day]
+            else:
+                return dictDayFormatENG[0]
+
+        if day in dictDayFormat:
+            return dictDayFormat[day]
+        else:
+            return dictDayFormat[0]
 
     def glitchtext(length):
         gt = "¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž"
@@ -149,16 +169,16 @@ init -505 python early:
         return red(str(n))
 
     def red(s):
-        return '{color=#FF4500}'+str(s)+'{/color}'
+        return _('{color=#FF4500}')+str(s)+_('{/color}')
 
     def green(s):
-        return '{color=#7CFC00}'+str(s)+'{/color}'
+        return _('{color=#7CFC00}')+str(s)+_('{/color}')
 
     def yellow(s):
-        return '{color=#ffff00}'+str(s)+'{/color}'
+        return _('{color=#ffff00}')+str(s)+_('{/color}')
 
     def gold(s):
-        return '{color=#FFD700}'+str(s)+'{/color}'
+        return _('{color=#FFD700}')+str(s)+_('{/color}')
 
     def num_str(num, l='*', r='%', rev = False):
         n = num
@@ -166,22 +186,22 @@ init -505 python early:
             n *= 100
             c = green if n>=100 else red
             l = ''
-        if l=='**' and r=='%':
+        elif l=='**' and r=='%':
             n *= 100
             c = green if n>=100 else red
             l= '*'
-        if l=='+' and r=='%':
+        elif l=='+' and r=='%': # 0.1 -> 90%
             n = (n-1) * 100
             c = green if n>=0 else red
             l = '+' if n>=0 else ''
-        if l=='++' and r=='%':
+        elif l=='++':
             c = green if n>=0 else red
             l = '+' if n>=0 else ''
+        elif l==None:
+            c = green if n>=0 else red
         
-        if rev == True:
-            cb = c
-            cb = green if c == red else red
-            c = cb
+        if rev:
+            c = green if c == red else red
         
         if n == 0:
             c = str
@@ -192,19 +212,20 @@ init -505 python early:
         leviathan_list=[audio.l1,audio.l2,audio.l3,audio.l4,audio.l5,audio.l6,audio.l7,audio.l8,audio.l9,audio.l10,audio.l11,audio.l12,audio.l13,audio.l14,audio.l15]
         x=rd(0,200)
         if x==0:
+            Achievement309.achieve()
+            Notice.show()
+            Achievement.show()
             renpy.music.play(audio.Leviathan, channel='music', loop=True, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False)
         elif x==200:
+            Achievement309.achieve()
+            Notice.show()
+            Achievement.show()
             renpy.music.play(audio.Ultimate, channel='music', loop=True, fadeout=None, synchro_start=False, fadein=0, tight=None, if_changed=False)
 
         return rcd(leviathan_list)
 
     def CuteLeviathan():
         renpy.music.play(return_cutelevi(), channel='audio', loop=None)
-        x=rd(0,200)
-        if x==0:
-            renpy.music.play(audio.Leviathan, channel='music', loop=True)
-        elif x==200:
-            renpy.music.play(audio.Ultimate, channel='music', loop=True)
     
     def play_sound(name):
         renpy.music.play(name, channel='sound', loop=None)
@@ -254,53 +275,51 @@ init -505 python early:
         else:
             renpy.show('solitus '+str, at_list=atl, zorder=1000, layer='headimage')
 
-        renpy.transition(None)
-
     def sh():
         renpy.transition(Dissolve(0.2), layer='headimage')
         renpy.hide('solitus', layer='headimage')
 
     def countdown(player):
         if player.cured < 42:
-            return "距离第三次手术还有%s天。" % (42-player.cured)
+            return _("距离第三次手术还有%s天。") % (42-player.cured)
 
         if player.cured < 63:
-            return "还有%s天进行第四次手术。" % (63-player.cured)
+            return _("还有%s天进行第四次手术。") % (63-player.cured)
 
         if player.cured < 84:
-            return "还有%s天。" % (84-player.cured)
+            return _("还有%s天。") % (84-player.cured)
         
         if player.cured < 105:
-            return "%s。" % (105-player.cured)
+            return _("%s。") % (105-player.cured)
 
         if player.cured == 105:
-            return "0。"
+            return _("0。")
     
-    def routineMusic(player):
-        def playmusic(pm):
-            if renpy.music.get_playing() != pm:
-                renpy.music.play(pm, channel='music', loop=True, fadeout=3, fadein=3)
+    def playmusic(pm):
+        if renpy.music.get_playing() != pm:
+            renpy.music.play(pm, channel='music', loop=True, fadeout=3, fadein=3)
 
+    def routine_music(player):
         if Despair.has(player):
             if player.mental <= 0:
                 playmusic(audio.impendingdeath)
             else:
                 playmusic(audio.drownedindespair)
 
-        elif p.cured > 0:
-            if p.onVacation:
-                if p.cured<21:
+        elif player.cured > 0:
+            if player.onVacation:
+                if player.cured<21:
                     playmusic(audio.rareleisure)
-                elif p.cured<42:
+                elif player.cured<42:
                     playmusic(audio.rl1)
-                elif p.cured<63:
+                elif player.cured<63:
                     playmusic(audio.rl2)
             else:
-                if p.cured<21:
+                if player.cured<21:
                     playmusic(audio.survivingdawn)
-                elif p.cured<42:
+                elif player.cured<42:
                     playmusic(audio.sd1)
-                elif p.cured<63:
+                elif player.cured<63:
                     playmusic(audio.sd2)
 
         else:
@@ -308,7 +327,7 @@ init -505 python early:
                 playmusic(audio.enjoysuffering)
                     
             else:
-                if p.onVacation:
+                if player.onVacation:
                     playmusic(audio.rareleisure)
                 else:
                     playmusic(audio.survivingdawn)
@@ -323,6 +342,64 @@ init -505 python early:
             renpy.transition(Dissolve(0.5, alpha=True))
             renpy.hide('blackmask', layer='mask')
         
+
+    def routine_bg(player):
+
+        bg = 'office'
+
+        if player.times > 9:
+            if player.onOutside or not player.onVacation:
+                bg = 'nightrun'
+            else:
+                bg = 'livingroom'
+                
+        elif player.onVacation:
+            bg = 'workarea'
+
+        elif not player.onVacation:
+            if rrs(player, 5):
+                bg = 'office_'
+            else:
+                bg = 'office'
+                
+                
+        
+        renpy.scene()
+        
+
+        renpy.show(bg, at_list=[setcolor])
+        renpy.with_statement(trans=Fade(0.5, 0.0, 0.5, color=_('#000')))
+        
+        renpy.transition(None)
+        renpy.show('blurred', at_list=[blurr_concentration(p)])
+        
+
+
+
+
+    def routine_narrator(p, what):
+        if p.cured < 21:
+            renpy.say(None, what)
+        else:
+            renpy.say(None, _("……"))
+
+    def random_color(str=None):
+        import random
+        rand_color = hex(random.randint(0,16**6)).replace('0x','').upper()
+        if(len(rand_color)<6):
+            rand_color = '0'*(6-len(rand_color))+rand_color
+        if str:
+            return '{color=#%s}%s{/color}' % (rand_color, str)
+        return '{color=#%s}' % rand_color
+
+
+
+
+
+
+
+
+
     '''
 
     def replaceKeywords(s):
@@ -330,19 +407,19 @@ init -505 python early:
             return s
         def addColor(s, color, seq):
             for name in seq:
-                if '？' in name:
+                if _('？') in name:
                     continue
-                r = '{color=%s}{u}%s{/color}{/u}'%(color, name)
+                r = _('{color=%s}{u}%s{/color}{/u}')%(color, name)
                 s = s.replace(name, r)
             return s
 
-        s = addColor(s, '#fbd26a', [i.name for i in getSubclasses(Task)])
-        s = addColor(s, '#ADD8E6', [i.name for i in getSubclasses(Effect)])
-        s = addColor(s, '#ff38ee', [i.name for i in getSubclasses(Item)])
-        s = addColor(s, '#2c80ff', ['工作类日程','运动类日程','写作类日程','休息类日程','特殊类日程'])
-        s = addColor(s, '#ff2b59', ['严重程度','工作能力','身体素质','写作技巧'])
-        s = addColor(s, '#eeff57', ['专注度','工作速度'])
-        s = addColor(s, '#4be63d', ['精神状态'])
+        s = addColor(s, _('#fbd26a'), [i.name for i in getSubclasses(Task)])
+        s = addColor(s, _('#ADD8E6'), [i.name for i in getSubclasses(Effect)])
+        s = addColor(s, _('#ff38ee'), [i.name for i in getSubclasses(Item)])
+        s = addColor(s, _('#2c80ff'), [_('工作类日程'),_('运动类日程'),_('写作类日程'),_('休息类日程'),_('特殊类日程')])
+        s = addColor(s, _('#ff2b59'), [_('严重程度'),_('工作能力'),_('身体素质'),_('写作技巧')])
+        s = addColor(s, _('#eeff57'), [_('专注度'),_('工作速度')])
+        s = addColor(s, _('#4be63d'), [_('精神状态')])
 
         return s
     '''

@@ -1,4 +1,7 @@
 label splashscreen:
+    $renpy.sound.stop(channel="chara_voice")
+    $renpy.hide('blackmask', layer='mask')
+    $sh()
     scene black
     $ p=None
     $ replaying = False
@@ -10,14 +13,17 @@ label splashscreen:
     $ _skipping = False
 
     if persistent.newplayer:
-        "本游戏不适合容易受到干扰，对心理暗示感到不适的玩家。\n游戏内并不存在用于直接恐怖的图片，也没有过于真实的图片。"
+        "本游戏正在测试中，可能会出现各种意想不到的报错或BUG，包括但不限于无法触发剧情，存档崩坏，进度归零等情况，请做好心理准备或等待稳定版发布。"
+        "禁止私自发布、外传、搬运等，本游戏为免费游戏，禁止通过该游戏牟利，如果您是通过某种渠道购买该游戏，可能已经上当受骗。"
+        "本游戏仅发布于{color=#fbff00}{a=https://yuxiu.itch.io/medicine}itch.io游戏主页{/a}{/color}以及QQ频道{color=#fbff00}{a=https://pd.qq.com/s/f83b8nyks}Endorphins酒馆{/a}{/color}，除此之外皆为非法发布。"
+        "本游戏不适合容易受到干扰，对心理暗示感到不适的玩家。"
         "本游戏包含限制级内容，除此之外还含有同性爱，兽人等。\n如果您未满18岁或者对这些元素感到不适，请退出游戏。"
         "本游戏在电脑平台上的某些效果更好，如果可以请尽量使用电脑游玩。"
         "本游戏包含的时间，地点，人物，事件，故事及其他内容均为虚构，与真实人物或事件无关。如有雷同，纯属巧合。"
         "以上以及此段提示仅会出现一次，如果您确定自己已经熟读以上内容准确无误，同时能够接受所提到的元素并已成年，\n请点击“我同意”以进入游戏，否则请关闭游戏。"
         menu:
             "以上以及此段提示仅会出现一次，如果您确定自己已经熟读以上内容准确无误，同时能够接受所提到的元素并已成年，\n请点击“我同意”以进入游戏，否则请关闭游戏。{fast}"
-            "我同意" if True:
+            "我同意":
                 $ persistent.newplayer = False
 
     play music audio.themedicine
@@ -32,10 +38,13 @@ label splashscreen:
     $ renpy.block_rollback()
     $ _skipping = True
 
+    $Save.savecheck()
+
     return
 
 label start:
     $ config.rollback_enabled = False
+    $ _game_menu_screen = None
     $ p = None
     $ Save.clear()
     stop music fadeout 5
@@ -137,6 +146,10 @@ label initplayer:
     $ ProfessionalBookWorking.add(p, 2)
     $ GameDifficulty3.add(p)
     $ Novice.add(p)
+    
+    
+    call screen screen_initplayer(p)
+    $ _game_menu_screen = "preferences"
 
     if persistent.lastend == 'ne':
         $Sticker59.add(p)
@@ -155,6 +168,9 @@ label initplayer:
 
 
 label to_the_title:
+    $renpy.hide('blackmask', layer='mask')
+    $renpy.sound.stop(channel="chara_voice")
+    $sh()
     call hide_all_screens from _call_hide_all_screens
     $ sh()
     play music audio.themedicine
@@ -264,6 +280,7 @@ label bookdont:
     $ quick_menu = False
     stop music
     scene bs
-    $renpy.pause()
     $Achievement303.achieve()
+    $Achievement.show()
+    $renpy.pause()
     $renpy.quit()

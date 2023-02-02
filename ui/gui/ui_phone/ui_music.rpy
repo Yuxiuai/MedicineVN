@@ -2,7 +2,7 @@ screen screen_phone_music(player):
     #tag gamegui
     modal True
 
-    zorder 100
+    zorder 600
     frame:
         at trans_app(150, 170)
         style "translucent_frame"
@@ -86,7 +86,7 @@ screen screen_phone_music(player):
 
                     imagebutton idle "gui/phone/music/random.png":
                         action [mr.RandomPlay(),renpy.restart_interaction]
-                        hovered Show(screen="info",i='随机播放', width=100)
+                        hovered Show(screen="info",i=_('随机播放'), width=100)
                         unhovered Hide("info")  
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                         activate_sound audio.cursor
@@ -94,7 +94,7 @@ screen screen_phone_music(player):
 
                     imagebutton idle "gui/phone/music/previous.png":
                         action [mr.Previous(),renpy.restart_interaction]
-                        hovered Show(screen="info",i='播放上一首', width=125)
+                        hovered Show(screen="info",i=_('播放上一首'), width=125)
                         unhovered Hide("info")  
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                         activate_sound audio.cursor
@@ -104,7 +104,7 @@ screen screen_phone_music(player):
 
                         imagebutton idle "gui/phone/music/play.png":
                             action [mr.Play(),renpy.restart_interaction]
-                            hovered Show(screen="info",i='播放第一首', width=125)
+                            hovered Show(screen="info",i=_('播放第一首'), width=125)
                             unhovered Hide("info")  
                             background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
@@ -114,7 +114,7 @@ screen screen_phone_music(player):
                         
                         imagebutton idle "gui/phone/music/stop.png":
                             action [mr.Stop(),renpy.restart_interaction]
-                            hovered Show(screen="info",i='停止播放', width=100)
+                            hovered Show(screen="info",i=_('停止播放'), width=100)
                             unhovered Hide("info")  
                             background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                             activate_sound audio.cursor
@@ -123,7 +123,7 @@ screen screen_phone_music(player):
 
                     imagebutton idle "gui/phone/music/next.png":
                         action [mr.Next(),renpy.restart_interaction]
-                        hovered Show(screen="info",i='播放下一首', width=125)
+                        hovered Show(screen="info",i=_('播放下一首'), width=125)
                         unhovered Hide("info")  
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                         activate_sound audio.cursor
@@ -133,7 +133,7 @@ screen screen_phone_music(player):
 
                     imagebutton idle "gui/phone/music/close.png":
                         action [Hide("screen_phone_music"),Hide("info"),Show(screen="screen_phone", player=player)]
-                        hovered Show(screen="info",i='关闭播放器', width=125)
+                        hovered Show(screen="info",i=_('关闭播放器'), width=125)
                         unhovered Hide("info")  
                         background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
                         activate_sound audio.cursor

@@ -1,9 +1,9 @@
 init python early:
 
     ret_mes = { # 空字符串代表已读
-        'Pathos': ['', '', '', '别叫'],
-        'Acolas': ['','嗯？', '什么意思？', '我不习惯用某信，有什么重要的事打电话和我说吧？'],
-        'Halluke': ['', '……', '嗯。'],
+        'Pathos': ['', '', '', _('别叫')],
+        'Acolas': ['',_('嗯？'), _('什么意思？'), _('有什么重要的事就打电话和我说吧。')],
+        'Halluke': ['', '……', _('嗯。')],
         'Depline': ['']
     }
 
@@ -32,7 +32,7 @@ init python early:
         @classmethod
         def new(cls, player, fro, to, what, h=None, m=None, seen=False, pos='b', chachong=True):
             if what!='':
-                if to == 'Halluke' and player.hal_p == 11 and player.today == 6 and player.times in (11, 13) and seen==False:
+                if to == 'Halluke' and player.hal_p == 11 and player.today == 6 and player.times == 10 and seen==False:
                     seen = None
                     renpy.music.stop()
                 if to == 'Halluke' and player.hal_p == 99:
@@ -43,20 +43,14 @@ init python early:
                     h = player.st()[0]
                 if m == None:
                     m = player.st()[1]
-                    if pos == 'b':
-                        m = int(m) - rd(2, 40)
-                        if m < 0:
-                            h = int(h) - 1
-                            m += 60
-                    elif pos == 'a':
-                        m = int(m) + rd(2, 40)
-                        if m >= 60:
-                            h = int(h) + 1
-                            m -= 60
-                    m = str(m)
-                    h = str(h)
-                    if len(m)<2:
-                        m='0' + m
+                if pos == 'b':
+                    m = rd(0, int(m))
+                elif pos == 'a':
+                    m = rd(int(m), 59)
+                m = str(m)
+                h = str(h)
+                if len(m)<2:
+                    m='0' + m
                 mes = cls(what, player.mon, player.day, fro, to, h, m, seen)
                 if mes in player.messages[to]:
                     if chachong:
@@ -65,16 +59,19 @@ init python early:
                         player.messages[to].append(mes)
                 else:
                     player.messages[to].append(mes)
+                
+                if fro == to:
+                    Notice.add('%s发来了一条消息！' % to)
 
         def info(self):
             if self.seen == True:
-                seeninfo = '已读'
+                seeninfo = _('已读')
             elif self.seen == False:
-                seeninfo = '未读'
+                seeninfo = _('未读')
             else:
-                seeninfo = '{color=#ff0000}发送失败{/color}'
+                seeninfo = _('{color=#ff0000}发送失败{/color}')
 
-            return '%s月%s日 %s:%s %s' % (self.mon, self.day, self.h, self.m, seeninfo)
+            return _('%s月%s日 %s:%s %s') % (self.mon, self.day, self.h, self.m, seeninfo)
 
         @classmethod
         def clear(cls, to):
@@ -110,4 +107,6 @@ init python early:
         @classmethod
         def ret(cls, player, who):
             Message.see(player, player.name, who)
-            Message.new(player, who, who, rca(player, ret_mes[who]), False, chachong=False)
+            mes = rca(player, ret_mes[who])
+            if mes:
+                Message.new(player, who, who, mes, seen=False, chachong=False)

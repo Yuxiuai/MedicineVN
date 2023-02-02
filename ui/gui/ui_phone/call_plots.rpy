@@ -1,26 +1,6 @@
 label end_call:
     $renpy.sound.stop(channel="chara_voice")
-    call screen screen_index(p)
-    hide screen info
-    hide screen info2
-    hide screen info3
-    if p.times == 13:
-        $p.times += 1
-    if replaying == True:
-        $renpy.jump(replaying_labelname)
-    if p.hal_p == 11 and p.today == 6 and p.times in (11, 13):
-        "我……被Halluke删了好友？"
-        "不会吧……为什么？"
-        "仅仅是因为我没去和他考试？"
-        "可……但……这到底是为什么？"
-        "我重新添加为好友，得到的却只有红色的拒绝。"
-        "……"
-        "某种挫败感交杂着怒火冲上大脑。"
-        "所以我做了这么多，结果却是这样的么？"
-        "我还没鼓起勇气先说再见，就先被他这种什么也不用担心，什么也不用顾虑的家伙删了？"
-        "现在还有时间，我必须去找他问个清楚。"
-        jump halluke_route_11
-    jump TaskExecuting
+    jump operate_screen_label
 
 
 label call_parents:
@@ -118,9 +98,9 @@ label arnel_q:
             $p.wages = r2(p.wages * 0.9)
             $p.onVacation = True
             $p.stime(55)
-            $p.checkTask()
+            $p.morning_checkTask()
             $p.hadAskedForLeave = True
-            $routineMusic(p)
+            $routine_music(p)
             "光速打车回家了……"
             jump end_call
         "闲聊":
@@ -140,6 +120,7 @@ label arnel_q:
             ar"“完成半数任务时（>=50\%），具体薪水为当前面板薪水*完成度*0.6，下周工资为1900*1.00^周数。”"
             ar"“没有完成任务时（<50\%），具体薪水为当前面板薪水*完成度*0.55，下周工资为1900*1.00^周数。”"
             ar"“总结一下就是，尽量完成的越多越好，虽然这句话和废话一样就是了，但完成度超过120\%就可以稍微放松下，毕竟不能把你累死了。”"
+            ar"“超过120\%时，完成再多的任务也不会增加薪水了。”"
             ar"“另外就是，下一周的工资和本周工资关系并不是太大，如果上周工资很少，只要这周努力点，很快就能恢复正常水平。”"
             ar"“就是这样。”"
             ar"“还有什么想问的吗？”"
@@ -606,3 +587,9 @@ label acolas_q:
             play sound audio.interruption
             "他挂断了电话。"
             jump end_call
+
+
+label call_test:
+    'a'
+    'b'
+    return
