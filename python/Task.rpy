@@ -31,7 +31,7 @@ init python early:
                 if cls.unlockCond(player) == True:
                     cls.unlock(player)
                 else:
-                    showNotice([_('未达到日程%s的解锁条件：\n%s') % (cls.name, cls.unlockCond(player))])
+                    showNotice([_('未达到日程？？？的解锁条件：\n%s') % (cls.unlockCond(player))])
             else:
                 showNotice([_('该日程：%s已解锁！') % cls.name])
 
@@ -97,9 +97,10 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
+            if BookRandConcEffect.has(player):
+                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
             perf = ra(player, 1, 100)
-            perf += cls.getConcScale(player)
-            #Notice.add('Perf: %s' % perf)
+            perf += cls.getConcScale(player)            
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)

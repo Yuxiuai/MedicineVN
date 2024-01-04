@@ -1,25 +1,22 @@
 screen screen_effects(player):
+    use barrier(screen="screen_effects", mode=0)
     #tag gamegui
-    use barrier(screen="screen_effects")
-
-    $ effects = sliceArr(player.effects)
-
     #modal True
-    zorder 600
+    zorder 550
     drag:
         xcenter 0.5
         ycenter 0.48
         frame:
             at trans_toRight()
             style "translucent_frame"
-            xsize 700
+            xsize 1000
             ysize 800
             vbox:
                 frame:
                     background None
                     yalign 0.001
-                    textbutton _('{size=+10}角色效果{/size}'):
-                        text_style "gameUI"
+                    textbutton '{size=+10}状态{/size}':
+                        text_style "white"
                         xoffset -5
                         yoffset -5
                         action NullAction()
@@ -27,97 +24,85 @@ screen screen_effects(player):
                     imagebutton auto "gui/exit_%s.png":
                         xalign 1.0
                         action [Hide("screen_effects",transition=dissolve),Hide("info")]
-                        #alternate Function(allI, player=player)
-
+                    
                     frame:
                         background None
-                        ysize 700
-                        xsize 650
-                        ypos 60
-                        xpos 25
+                        ysize 680
+                        xsize 980
+                        xpos 10
+                        ypos 80
 
-                        viewport:
-                            mousewheel True
-                            draggable True
-                            scrollbars "vertical"
-                            use effects_show(player, effects)
-    
+                        use screen_effects_inner(player)
     key 'K_ESCAPE' action [Hide("screen_effects",transition=dissolve),Hide("info")]
-                    
 
-screen effects_show(player, effects):
-    vbox:
-        xsize 640
-        default isFold = {
-            _('天气'):False,
-            _('状态'):False,
-            _('增益'):False,
-            _('药物反应'):False,
-            _('学识'):False,
-            _('伤痕'):False
-        }
-        for i in effects:
-            $typename = type(i[0]).kind
-            $typei = effectKindInfo(typename, 'i')
-            $typea = effectKindInfo(typename, 'a')
-            hbox:
-                if isFold[typename] == False:
-                    textbutton '{size=-5}'+typename+'{/size}' text_style "white":
-                        action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
-                        unhovered Hide("info")
-                        xfill True
-                        xalign 1.0
-                        activate_sound audio.cursor
-                        #background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
 
-                    imagebutton idle "gui/style/folded.png":
-                        xoffset -85
-                        yoffset 10
 
-                else:
-
-                    textbutton '{size=-5}'+typename+'{/size}' text_style "white":
-                        action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
-                        unhovered Hide("info")
-                        xfill True
-                        xalign 1.0
-                        activate_sound audio.cursor
-                        #background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-
-                    imagebutton idle "gui/style/folded.png":
-                        xoffset -85
-                        yoffset 10
-                        at reverse
-            if isFold[typename] == False:
+screen screen_effects_inner(player):
+    $ effects = sliceArr(player.effects)
+    if player.effects:
+        frame:
+            background None
+            ysize 670
+            xfill True
+            viewport:
+                mousewheel True
+                draggable True
+                scrollbars "vertical"
                 vbox:
-                    #xalign 1.0
-                    for ite in i:
-                        frame:
-                            background None
-                            ysize 60
-                            xfill True
+                    for i in effects:
+                        use screen_effects_inner_inner(player, i)
 
-                            $ite_pre = ite.getPrefixInfo(player)
-                            $ite_main = ite.getPrincipalInfo()
-                            $ite_suf = ite.getSuffixInfo()
+        
+screen screen_effects_inner_inner(player, effect):
+    $typename = effect[0].kind
+    $typei = effectKindInfo(typename, 'i')
+    $typea = effectKindInfo(typename, 'a')
+    textbutton typename text_style 'white':
+        action NullAction()
+        hovered Show(screen="info", i=typei, a=typea)
+        unhovered Hide("info")
+        background Frame("gui/style/grey_hover_background.png", tile=gui.frame_tile)
+        xfill True
+        ysize 40
+        
+    frame:
+        background None
 
-                            frame:
-                                background None
-                                textbutton ite.name text_style "white":
-                                    action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), t=type(ite).name, i=ite_pre+ite_main + ite_suf, a=ite.ad)]
-                                    hovered Show(screen="info", t=type(ite).name, i=ite_pre+ite_main + ite_suf, a=ite.ad)
-                                    unhovered Hide("info")
-                                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                                    activate_sound audio.cursor
-                                    xfill True
-                                $stacks = str(ite.stacks) if ite.stacks>1 else ''
-                                textbutton stacks text_style "white":
-                                    xpos 1.0
-                                    xoffset -45
-                                    xanchor 1.0
+        hbox:
+            box_wrap True
+            for item in effect:
+                use screen_effects_inner_inner_effect(player, item)
+                null height 2
 
-                        null height 2
-        null height 30
-        textbutton ''
+screen screen_effects_inner_inner_effect(player, effect):
+
+    python:
+        def geticon(effect):
+            stack_layer = '' if effect.stacks == 1 else str(effect.stacks)
+            return Composite((75, 75), (0, 0), effect.icon(), (0, 0), Fixed(Text(stack_layer, size=30,xcenter=0.9, ycenter=0.2)))
+
+
+    $effect_pre = effect.getPrefixInfo(player)
+    $effect_main = effect.getPrincipalInfo()
+    $effect_suf = effect.getSuffixInfo()
+    $showname = effect.name
+    if len(showname) >= 9:
+        $showname='{size=-5}'+showname+'{/size}'
+
+    frame:
+        background None
+        xsize 295
+        ysize 90
+        textbutton showname text_style "white":
+            action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), t=effect.name, i=effect_pre+effect_main + effect_suf, a=effect.ad)]
+            hovered Show(screen="info", t=effect.name, i=effect_pre+effect_main + effect_suf, a=effect.ad)
+            unhovered Hide("info")
+            background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
+            activate_sound audio.cursor
+            xfill True
+            yfill True
+            text_xpos 0.3
+        imagebutton idle geticon(effect):
+            #xalign 0.5
+            yalign 0.5
+            xoffset 4

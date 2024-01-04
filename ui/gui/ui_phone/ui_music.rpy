@@ -1,142 +1,188 @@
-screen screen_phone_music(player):
-    #tag gamegui
-    modal True
+init python:
+    def fun_screen_phone_music_progress(st, at):
+        pos = renpy.music.get_pos()
+        maxd = renpy.music.get_duration()
+        if not pos:
+            pos = 0
+        if not maxd:
+            maxd = 0
+        pos = int(pos)
+        maxd = int(maxd)
+        if maxd != 0:
+            d = Text("%s:%s / %s:%s" % (pos//60, str(pos-(pos//60)*60).zfill(2), maxd//60, str(maxd-(maxd//60)*60).zfill(2)),style='phonew', size=25)
+        else:
+            d = Text("%s:%s / ?:??" % (pos//60, str(pos-(pos//60)*60).zfill(2)),style='phonew', size=25)
+        return d, 1
 
+image screen_phone_music_progress = DynamicDisplayable(fun_screen_phone_music_progress)
+
+screen screen_phone_music(player):
+
+    predict False
+    style_prefix "gameUI"
     zorder 600
+    
+
+    $playlist = mr.unlocked_playlist()
+
+    
+
+        
+
     frame:
-        at trans_app(150, 170)
-        style "translucent_frame"
+        
+        if phone_page == 10:
+            at app_inner_show(220, 50)
+        else:
+            at app_inner_hide(220, 50)
+        
+
+        
         background None
         xcenter 0.5
         ycenter 0.5
-        ysize 750
-        xsize 400
-        add "gui/phone/phone_desktop_.png":
-            xcenter 0.51
-            ycenter 0.46
-
-        $playlist = mr.unlocked_playlist()
+        yoffset -10
         
-        frame:
-            #use screen_phone_bg_
-            background None
+        use barrier('', 0)
+
+        add "gui/phone/wallpaper/camera.webp":
             xcenter 0.5
-            ycenter 0.5
-            ysize 750
-            xsize 400
-            frame:
-                background None
-                #xpos 0.41
-                frame:
-                    background None
-                    ypos 0.5
-                    ysize 80
-                    xfill True
-                    vbox:
-                        text _("{size=+5}音乐播放器{/size}") style "white"
-                    if config.developer: 
-                        imagebutton idle "gui/reset_w.png":
-                            action Function(unlockallmusic)
-                            hover_sound audio.cursor
-                            xpos 0.9
-                            ypos 0.05
-            frame:
-                background None
-                ypos 0.15
-                viewport:
-                    ysize 475
-                    mousewheel True
-                    draggable True
-                    if len(playlist)>10:
-                        scrollbars "vertical"
-                    vbox:
-                        spacing 4
-                        for i in playlist:
+
+        text "音乐" xpos 0.92 xanchor 1.0 ypos 0.085 size 40 style "phonew"
+
+        frame:
+            
+            background None
+            xalign 0.5
+            ypos 150
+            ysize 700
+            xsize 582
+            
+            viewport:
+                xcenter 0.5
+                mousewheel True
+                draggable True
+                scrollbars "vertical"
+
+                vbox:
+                    spacing 4
+                    for i in playlist:
+                        frame:
+                            xfill True
+                            ysize 95
+                            background None
+
                             $name = musicFormat(i)
-                            textbutton name:
+                        
+
+
+                            imagebutton idle "gui/phone/music/"+name.replace(" ", "_")+".png":
+                                
                                 if renpy.music.get_playing()==i:
-                                    action NullAction()
-                                    hover_sound audio.cursor
-                                    hovered Show(screen="info",i=dictMusicCommet[name])
-                                    unhovered Hide("info")  
-                                    background Frame("gui/style/musicplayer_hover_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                                    text_style "white"
-                                    xfill True
+                                    action PauseAudio("music", "toggle")
+                                    background Frame("gui/style/musicplayer_hover_background.png", tile=gui.frame_tile)
                                 else:
                                     action Function(renpy.music.play, i)
-                                    hover_sound audio.cursor
-                                    hovered Show(screen="info",i=dictMusicCommet[name])
-                                    unhovered Hide("info")  
-                                    background Frame("gui/style/musicplayer_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                                    text_style "white"
-                                    xfill True
+                                    background Frame("gui/style/musicplayer_[prefix_]background.png", tile=gui.frame_tile)
                                     activate_sound audio.cursor
+                                
+                                hovered Show(screen="info",i=dictMusicCommet[name])
+                                unhovered Hide("info")  
+                                xfill True
+                                at app_transform
 
 
+                            text name:
+                                size 25
+                                xpos 0.2
+                                style "phonew"
+                            
+                            if not renpy.music.get_pause() and renpy.music.get_playing()==i:
+                                add "gui/phone/music/musicpause.png" xpos 0.9 ycenter 0.5
+                            else:
+                                add "gui/phone/music/musicplay.png" xpos 0.9 ycenter 0.5
+
+            add "screen_phone_music_progress" ypos 1.03 xalign 0.5
 
             frame:
                 background None
-                ypos 0.83
+                ypos 1.05
                 xfill True
                 ysize 65
                 
                 hbox:
                     xalign 0.5
-                    spacing 20
+                    spacing 60
 
                     imagebutton idle "gui/phone/music/random.png":
-                        action [mr.RandomPlay(),renpy.restart_interaction]
+                        action mr.RandomPlay()
+                        if config.developer:
+                            alternate Function(unlockallmusic)
                         hovered Show(screen="info",i=_('随机播放'), width=100)
                         unhovered Hide("info")  
-                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                        at screen_phone_message_friendbox_transform
                         activate_sound audio.cursor
                         yfill True
 
                     imagebutton idle "gui/phone/music/previous.png":
-                        action [mr.Previous(),renpy.restart_interaction]
+                        action mr.Previous()
                         hovered Show(screen="info",i=_('播放上一首'), width=125)
                         unhovered Hide("info")  
-                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                        at screen_phone_message_friendbox_transform
                         activate_sound audio.cursor
                         yfill True
 
-                    if not renpy.music.get_playing():
+                    if renpy.music.get_pause():
 
                         imagebutton idle "gui/phone/music/play.png":
-                            action [mr.Play(),renpy.restart_interaction]
-                            hovered Show(screen="info",i=_('播放第一首'), width=125)
+                            action PauseAudio("music", "toggle")
+                            hovered Show(screen="info",i=_('播放'), width=125)
                             unhovered Hide("info")  
-                            background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                            at screen_phone_message_friendbox_transform
                             activate_sound audio.cursor
                             yfill True
 
                     else:
                         
                         imagebutton idle "gui/phone/music/stop.png":
-                            action [mr.Stop(),renpy.restart_interaction]
-                            hovered Show(screen="info",i=_('停止播放'), width=100)
+                            action PauseAudio("music", "toggle")
+                            hovered Show(screen="info",i=_('暂停'), width=100)
                             unhovered Hide("info")  
-                            background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                            at screen_phone_message_friendbox_transform
                             activate_sound audio.cursor
                             yfill True
 
 
                     imagebutton idle "gui/phone/music/next.png":
-                        action [mr.Next(),renpy.restart_interaction]
+                        action mr.Next()
                         hovered Show(screen="info",i=_('播放下一首'), width=125)
                         unhovered Hide("info")  
-                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                        at screen_phone_message_friendbox_transform
                         activate_sound audio.cursor
                         yfill True
 
                     
 
                     imagebutton idle "gui/phone/music/close.png":
-                        action [Hide("screen_phone_music"),Hide("info"),Show(screen="screen_phone", player=player)]
+                        action Hide("screen_phone_music"),Hide("info"),SetVariable("phone_page", 0)
                         hovered Show(screen="info",i=_('关闭播放器'), width=125)
                         unhovered Hide("info")  
-                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                        at screen_phone_message_friendbox_transform
                         activate_sound audio.cursor
-                        yfill True
+                        yfill True                   
+
+
+        frame:
+            background None
+            xpos 0.03
+            ypos 0.06
+            imagebutton auto "gui/phone/backw_%s.png":
+                action SetVariable("phone_page", 0), Hide("info")
+                hover_sound audio.cursor
+            
+
+                
     
-    key 'K_ESCAPE' action [Hide("screen_phone_music"),Hide("info"),Show(screen="screen_phone", player=player)]
+    key 'K_ESCAPE' action SetVariable("phone_page", 0), Hide("info")
+
+

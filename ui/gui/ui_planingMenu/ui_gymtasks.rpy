@@ -112,17 +112,10 @@ screen gymtasks_show(player, gymtasks, show_all_task):
         $UnlockedButCanUnlock = list(filter(lambda x:x.isUnlocked(p) == False and x.unlockCond(p) == True, ALLGYMTASKS))
 
         xsize 460
-        default isFold = {
-            _('可解锁的日程'):False,
-            _('无难度'):False,
-            _('低难度'):False,
-            _('中难度'):False,
-            _('高难度'):False
-        }
 
         if UnlockedButCanUnlock:
             $UnlockedButCanUnlock.sort(key=lambda x: x.id)
-            $typename = _('可解锁的日程')
+            $typename = _('{color=#ffe032}可解锁的日程{/color}')
             $typei = _('该分类下的日程为达成了解锁条件但没解锁的日程。')
             $typea = _('为什么我做一件事也要去解锁？难道我在身体素质不达标之前连跑步都做不到吗？')
 
@@ -130,28 +123,18 @@ screen gymtasks_show(player, gymtasks, show_all_task):
             hbox:
                 
                 textbutton '{size=-5}'+typename+'{/size}' text_style "white":
-                    if isFold[typename] == False:
-                        action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
-                    else:
-                        action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
+                    action NullAction()
+                    hovered Show(screen="info", i=typei, a=typea)
                     unhovered Hide("info")
                     xfill True
                     xalign 1.0
                     activate_sound audio.cursor
                     xoffset -5
                         
-                imagebutton idle "gui/style/folded.png":
-                    xoffset -150
-                    yoffset 10
-                    if isFold[typename]:
-                        at reverse
 
-            if isFold[typename] == False:
-                vbox:
-                    for ite in UnlockedButCanUnlock:
-                        use print_single_gymtasks(ite, player)
+            vbox:
+                for ite in UnlockedButCanUnlock:
+                    use print_single_gymtasks(ite, player)
 
 
 
@@ -162,29 +145,18 @@ screen gymtasks_show(player, gymtasks, show_all_task):
             $typea = taskKindInfo('运动类', 'a')
             hbox:
                 textbutton '{size=-5}'+typename+'{/size}' text_style "white":
-                    if isFold[typename] == False:
-                        action [SetDict(isFold, typename, True),Hide("info")]
-                        hovered Show(screen="info", i=typei+_('\n\n单击以折叠该类日程。'), a=typea)
-                    else:
-                        action [SetDict(isFold, typename, False),Hide("info")]
-                        hovered Show(screen="info", i=typei+_('\n\n单击以展开该类日程。'), a=typea)
+                    action NullAction()
+                    hovered Show(screen="info", i=typei, a=typea)
                     unhovered Hide("info")
                     xfill True
                     xalign 1.0
                     activate_sound audio.cursor
                     xoffset -5
                         
-                imagebutton idle "gui/style/folded.png":
-                    xoffset -150
-                    yoffset 10
-                    if isFold[typename]:
-                        at reverse
-
-            if isFold[typename] == False:
-                vbox:
-                    #xalign 1.0
-                    for ite in i:
-                        use print_single_gymtasks(ite, player)
+            vbox:
+                #xalign 1.0
+                for ite in i:
+                    use print_single_gymtasks(ite, player)
                         
         null height 30
         textbutton ''
@@ -215,20 +187,26 @@ screen print_single_gymtasks(ite, player):
                 $show_a = ite.ad if ite.isUnlocked(player) else locked_info
 
                 textbutton show_name text_style "grey":
-                    action [Hide("info"), Show(screen="info_confirm", text=_('解锁健身日程'),act=Function(ite.unlockClass, player), pp=renpy.get_mouse_pos(), t=show_name, i=show_info + red(_('\n\n') +error_info), a=show_a)]
+                    if persistent.actionquickly:
+                        action Hide("info"),Function(ite.unlockClass, player)
+                    else:
+                        action [Hide("info"), Show(screen="info_confirm", text=_('解锁健身日程'),act=Function(ite.unlockClass, player), pp=renpy.get_mouse_pos(), t=show_name, i=show_info + red(_('\n\n') +error_info), a=show_a)]
                     hovered Show(screen="info", t=show_name, i=show_info + red(_('\n\n') +error_info), a=show_a)
                     unhovered Hide("info")
-                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.error
 
             else:
 
                 textbutton ite_name text_style "white":
-                    action [Hide("info"), Show(screen="info_confirm",text=_('添加到健身日程'),act=Function(player.setgymtask, ite), pp=renpy.get_mouse_pos(), t=ite_name, i=ite.info + type_info, a=ite.ad)]
+                    if persistent.actionquickly:
+                        action [Hide("info"), Function(player.setgymtask, ite)]
+                    else:
+                        action [Hide("info"), Show(screen="info_confirm",text=_('添加到健身日程'),act=Function(player.setgymtask, ite), pp=renpy.get_mouse_pos(), t=ite_name, i=ite.info + type_info, a=ite.ad)]
                     hovered Show(screen="info", t=ite_name, i=ite.info + type_info, a=ite.ad)
                     unhovered Hide("info")
-                    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                    background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
                     xfill True
                     activate_sound audio.cursor
 
@@ -250,7 +228,7 @@ screen gymplan_show(player):
                 action NullAction()
                 xsize 330
                 xoffset -5
-                #background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                #background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
             frame:
                 background None
                 ysize 60
@@ -261,7 +239,7 @@ screen gymplan_show(player):
                         action [Hide("info"), Function(player.removegymtask, i)]
                         hovered Show(screen="info", t=player.gymplan[i].name, i=player.gymplan[i].info+type_info + ctc_info, a=player.gymplan[i].ad)
                         unhovered Hide("info")
-                        background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+                        background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
                         xsize 330
                         activate_sound audio.cursor
             null height 2

@@ -1,33 +1,41 @@
 init -10 python early:
+
+
     class Save:
+        
+        def __init__(self, name, p):
+            self.name = name
+            self.p = dcp(p)
+            self.exception = False
 
-        @classmethod
-        def clear(cls):
-            persistent.savefile[0] = None
-            persistent.savefile[1] = None
+        def rename(self, name):
+            self.name = name
 
-        @classmethod
-        def default(cls):
-            persistent.savefile = [None, None, None, [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]]
+        def delete(self):
+            for i in range(len(persistent.savefile)):
+                for j in range(len(persistent.savefile[i])):
+                    if persistent.savefile[i][j] == self:
+                        if len(persistent.savefile[i]) == 1:
+                            del persistent.savefile[i]
+                            return
+                        del persistent.savefile[i][j]
+                        return
+
+
+    class Saver:
 
         @classmethod
         def save(cls, player):
+            import time
+            player.savetime = time.strftime(_('%Y.%m.%d %H:%M:%S'),time.localtime(time.time()))
+            saved = False
+            for i in persistent.savefile:
+                if i[0].p.timestamp == player.timestamp:
+                    i.append(Save('存档' + str(len(i)), player))
+                    saved = True
+            if not saved:
+                persistent.savefile.append([Save('存档0', player)])
 
-            if persistent.savefile[0] != None:
-                if persistent.savefile[0].today == player.today:
-                    return
-
-            persistent.savefile[1] = dcp(persistent.savefile[0])
-            persistent.savefile[0] = dcp(player)
-            if player.today == 5:
-                if type(persistent.savefile[2]) == list:
-                    t0 = dcp(persistent.savefile[0])
-                    t1 = dcp(persistent.savefile[1])
-                    t2 = dcp(persistent.savefile[2])
-                    persistent.savefile = [t0, t1, None, t2]
-                persistent.savefile[2] = dcp(player)
-
-            renpy.save_persistent()
 
         @classmethod
         def load(cls, slot):
@@ -35,73 +43,66 @@ init -10 python early:
             sh()
             slot.restart += 1
             p = dcp(slot)
-            persistent.savefile[1] = None
-            persistent.savefile[0] = dcp(p)
             renpy.jump_out_of_context("afterload")
+        
+        @classmethod
+        def get_today(cls):
+            global p
+            if not p:
+                return -1
+            for i in range(len(persistent.savefile)-1,-1,-1):
+                for j in range(len(persistent.savefile[i])-1,-1,-1):
+                    if persistent.savefile[i][j].p.today == p.today:
+                        return persistent.savefile[i][j].p
+            return None
 
         @classmethod
-        def record(cls, slot):
-            import time
-            slot.savetime = time.strftime(_('%Y.%m.%d %H:%M:%S'),time.localtime(time.time()))
-            if None not in persistent.savefile[-1]:
-                showNotice([_('存档栏位已满！！')])
-            else:
-                for i in range(len(persistent.savefile[-1])):
-                    if not persistent.savefile[-1][i]:
-                        persistent.savefile[-1][i] = dcp(slot)
-                        break
-            renpy.save_persistent()
-
-        @classmethod
-        def record_poz(cls, poz):
-            import time
-            persistent.savefile[-1][poz] = dcp(persistent.savefile[0])
-            persistent.savefile[-1][poz].savetime = time.strftime(_('%Y.%m.%d %H:%M:%S'),time.localtime(time.time()))
-
-            renpy.save_persistent()
-            
-
-        @classmethod
-        def delete(cls, pos):
-            persistent.savefile[-1][pos] = None
-
-            renpy.save_persistent()
+        def get_newest(cls):
+            try:
+                return persistent.savefile[-1][-1].p
+            except Exception:
+                return None
 
 
         @classmethod
-        def savecheck(cls):
+        def savecheck(cls, console=False):
+            allsaves = 0
+            badsaves = 0
+            exceptsaves = 0
+            exceptok = 0
+            haveempty = False
+            for saves in range(len(persistent.savefile)):
+                if not persistent.savefile[saves]:
+                    haveempty = True
+                    continue
+                for save in persistent.savefile[saves]:
+                    allsaves += 1
+                    compatible = False
+                    try:
+                        compatible = cls.is_compatible(save.p)
+                    except Exception:
+                        save.exception = True
+                        exceptsaves += 0
+                        continue
+                    else:
+                        save.exception = False
+                    if not compatible:
+                        badsaves += 1
+                        try:
+                            cls.save_compatible(save.p)
+                            exceptok += 1
+                        except Exception:
+                            pass
+                    
+            if haveempty:
+                for i in range(len(persistent.savefile)-1,-1,-1):
+                    if not persistent.savefile[i]:
+                        persistent.savefile.pop(i)
 
-            if list not in [type(savetype) for savetype in persistent.savefile]:
-                cls.default()
-                return
-
-            if len(persistent.savefile) == 3:
-                t0 = dcp(persistent.savefile[0])
-                t1 = dcp(persistent.savefile[1])
-                t2 = dcp(persistent.savefile[2])
-                persistent.savefile = [t0, t1, None, t2]
-
-            if persistent.savefile[0]:
-                cls.save_compatible(persistent.savefile[0])
-            if persistent.savefile[1]:
-                cls.save_compatible(persistent.savefile[1])
-            if persistent.savefile[2]:
-                cls.save_compatible(persistent.savefile[2])
-
-            if type(persistent.savefile[-1]) == list:
-                for savefile in persistent.savefile[-1]:
-                    if savefile:
-                        cls.save_compatible(savefile)
-                if len(persistent.savefile[-1]) < 20:
-                    for i in range(20 - len(persistent.savefile[-1])):
-                        persistent.savefile[-1].append(None)
-            else:
-                temp = dcp(persistent.savefile[-1])
-                showNotice(["存档数据丢失，已重置。"])
-                if type(temp) == Player:
-                    persistent.savefile[-1] = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, temp]
-                else:
-                    persistent.savefile[-1] = [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+            if console:
+                print('已完成对%s个存档的检查，其中有%s个存档被修复。' % (allsaves, badsaves))
+                if exceptsaves:
+                    print('其中有%s个存档出现异常，其中有%s个存档被修复。' % (exceptsaves, exceptok))
 
         
         @classmethod
@@ -143,13 +144,14 @@ init -10 python early:
                 else:
                     setattr(object, attr, getattr(compatible_object, attr))
             
-
         @classmethod
-        def save_compatible(cls, slot):   
+        def save_compatible(cls, slot):
             cls.compatible(slot)
             for i in slot.items:
                 cls.compatible(i, slot)
             for i in slot.effects:
                 cls.compatible(i)
+            if len(slot.plan) == 3:
+                slot.plan.append(NoTask)
             
             

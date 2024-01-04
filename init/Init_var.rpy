@@ -1,7 +1,8 @@
 init -20:
-    default persistent.savefile = [None, None, None, [None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None]]
+    default persistent.savefile = []
 
-    
+    default persistent.main_menu_theme = Theme_train
+
 
     default persistent.newplayer = True
     default persistent.beforename = ''
@@ -12,31 +13,40 @@ init -20:
     default persistent.nocharacterplot = False
     default persistent.nomedicine = False
     default persistent.unlocktesttask = False
+    default persistent.unlockcharacterplot = False
 
 
-    default persistent.PreciseDisplay = False
     default persistent.PreciseMedDisplay = False
     default persistent.notifyDuration = 5
     default persistent.PreciseDisplayAbilities = False
     default persistent.PreciseDisplayGoal = False
-    default persistent.AutoQuitBrokenItem = False
-    default persistent.quickAlarm = False
+    default persistent.noBrokenItem = False
     default persistent.disablecharactervoice = False
     default persistent.unlockplan = False
-    default persistent.keepskippingafteroperate = False
+    default persistent.replymessagesquickly = False
+    default persistent.actionquickly = False
+    default persistent.forbidnostarquickitem = False
+    default persistent.noannoyhalluke = False
+    default persistent.nosolitussprite = False
+    default persistent.allowquitunique = False
+    default persistent.clearscreenwhenplot = False
+    default persistent.diangunlevi = False
 
+    default persistent.uiItemsSorted = 1
+
+
+
+    default persistent.sponsor = False
+
+    default persistent.te_weekday = 3
+    default persistent.unlocked_items = []
 
 
     default persistent.highestscore2048 = 0
 
     default persistent.GlobalStatistics = {}
+    default persistent.GlobalStatisticso = {}
 
-    default persistent.HallukeEnding = False
-    default persistent.AcolasEnding = False
-    default persistent.DeplineEnding = False
-    default persistent.ne = False
-    default persistent.te = False
-    default persistent.ce = False
     default persistent.lastend = None
 
     default persistent.achievements = {}
@@ -45,12 +55,21 @@ init -20:
     default persistent.highestscore = 0
     default persistent.gametimes = 0
 
+    default persistent.writerendname = None
+
     define p = None
     define replaying = False
     define replaying_times = None
+    define replaying_args = None
+
+    define calling = False
 
     default persistent.loadslot = None
 
+    define loading = False
+
+    define config.default_music_volume = 0.5
+    #define config.quit_action = Quit(False)#[Function(renpy.scene,layer='headimage'),Show(screen='quit_screen')]
 
 
 
@@ -69,18 +88,26 @@ init python:
     config.game_main_transition = dissolve
     config.intra_transition = dissolve
     config.main_game_transition = dissolve  
-    config.layers = [ 'master', 'mask', 'transient', 'screens', 'headimage' ,'overlay']
+    config.layers = ['master', 'mask', 'transient', 'screens', 'headimage' ,'overlay']
+    config.menu_clear_layers = ['headimage']
 
     ALLEFFECTS = getSubclasses(Effect)
     ALLITEMS = getSubclasses(Item)
     ALLITEMS.remove(UnfinishedCommission)
     ALLITEMS.remove(FinishedCommission)
+    #ALLITEMS.remove(Item)
     ALLACHIEVEMENTS = list(filter(lambda x: not x.hide, getSubclasses(Achievement)))
-    ALLHIDEACHIEVEMENTS = list(filter(lambda x: x.hide, getSubclasses(Achievement)))
+    ALLHIDEACHIEVEMENTS = list(filter(lambda x: x.hide and x.id < 10000, getSubclasses(Achievement)))
     ALLTASKS = getSubclasses(Task)
     ALLGYMTASKS = getSubclasses(GymTask)
     ALLBOOKS = getSubclasses(BookBase)
     PLAYER_DIR = dir(Player())
+    ALLBGS = [x for x in renpy.list_files() if 'images/bg/' in x]
+    LENALLBGS = len(ALLBGS)
+
+
+        
+
 
    
 
@@ -96,3 +123,42 @@ init python:
         _windows_hidden = True
         renpy.pause(delay=time,hard=True)
         _windows_hidden = False
+
+
+screen quit_screen:
+
+    #$renpy.with_statement(None)
+    modal True
+    tag menu
+
+    zorder 99999
+
+    style_prefix "transparent"
+
+
+    add "gui/overlay/confirm.png"
+
+    frame:
+        xalign .5
+        yalign .5
+        padding (60, 40)
+        background '#0000004f'
+
+        has vbox:
+            xalign .5
+            yalign .5
+            spacing 45
+
+        label "是否退出游戏？":
+            style "confirm_prompt"
+            xalign 0.5
+
+        hbox:
+            xalign 0.5
+            spacing 150
+
+            textbutton _("{size=-3}确定{/size}") action Quit(confirm=False)
+            textbutton _("{size=-3}取消{/size}") action Hide("quit_screen")
+
+
+    key "game_menu" action Hide("quit_screen")

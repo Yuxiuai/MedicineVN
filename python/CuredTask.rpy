@@ -52,7 +52,7 @@ init python early:
             player.onVacation = False
             cons = r2(30 * f())
             a = r2(player.goal * ra(player, 10, 12) * 0.01)
-            player.mental -= cons
+            player.gain_mental(-cons)
             player.achievedGoal += a
             Notice.add(_('消耗了%s点精神状态。') % cons)
             Notice.add(_('完成了%s点工作进度。') % a)
@@ -76,10 +76,8 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(40 * f())
-            player.mental += reco
-            player.severity -= 0.05
-            Notice.add(_('恢复了%s点精神状态。') % reco)
-            Notice.add(_('降低了5点严重程度。'))
+            player.gain_mental(reco)
+            player.gain_abi(-0.05, 'sev')
             Notice.show()
 
     class CuredHosp(CuredTask):

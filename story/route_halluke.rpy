@@ -153,6 +153,8 @@ label halluke_route_0:
     $end_plot()
     if replaying:
         jump afterreplay
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 3)
     $p.times+=1
     scene nightrun with fade
     $p.onOutside = True
@@ -272,6 +274,8 @@ label halluke_route_1:
     $end_plot()
     if replaying:
         jump afterreplay
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 3)
     $p.times+=1
     scene nightrun with fade
     $p.onOutside = True
@@ -319,6 +323,7 @@ label halluke_route_2:
     "从可以看出肌肉形状的小腿到露出大半的大腿。"
     "白色运动鞋，脚踝露出恰到好处长度的双黑色条纹的白袜。"
     $Erection.add(p)
+    $Notice.show()
     "右腿还缠着护膝。"
     show halluke smile_eyes smile_mouth sweat with dissolve
     "他接球。他跳动。他发球。他手撑着膝盖。他跑去捡球。他张着嘴喘气。他翻起衣服下摆。他对着同组得意地笑。"
@@ -338,7 +343,7 @@ label halluke_route_2:
     "…"
     "所以我来做什么，当然是。"
     "我用手扯下短裤，好让我挺立的狼根呼吸一下外面的空气。"
-    "这坨红色的柱子就这么不受控制地在裤裆里充血，逼迫它的主人来照顾他。"
+    "这根证明我作为雄性的东西就这么不受控制地在裤裆里充血，逼迫它的主人来照顾他。"
     "虽然说对不起也是没有意义的，毕竟手机里有这么多关于他的照片的我早就是完完全全的罪人了。"
     "借用一下从他身上反射进我手机镜头时留下的彩色图像又有何不可呢？"
     "我用手握住我的阳具，温热，同时完全坚硬。"
@@ -365,8 +370,8 @@ label halluke_route_2:
     show halluke with dissolve
     "便看到白熊站定在左斜方的小便池前。"
     show halluke normalpee with dissolve
-    "他把运动短裤轻轻往下一拉，白色绒毛和红色茎柱的交界处就刺入了我的视界。"
-    "我看着眼前被白毛包裹着的小家伙，正用爪子扶着柔软的粉色阳物，对着便池排放出尿液。"
+    "他把运动短裤轻轻往下一拉，那根被白色绒毛包裹着的柔软东西就刺入了我的视界。"
+    "我看着眼前毫无防备的小家伙，正用爪子扶着柔软的阳物，对着便池排放出尿液。"
     "我屏住呼吸，想听清尿液冲刷在小便池壁上发出的水声，但是什么也没有。"
     show halluke normalpee angry_eyes with dissolve
     "他那手上的动作像是甩了下阳具上的残尿，像每个男人结束排泄一样。"
@@ -390,6 +395,8 @@ label halluke_route_2:
     if replaying:
         jump afterreplay
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 5)
     scene nightrun with fade
     $p.onOutside = True
     "准备回去了。"
@@ -505,6 +512,8 @@ label halluke_route_3:
     $end_plot()
     if replaying:
         jump afterreplay
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 3)
     $p.times+=1
     scene nightrun with fade
     $p.onOutside = True
@@ -620,6 +629,8 @@ label halluke_route_4:
     $end_plot()
     if replaying:
         jump afterreplay
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 3)
     $p.times+=1
     scene nightrun with fade
     $p.onOutside = True
@@ -738,6 +749,8 @@ label halluke_route_5:
     if replaying:
         jump afterreplay
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 4)
     scene nightrun with fade
     $p.onOutside = True
     "准备回家了……"
@@ -897,13 +910,15 @@ label halluke_route_6:
     "……"
     stop music fadeout 5
     if p.hal_p == 6:
-        $Message.new(p, 'Halluke', 'Halluke', '你好，我的名字是Halluke，如你所见，我在和新认识的朋友说话的时候很容易紧张，有时候连话都说不出来，并不是因为我故意想这样的……总之对不起，可能和我说话这件事让你觉得很困惑吧。\n周日下午，怎么样？我会在体育馆等你的。', h=16, m=50)
+        $Message.new(p, 'Halluke', 'Halluke', '你好，我的名字是Halluke，如你所见，我在和新认识的朋友说话的时候很容易紧张，有时候连话都说不出来，并不是因为我故意想这样的……总之对不起，可能和我说话这件事让你觉得很困惑吧。\n周日下午，怎么样？我会在体育馆等你的。', h=16, m=rd(0, 59), pos='')
         $HallukeTask1.unlock(p)
         $p.hal_p = 7
     $end_plot()
     if replaying:
         jump afterreplay
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 4)
     scene nightrun with fade
     $p.onOutside = True
     "准备回家了……"
@@ -993,6 +1008,8 @@ label halluke_route_7:
     if replaying:
         jump afterreplay
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 4)
     scene nightrun with fade
     $p.onOutside = True
     "准备回家了……"
@@ -1148,6 +1165,8 @@ label halluke_route_8:
     if replaying:
         jump afterreplay
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 4)
     scene nightrun with fade
     $p.onOutside = True
     "准备回家了……"
@@ -1282,7 +1301,7 @@ label halluke_route_9:
     s"“两块钱而已啦，请你吃的…”"
     $sh()
     show halluke angry_eyes normal_eyebrow normal_mouth with dissolve
-    "熊用两只手握着冰淇淋，小口地咬着粉红色的冰淇淋顶，但他的表情却十分复杂，并不像是开心，更像是思考着什么。"
+    "Halluke用两只手握着冰淇淋，小口地咬着粉红色的冰淇淋顶，但他的表情却十分复杂，并不像是开心，更像是思考着什么。"
     "不过我也不想多问，可能是太热了的原因吧。"
     stop music fadeout 4
     if p.hal_p == 9:
@@ -1291,6 +1310,8 @@ label halluke_route_9:
     if replaying:
         jump afterreplay
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 5)
     scene nightrun with fade
     $p.onOutside = True
     "准备回去了。"
@@ -1306,7 +1327,6 @@ label halluke_route_9:
 
 label halluke_route_11:
     $start_plot()
-    $BadmintonClass.lock(p)
     scene ingym with fade
     stop music fadeout 5
     $p.stime(18,20)
@@ -1606,7 +1626,7 @@ label halluke_route_11:
             show halluke cry_eyes cry_eyebrow with dissolve
             "当我说完这些话之后，只觉脸上有团火在烧。"
             "即便这些话仅仅只是我片刻想出来的，但我不知道这样的说辞能否获取他的信任。"
-            "大概我还没有完全爱上他，但如果我了拒绝他，就再也遇不到像他这样无论是体型还是外貌都如此符合我口味的人了。"
+            "大概我还没有完全爱上他，但如果我现在拒绝了他，以后可能就也遇不到像他这样，无论是体型还是外貌都如此符合我口味的人了。"
             "……无论如何，先答应好了，也许以后我会逐渐爱上他的。"
             "他朝我伸出双臂。"
             "于是我便和他拥抱着。"
@@ -1636,7 +1656,7 @@ label halluke_route_11:
             "我背对着他打开门，离开了他的家。"
             if p.hal_p == 11:
                 $p.hal_p = 99
-                $Achievement106.achieve()
+                $Achievement150.achieve()
                 if p.aco_p >= 98:
                     $Achievement301.achieve()
                 $HallukeTask1.lock(p)
@@ -1666,6 +1686,8 @@ label halluke_route_11:
         "我们在一起，真的能够幸福吗？"
         "我走进自己居住的公寓小区。"
         "头开始痛起来了，以后再想吧。"
+        if p.experience == 'wri':
+            $WriterItem3.add(p, 5)
     if p.hal_p == 99:
         "一切都如同已死去那般安静。"
         "我只能听见我的脚步声。"
@@ -1677,6 +1699,8 @@ label halluke_route_11:
         "……"
         "不，这一切都和我没关系。"
         "和我没关系。"
+        if p.experience == 'wri':
+            $WriterItem3.add(p, 10)
     "……"
     if not replaying:
         $p.stime()
@@ -1686,8 +1710,10 @@ label halluke_route_11:
     if replaying:
         jump afterreplay
     
+    $BadmintonClass.lock(p)
+
     if p.hal_p == 12:
-        $Message.new(p, 'Halluke', 'Halluke', '那么既然你已经来过我家了，之后你想来玩也可以啦。因为羽毛球课已经结课了，所以那个时候我没课，如果你想来找我玩，就周六下午来吧。', h=20, m=51)
+        $Message.new(p, 'Halluke', 'Halluke', '那么既然你已经来过我家了，之后你想来玩也可以啦。因为羽毛球课已经结课了，所以那个时候我没课，如果你想来找我玩，就周六下午来吧。\n除此之外，我想每天晚上都和你打羽毛球！想每天晚上都看见你！如果你不来的话我会难过哦！', h=20, m=51)
         $HallukeTask2.unlock(p)
 
     play sound unlocking
@@ -1719,7 +1745,7 @@ label halluke_route_12:
     "曾经的我只想将这一偷拍环节称之为死前生活的一点小小的刺激行为，以及施法材料的获取方式。"
     "谁能想到一两个月前我还在对着他意淫，两周前我还在担心我和他能不能做好朋友。"
     "现在就已经睡到了。"
-    "只是我越来越感到某种…虚无感。"
+    "我越来越感到某种…无法描述的虚无感。"
     "可能这就是拥有一切之后产生的无趣？"
     "无论是偷拍还是对着他自慰，都是极为热烈的。"
     "但到了现在，却只能感到无聊，孤独和空虚。"
@@ -1837,7 +1863,7 @@ label halluke_route_12:
     "…"
     scene bedroom with fade
     "我突然意识到自己好像没那么困了。"
-    "他起床去上厕所了，卧室里只有裸体的我。"
+    "他起床去上厕所了，卧室里只有我。"
     "…"
     play music audio.impendingdeath
     "那么，我成功地安抚了他，解决了他的问题，很明显他开心多了，但我内心却有种奇怪的感觉。"
@@ -1873,6 +1899,8 @@ label halluke_route_12:
     if replaying:
         jump afterreplay
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 10)
     scene nightrun with fade
     $p.onOutside = True
     "准备回去了。"
@@ -1889,6 +1917,7 @@ label halluke_route_12:
 label halluke_route_13:
     $start_plot()
     $p.onOutside = True
+    $p.onShip = True
     scene black with fade
     stop music fadeout 5
     $p.stime(8,33)
@@ -1910,8 +1939,8 @@ label halluke_route_13:
     "即便住在临海的港口城市，我也没有太多机会去看看海之类的，倒不如说我根本就对这种本质上只是更巨大的水库来说没什么兴趣。"
     show halluke shirt smile_mouth with dissolve
     $p.stime(36)
-    "不过Halluke嘛…他倒是挺开心的，甚至还为此穿了套新衣服。"
-    "他并不是那种喜欢出去乱逛的人，但只要是我陪他，他也十分愿意和我一起……"
+    "Halluke为此穿了套新衣服。"
+    "他大概并不是那种喜欢出去乱逛的人，但估计只要是我陪他，他就一定十分愿意地和我一起……"
     scene deldrimor2 with dissolve
     $p.stime(37)
     "…"
@@ -2122,9 +2151,9 @@ label halluke_route_13:
     "我回忆起小时候自己想当作家，想写各种各样的文字，但高中的作文只能拿到中等偏下的成绩。"
     "于是我高中的时候决定做个老师，又喜欢理科，想着做个化学老师之类的。"
     $p.stime(42)
-    "但是为什么阴差阳错地，把志愿填成了软工呢。"
+    "但是为什么阴差阳错地，把志愿填成了软件工程呢。"
     $ss('ship cap')
-    s"“软件工程。”"
+    s"“……软件工程。”"
     $sh()
     show halluke angry_eyes normal_mouth with dissolve
     h"“我是计算机，父母硬给我填的。”"
@@ -2178,7 +2207,7 @@ label halluke_route_13:
         $p.hal_p = 14
     $ p.newDay()
     $ p.stime()
-    $ Save.save(p)
+    $ Saver.save(p)
     $ Notice.add('存档已保存！')
     $ Notice.show()
     call loading from _call_loading_10
@@ -2189,8 +2218,10 @@ label halluke_route_14:
     $start_plot()
     if p.mental < 5:
         $p.mental = 30.0
-    show screen screen_dashboard(p)
+    if not replaying and not persistent.clearscreenwhenplot:
+        show screen screen_dashboard(p)
     $p.onOutside = True
+    $p.onShip = True
     scene deldrimor4 with fade
     "汽笛声和穿过玻璃的阳光将我唤醒。"
     "在醒来的刹那我突然意识到，这次的起床并没有闹钟参与，也没有头疼的折磨。"
@@ -2203,7 +2234,8 @@ label halluke_route_14:
     "还是算了。"
     scene deldrimor6 with fade
     $p.stime(9, 55)
-    "我们回到自己的房间，在我拒绝了他还想再来一发的请求后，他还是紧紧抱着我，将他的爪子放进我的内裤里抚摸着我半硬不硬的阳物，带着微红的脸颊用鼻子顶着我的耳朵。"
+    "我们回到了自己的房间。"
+    "在我拒绝了他还想再来一发的请求后，他还是紧紧抱着我，将他的爪子放进我的内裤里抚摸着我半硬不硬的阳物，带着微红的脸颊用鼻子顶着我的耳朵。"
     "也许叫他来这里并不是一件正确的事，他比从前更粘人了，更加依赖我了，甚至看我的眼神都变了。"
     "他的世界，也许只剩下我了。"
     "而我也不再考虑如何让自己爱上他，我只想逃避这份感情。"
@@ -2211,44 +2243,39 @@ label halluke_route_14:
     $p.stime(10, 30)
     scene subway with fade
     "回家途中，我和他上了地铁。"
-    "他和我坐在一起，即便我们一句话没说，但他甚至仅仅只是一直盯着我，以这种方式消磨时间。"
-    "幸好地铁很快就开到他要下车的地铁站了。"
-    "即便如此，我们仍就像真正的情侣那样，牵手，对视，聊天，告别。"
-    "但，伪装自己的心去做这些事，真的消耗了我特别多的精力。"
+    "他和我坐在一起，左手一直牵着我的右手。"
+    "我们就像真正的情侣那样，牵手，对视，聊天。"
+    "这就是我所想要的幸福吗？我应该告诉他自己其实无法承受他如此热烈的爱意吗？"
     $p.stime(31)
-    "我叹口气，仿佛卸下了千斤重的担子一样向后倒在地铁座位的椅背上。"
+    "……"
+    show halluke shirt smile_eyes smile_mouth smile_eyebrow with dissolve
+    h"“回去之后要给我发消息哦！”"
+    "我无意识地点头，如同机器对指令的回应。"
+    hide halluke with dissolve
+    "他离开之后，我才能从如此爱意中得到一丝喘息。"
+    "我不明白，爱太多为什么会不好？"
+    "被爱……被如此强烈，被无法割舍的爱环绕，为何我只觉得痛苦。"
+    "不……那绝对不是爱……"
+    "绝对不是。"
+    "……"
     "我掏出手机，准备翻翻莓博消磨时间，不知为何却点开了图片应用。"
-    "几乎是轻车熟路地，我解锁了特殊权限并进入了隐藏文件夹，里面都是Halluke打球的照片，都来源于我的偷拍。"
-    "有的清晰，有的模糊，有的还裁掉了其他路人，用来方便手冲。"
+    "几乎是轻车熟路地，我解锁了特殊权限，并进入了隐藏文件夹，里面都是Halluke打球的照片，都来源于我的偷拍。"
+    "有的清晰，有的模糊，有的还裁掉了其他路人。"
     "现在的我面对着这些照片是什么心情呢？"
     $p.stime(32)
+    
     "而曾经的我又是抱着怎样的心态拍摄，又怀着怎样的歹念对着这些正常人来看只是普通的照片自慰的呢？"
     "我心里有些复杂，更多的是不知道该怎么结束这一切的疑问。"
     "…"
-    play sound audio.getmedicine
-    $p.stime(33)
-    "手机突然传出一阵提示音。"
-    "我很快就发现，这是一个我好久都没点开过的社交应用的特殊提示音。"
-    "虽然说是社交，但大家基本上都把它当作约炮的应用。"
-    $p.stime(34)
-    "我点开那个应用，显示出来的则是一个和Halluke相比更加矮小更加可爱的小狼兽人发来的信息。"
-    "我突然感到一阵混乱的情绪。"
-    "抱着仅仅是好奇的态度，我点开了信息。"
-    
-    stop music
-    scene bedroom with fade
-    $p.stime(16, 55)
-    "…"
-    "我感觉快乐吗？"
-    "或许是的。"
-    "当我把那种小狗一样可爱的家伙抱起来侵犯时，某种特殊，十分稀有又让人完全痴迷的感觉填满了我的大脑。"
-    "我突然回忆起几个月前，我在A大体育馆对着小便的Halluke自慰，清理完自己自慰产生的精液后没多久，突然对着马桶呕吐起来的事。"
+    "这就是我所期望的爱吗？"
+    "我突然回忆起几个月前，在厕所想着他自慰时突然对着马桶呕吐起来的事。"
     if p.hal_p == 14:
         $p.hal_p = 15
     $end_plot()
     if replaying:
         jump afterreplay
     $p.onOutside = False
+    $p.onShip = False
     jump dayEnd
 
 
@@ -2284,7 +2311,7 @@ label Halluke_hidden_plot1:
     s"“我每周都去，如果我这周不去她肯定…”"
     $sh()
     ar"“…好了，我听够了。”"
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     ar"“你要不要看看你自己编得都是些什么乱七八糟的，把我当小孩耍？”"
     "恐惧令四肢的血液抽回心脏。"
     $ss('glasses white no_hat sad_eyebrow closed_eyes angry_mouth sweat')   
@@ -2306,7 +2333,6 @@ label Halluke_hidden_plot1:
     scene workarea with fade  
     $p.onVacation = True
     $p.stime(55)
-    $p.hal_p = 50
     $p.morning_checkTask()
     $routine_music(p)
     "我离开公司，回到了家中。"
@@ -2371,7 +2397,7 @@ label Halluke_hidden_plot2:
     s"“没关系，不用担心的，你这几节课表现得都那么好，而且也都出勤了，老师不会为难你的。”"
     $sh()
     "他的状态更差了，只是一直低着头往前走，或许是在听到我的声音后才停下，随后转头看向我。"
-    play music audio.debilitatinganxiety fadein 3
+    play music audio.anxietyspreading fadein 3
     show halluke cry_eyebrow angry_eyes angry_mouth with dissolve
     h"“…你…走吧…”"
     show halluke cry_eyebrow angry_eyes opened_mouth tear with dissolve
@@ -2387,19 +2413,24 @@ label Halluke_hidden_plot2:
     hide halluke with dissolve
     "还没来得及解释，他便松开了手，朝着球场出口的方向跑走了。"
     "…"
-    "我该生气吗？为了来他这里，我宁愿抛下一大笔加班费，抛下同事额外包揽我的工作，该卖了Arnel一个大人情。"
-    "明明是他自己太紧张，自己发挥失常，怎么能怪到我头上？"
-    "果然是撒泼成性的小孩子，幼稚得可笑。"
+    if p.experience == 'wor':
+
+        "我该生气吗？为了他，我舍弃了一大笔加班费，就为了来到这个地方看他考试。"
+        "难道我不来，他就没法考试了吗？"
+        "让同事承担我应该做的工作，还卖了Arnel一个大人情。"
+    "……明明是他自己太紧张，自己发挥失常，还怪到我头上。"
+    "果然是撒泼成性的小孩子，简直幼稚得可笑。"
     "我居然还为了他来到这里。"
     "…"
     "唉。"
     "Halluke他，考试失利成那样，一定很伤心吧。"
-    "所以他才会这样。"
+    "生气归生气，但……"
     "…"
     "我转头，刚刚我们所在的球网边还在进行着别人的考试。"
     "那两个我不认识的人配合得十分出彩，几乎每一球都拿到了满分。"
     "我叹气，离开了羽毛球场。"
     $p.hal_p = 51
+    $p.messages['Halluke']=[]
     $p.times+=1
     scene nightrun with fade
     $p.onOutside = True
@@ -2410,6 +2441,8 @@ label Halluke_hidden_plot2:
     "都是因为我。"
     "因为我。"
     $p.times+=1
+    if p.experience == 'wri':
+        $WriterItem3.add(p, 8)
     stop music fadeout 3
     $HallukeTask1.lock(p)
     $HallukeTask2.lock(p)

@@ -7,8 +7,8 @@ init python early:
         maxDuration = None
         maxStacks = None
         info = None
-        info_p = None
         ad = None
+        hide = False
 
         def __init__(self):
             self.duration = self.maxDuration
@@ -37,10 +37,7 @@ init python early:
             return dur_info + sta_info + '\n'
 
         def getPrincipalInfo(self):
-            if persistent.PreciseDisplay:
-                showinfo = self.info_p
-            else:
-                showinfo = self.info
+            showinfo = self.info
 
             feed = '\n' if showinfo != '' else ''
             return feed + showinfo
@@ -60,7 +57,12 @@ init python early:
                 self.timeUpAction(player)
                 self.clear(player)
             
-            
+        @classmethod
+        def icon(cls):
+            path = 'gui/effects/%s.png' % cls.id
+            if not renpy.loadable(path):
+                path = 'gui/effects/unknown.png'
+            return path
 
         @classmethod
         def has(cls, player):
@@ -139,7 +141,11 @@ init python early:
         def defaultAddEffect(cls, player):  # 默认的add函数，禁止重写
             if not cls.has(player):
                 if cls.maxDuration != 0:
-                    Notice.add(_('获得新%s：%s！') % (cls.kind, cls.name))
+                    if cls.kind == '天气' and cls.id not in (198, 199):
+                        Notice.add(_('本日的天气为：%s。') % (cls.name))
+                    else:
+                        if not cls.hide:
+                            Notice.add(_('获得新%s：%s！') % (cls.kind, cls.name))
                 e = cls()
                 player.effects.append(e)
                 e.enableAction(player)
@@ -173,18 +179,20 @@ init python early:
 
     def effectKindInfo(kind, mode):
         d = {
-            '天气i': _('天气（Weather）\n\n随状态一同刷新，每天有且只有一个天气，在不同的天气下有不同的效果。'),
+            '天气i': _('天气\n\n随状态一同刷新，每天有且只有一个天气，在不同的天气下有不同的效果。'),
             '天气a': _('\n为什么没有可以让我休息的天气……'),
-            '状态i': _('状态（State）\n\n一般由各种日程获得，带有一定的持续时间，效果较为复杂，部分状态之间存在转化关系。'),
+            '状态i': _('状态\n\n一般由各种日程获得，带有一定的持续时间，效果较为复杂，部分状态之间存在转化关系。'),
             '状态a': _('\n据说是0.3版本遗留下来的东西，但0.3版本到底是什么意思？'),
-            '增益i': _('增益（Gain）\n\n一般由各种日程获得，与状态不同的是，增益皆为正面效果且不会互相转化，作为完成某项事情后的奖励。'),
+            '增益i': _('增益\n\n一般由各种日程获得，与状态不同的是，增益皆为正面效果且不会互相转化，作为完成某项事情后的奖励。'),
             '增益a': _('\n仪式感带来的安心，成就感带来的慰藉……'),
-            '药物反应i': _('药物反应（Respond）\n\n包含了所有与药物相关的效果，来源于早上刷新，旧药物反应的转化和使用药物后的具体效果。'),
+            '药物反应i': _('药物反应\n\n包含了所有与药物相关的效果，来源于早上刷新，旧药物反应的转化和使用药物后的具体效果。'),
             '药物反应a': _('\n是的，这些生命反抗自然而制取的智慧结晶最终变成了枷锁。'),
-            '学识i': _('学识（Knowledge）\n\n进行阅读日程后获得的效果，效果相对于增益更为优秀。'),
+            '学识i': _('学识\n\n进行阅读日程后获得的效果，效果相对于增益更为优秀。'),
             '学识a': _('\n你以为我在学习？其实我在看小说哦？'),
-            '伤痕i': _('伤痕（Scar）\n\n永久存在的负面效果，出现此状态说明你经营不善，让主角的身体受到了永久性的创伤。'),
-            '伤痕a': _('\n“更近一步走向日落，已看到夜晚的初星。”……')
+            '伤痕i': _('伤痕\n\n永久存在的负面效果，出现此状态说明你经营不善，让主角的身体受到了永久性的创伤。'),
+            '伤痕a': _('\n“更近一步走向日落，已看到夜晚的初星。”……'),
+            '酒类作用i': _('酒类作用\n\n……'),
+            '酒类作用a': _('\n……')
         }
         return d[kind + mode]
 

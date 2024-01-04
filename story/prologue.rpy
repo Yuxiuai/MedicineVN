@@ -5,8 +5,6 @@ label wakeup_pro:
     scene black
     if not persistent.nomedicine:
         play music audio.alarm
-        if not persistent.quickAlarm:
-            $pause(2)
         scene bedroom with dissolve
     $quick_menu = True
 
@@ -17,8 +15,6 @@ label alarmCircle_pro:
         stop music
         show screen screen_dashboard(p)
         jump beforeCircle_pro
-    if not persistent.quickAlarm:
-        $pause(2)
     menu:
         "关闭闹钟":
             stop music
@@ -57,6 +53,11 @@ label medicineTake_pro:
                 jump ending2
         "不吃药":
             jump dontusemed_pro
+        "坚持下去" if p.mental <= 0 and Novice.has(p):
+            "……"
+            $p.mental = 80.0
+            $Novice.clearByType(p)
+            jump beforeCircle_pro
 
     if p.mental < 0:
         "不……不行，头还是很痛……"
@@ -83,15 +84,17 @@ label beforeCircle_pro:
 
 
 label day0:
+    if p.experience == 'wri':
+        jump writer_day0
     stop music fadeout 3
     scene black with dissolve
-    "…"
     "……"
-    "我问你，你知道世界上最漂亮的花是什么吗？"
-    "勿忘我？矢车菊？金盏花？"
-    "不，都不对。"
-    "是塑料和铁架缠绕而成的假花。"
-    "原因是，它从里到外都是由谎言充满的。"
+    "“痛苦啊，你从未离开我那贫苦的心之火炉，”"
+    "“比最为真挚的恋人更加多情。”"
+    "“我知道在我迈向死亡的那一天，”"
+    "“你会进到我的内心深处，”"
+    "“与我并排躺下。”"
+    "——弗朗西斯·雅姆《十四首祈祷诗其六》"
     "……"
     jump solitus_route_0
 
@@ -102,6 +105,7 @@ label solitus_route_0:
     scene city with fade
     if not replaying:
         show screen screen_dashboard_calendar(p)
+
     with dissolve
     "星期五。"
     "A市的街上总是没有什么太多的行人，大概是因为原来只是座港口小城的它突然被某人投资了大量的经费。"
@@ -115,8 +119,8 @@ label solitus_route_0:
     scene street with dissolve
     "而我是什么呢？"
     "我只是在这高速发展的社会中在地上爬行的败类，无法追上时代潮流的废物。"
-    "作为一个普通的程序员，被人戏称为码农，天天做的也只是打一份又一份无聊的，看着想吐的代码。"
-    "曾经还在上大学时的我还能用有限的知识创造出有意思的文字游戏，还能靠着自己的能力用大家都在玩的游戏的引擎做游戏。"
+    "作为一个普通的程序员，被人戏称为码农，天天做的也只是编写一份又一份无聊的，看着想吐的代码。"
+    "曾经还在上大学时的我还能用有限的知识创造出有意思的文字游戏，还能靠着自己的能力稍微赚一点生活费。"
     "但这些对于我的人生，我的事业没有任何帮助。"
     "我的生活不会因为自己那些拿不到大众面前的小作品改变，那些东西也不会成为我能够写在简历上的东西。"
     "它们也吞噬了我的大学时光，我的时间都托付给制作一些不入流的游戏，导致成绩下降，毕业时也没有一个好看的成绩单。"
@@ -124,16 +128,12 @@ label solitus_route_0:
     "我抬头。"
     $p.stime(56)
     "世界之外存在着一颗不知能燃烧多久的火球，不停朝着我所在的位置投射光明与热量。"
-    "我的梦想，也许就是做太阳。"
+    "如果我……也能成为谁的太阳就好了。"
     "用自己的能力——就算是燃烧自己，只要能做出好的游戏，写出好的文章，让别人看了开心，玩了觉得有趣，那就算是成功了。"
-    "“看，他就是我们的太阳。”"
-    "如果大家也都来羡慕我就好了…"
-    "嘿嘿。"
-    "我突然意识到自己正在大街上傻笑出声，于是赶紧换上平淡的表情装作无事发生。"
-    "星期五的下午总是让人觉得意外地安逸，但我并不只是在出门乱走。"
-    "如果可以，我其实可以一直躺在床上吹空调来度过这个下午。"
-    "但我需要做一些事。"
-    "一些必须做的事。"
+    "到时候也会有人像我看向太阳那样看向我吗？"
+    "不……怎么可能呢……我连自己都照顾不好罢了。"
+    "虽然病痛让我生不如死……但如果可以，我也好想体验那种被别人需要的感觉呢。"
+    "要是能成为他人的太阳，就算{b}燃烧自己{/b}……"
     $p.stime(57)
     stop music
     scene black
@@ -142,7 +142,7 @@ label solitus_route_0:
     "即便如此，小时候的我偶尔也有忘记吃药的经历。"
     "但其实也只是那种脑子里的血管鼓胀的感觉，夹杂着剧烈的无法描述的疼痛。"
     "还在我能够忍受的范围。"
-    "但第二天醒来的时候，我在床边发现了被自己硬揪下来的头发，还有在地上已经干掉的暗红色的血迹。"
+    "但第二天醒来的时候，我在床边发现了被自己硬揪下来的毛发，还有在地上已经干掉的暗红色的血迹。"
     "我不敢照镜子，直到现在也是。"
     "同样地，我也没有再断过药。"
     "我家里摆着四五个闹钟，分散在出租房里的不同位置，确保我每天能按时起床，其中两个放在最显眼的桌边。"
@@ -155,6 +155,10 @@ label solitus_route_0:
     "…"
     scene street with dissolve
     $p.stime(58)
+    "星期五的下午总是让人觉得意外地安逸，但我并不只是在出门乱走。"
+    "如果可以，我其实可以一直躺在床上吹空调来度过这个下午。"
+    "但我需要做一些事。"
+    "一些必须做的事。"
     "所以我准备去医院，即便医院现在还没法治好我，但他们会在每周五售卖我需要的药物。"
     "但是为什么是每周五？或者为什么其他时候不卖，我一概不知，也没有兴趣知道为什么。"
     "可能这就是我只能处于这个社会底层的原因吧。"
@@ -164,7 +168,7 @@ label solitus_route_0:
     "所以你应该也知道了，这周五的晚上我需要做的日程就是【外出】，然后去医院。"
     $p.times = 4
     $plantemp = p.plan
-    $p.plan = [DefaultWork, MeetingWork, GoOutside]
+    $p.plan = [DefaultWork, MeetingWork, GoOutside, NoTask]
     "但这并不代表我晚上就只用来去医院，我在剩下的其他时间可以做一些其他的事，也许这就是我不能称我自己为完全自律的人。"
     show screen tutorial_screen_tasks(p)
     "这是我的日程表，不过它并不是“真实存在的”，这只是我脑中的一个想象。\n如日程表所示，每周五，我需要找个时间【外出】去医院买药，除非我今天请假，否则上午和下午我应该都在公司，我只能在下班之后的晚上才能买药。"
@@ -210,11 +214,28 @@ label solitus_route_0:
     with dissolve
     pathos"“你有没有在听我说话？”"
     show pathos angry_eyebrow angry_eyes normal_mouth anger at near
+    with dissolve
     "他从另一侧强行闯进我的视线中，挡住了窗子。"
     "纯黑色的狮子穿着一身白大褂，像是奶油蛋筒顶端插了一块巧克力。"
     "这种黑白的反差很有趣。"
     show pathos angry_eyebrow angry_eyes normal_mouth no_anger at near_
-    pathos"“总之，记得下周五也来复诊，不要试图挑战不吃药的结果，如果你害怕就找个人帮你记。”"
+    with dissolve
+    pathos"“记得每4周都来复诊，假设这周是第0周，那就是第4周和第8周的时候都各来一次，其他时候的周五我也在这里坐诊。”"
+    show pathos awkward_eyebrow awkward_eyes angry_mouth
+    with dissolve
+    pathos"“至于第12周……先看你能不能活到那个时候吧？”"
+    $ss('normal2_eyes sweat')
+    s"“……”"
+    $sh()
+    show pathos angry_eyebrow angry_eyes normal_mouth no_anger
+    with dissolve
+    if not replaying:
+        show screen screen_dashboard_severity(p)
+    pathos"“药物能够显著恢复你的精神状态，也就是你的头疼程度，如果低于0，你肯定承受不住这种疼痛的。”"
+    pathos"“工作，或者做一些消耗精力的事，以及睡觉到第二天都会消耗大量精神状态。”"
+    pathos"“除此之外，药物还能维持你的严重程度水平，也就是你的病情严重程度。”"
+    pathos"“严重程度越低，你的所有恢复效果就会越高，专注度也会变高，睡眠消耗以及其他消耗也会变低。”"
+    pathos"“不要试图挑战不吃药的结果，如果你害怕就找个人帮你记。”"
     show pathos normal_eyebrow normal_eyes smile_mouth no_anger
     with dissolve
     pathos"“你这样俊俏的小伙子，应该有女朋友了吧，女孩子在这种事上比较细心，你可以让她提醒你。”"
@@ -326,33 +347,52 @@ label solitus_route_0:
     show pathos surprised_eyebrow surprised_eyes saying
     with dissolve
     pathos"“好消息是你可以试着多做运动，来让你的头疼稍微减轻，也可以让你少吃一点药。”"
-    pathos"“多做轻松愉快的事，不要快速地变换情绪。”"
-    pathos"“差不多就这些。”"
-    pathos"“走之前我会给你我的手机号，你可以在有需要的时候给我打电话，有什么问题我都会帮你解答。”"
-    show pathos normal_eyebrow normal_eyes saying
+
+    if not replaying:
+        show screen screen_dashboard_abilities(p)
+    pathos"“左侧的严重程度便是字面意思，代表你的疾病的严重程度，越多就代表你的头疼越严重，这也会影响整体的精神状态恢复等等，总之越低越好。”"
+    pathos"“多做运动可以提升你的身体素质，来使你抵抗头疼的能力提升，抵消严重程度的反面效果。”"
+    pathos"“其他的能力你自己检查一下就行，点击一下都会有详细说明的。”"
+    show pathos awkward_eyebrow angry_eyes saying
     with dissolve
+    if not replaying:
+        show screen screen_dashboard_effects(p)
+    pathos"“另外看你的黑眼圈，你肯定是{color=#ffff00}过劳{/color}了吧？”"
+    pathos"“在你屏幕的右侧是你当前的效果栏，效果有很多种，有些是好的有些是坏的，像{color=#ffff00}过劳{/color}就是坏的。”"
+    pathos"“层数较少时，持续时间结束不会有什么问题，代表你休息好了，而层数较高的话，持续时间结束就会让你{color=#ffff00}生病{/color}哦？到时候可就麻烦了。”"
+    pathos"“放假的时候要多休息，产生一些与之对抗的效果，就能消除{color=#ffff00}过劳{/color}了。”"
+    show pathos normal_eyebrow awkward_eyes saying
+    with dissolve
+    pathos"“还有很多和状态有关的知识，你可以用悬浮鼠标到状态上，如果是手机的话就长按，或者点开状态页面详细地查看，查看这个状态有什么具体的效果，能转化成什么。”"
+    pathos"“具体还是需要你自己来学习，如果你不想动脑，点开右边的齿轮图标，也就是设置。”"
+    pathos"“将难度调节到简单……虽然简单难度下会获得很多增益，但是也不代表你就无敌了，还是要找机会休息一下的。”"
+    show pathos normal_eyebrow normal_eyes smile_mouth
+    with dissolve
+    pathos"“差不多就这些，如果你没听懂我说的什么或者还想再温习一下就点一下右边的左箭头图标，回退一下，或者点击历史图标。”"
+    pathos"“走之前我会给你我的手机号，你可以在有需要的时候给我打电话，有什么问题我都会帮你解答。”"
     "我不清楚我是不是都记下了，但我确实有在听。"
     "但我应该记下来，这就是游戏规则，教我如何苟活在这个世界上的游戏规则。"
+    show pathos angry_eyebrow normal_eyes normal_mouth
+    with dissolve
+    pathos"“我知道活下去很难，如何调整自己的身体，平衡自身的状态之类的，但别灰心，我相信你。”"
+    pathos"“当你熟悉了这个世界的一切之后，活下去这件事对你来说就会像是玩过家家游戏一样简单。”"
     if replaying:
         jump afterreplay
     $showNotice(['已解锁新药物！{color=#fe6363}药物{font=arial.ttf}α{/font}{/color}！','可以在医院二楼的药房购买到该药物！'])
     play sound audio.getmedicine
-    show pathos normal_eyebrow normal_eyes normal_mouth
-    with dissolve
     $p.stime(5)
-    show screen screen_dashboard_severity(p)
-    show screen screen_dashboard_abilities(p)
-    show screen screen_dashboard_effects(p)
-    with dissolve
     scene hospital_corridor with dissolve
     "我手中握着的是写有他字迹的诊断书。"
     "那么下一站便就是药房了。"
     scene hospital_corridor with fade
     nurse"“病人848662号，取药了。”"
     nurse"“需要多少？”"
-    $temp = p.money
     show screen screen_dashboard_medicine(p)
+    $temp = p.money
     call screen screen_buyMed(p)
+    
+    
+
     $p.stime(16,6)
     if temp!=p.money:
         nurse"“给你药。”"
@@ -376,6 +416,7 @@ label solitus_route_0:
     stop music fadeout 4
     $p.stime(58)
     scene black with dissolve
+    $PhysProb.clearByType(p)
     "…"
     "楼道的声控灯总是出问题，但电梯口到防盗门的距离并不远。"
     "我把手伸进斜挎包一侧的小袋，从里面摸出一串钥匙。"
@@ -397,7 +438,7 @@ label solitus_route_0:
     $end_plot()
     scene black with dissolve
     $p.newDay()
-    $Save.save(p)
+    $Saver.save(p)
     $Notice.add('存档已保存！')
     $Notice.show()
     call loading from _call_loading_4 
@@ -419,7 +460,7 @@ label solitus_route_1:
     "虽然算是专属于大学生日常上课用的教室，但其实体育馆也并非是完全属于学校的。"
     "所以校外人员也可以从正门正大光明地进入场馆。"
     "虽然很早就有健身的想法，但自觉自己不是那种能够坚持下来高强度训练的人。"
-    "我注意到立在路边代表行人通行的绿色指示灯看起来快要灭掉了，于是便提着挎包踩着斑马线快速通过。"
+    "立在路边代表行人通行的绿色指示灯看起来快要灭掉了，注意到这点后于是我便提着挎包踩着斑马线快速通过。"
     "现在仍然是春天，但身上已经开始有些燥热的感觉了。"
     "热风像泼过来的水，只不过把寒冷换成炎热。"
     "啊…"
@@ -427,6 +468,7 @@ label solitus_route_1:
     "如果有一天我也变得浑身肌肉，那会发生什么呢…"
     "至少找男朋友肯定轻松多了，就算我不好看，也可以被他们去头食用。"
     "我的视线落在一家文体商店的橱窗上。"
+
     "自小我就讨厌足球或是篮球。"
     "很多男生喜欢打篮球，仅仅是短暂的课间也要带着球出去，把自己弄得臭烘烘回来，搞得教室里乌烟瘴气的。"
     "我是不明白这种把球丢进高处的篮子里有什么好玩的，也许只是我不感兴趣吧。"
@@ -443,14 +485,27 @@ label solitus_route_1:
     "不需要满场地乱跑，活动范围只有那半个场地。"
     "挥拍击球也不会消耗很大的力，也不会有危险。"
     "容易上手，但专精有难度。"
-    $p.stime(7)
     "这太适合我了。"
     "这么想着，我挑了一副蓝色框的球拍。"
-    "我用手机扫码付过钱后，推开了玻璃门。"
-    "现在我被刚刚拯救了自己的世界遗弃了。"
-    "我望向对面的体育馆。"
-    "即便有着想要立刻试试球拍的想法，但今天的温度实在有点高到离谱了。"
-    "算了，以后有时间再去看看好了。"
+    $p.stime(7)
+    if p.money < 160:
+        "不过难受的是我已经把所有的钱都拿来买药了。"
+        "不过我真的有必要把所有的钱都拿来买药吗？还是说我只是在自暴自弃地胡乱消费呢。"
+        "以后再说吧，虽然也不知道自己会不会再来买了。"
+    else:
+        $BadmintonRacket.add(p)
+        $p.money -= 160
+        $Notice.show()
+        if not replaying:
+            "我掂量着手中的球拍，转头看了看其他的货物。"
+            "随便看看吧。"
+            call screen screen_explore_store3(p)
+            $p.visitedStore.add(8)
+        "我用手机扫码付过钱后，推开了玻璃门。"
+        "现在我被刚刚拯救了自己的世界遗弃了。"
+        "我望向对面的体育馆。"
+        "即便有着想要立刻试试球拍的想法，但今天的温度实在有点高到离谱了。"
+        "算了，以后有时间再去看看好了。"
     stop music fadeout 4
     $p.stime(21,40)
     $p.onOutside = False
@@ -462,11 +517,11 @@ label solitus_route_1:
     "趴在床上的我把头埋进被子里。"
     "不对…不对…明天也不算放假，马上就是委托我写东西的委托人设置的截稿日了，而要写的东西还一点没动！"
     "天哪……不想活了……"
-    "我在床上滚来滚去。"
     $p.stime(41)
     "是的，我是一个写网络小说的三流写手，擅长写一些自己从来没经历过但在漫画上看过的成人场面。"
     "虽然来约稿的人不多，但也能为自己分担一些开销。"
-    "我停止翻滚，平躺着盯着天花板。"
+    "我在床上滚来滚去。"
+    "随后又停止翻滚，平躺着盯着天花板。"
     "好累…想死掉了…"
     "明明我今天好像也没做什么的样子…"
     "我转头，看着搭在桌边的装着羽毛球拍的袋子。"
@@ -482,7 +537,7 @@ label solitus_route_1:
     if replaying:
         jump afterreplay
     $p.newDay()
-    $Save.save(p)
+    $Saver.save(p)
     $Notice.add('存档已保存！')
     $Notice.show()
     call loading from _call_loading_5 
@@ -528,7 +583,7 @@ label solitus_route_2:
     "啊…为什么世界上的雄兽那么多，而没有一个是我的呢？"
     "什么时候我也能有一个穿着短裤的帅哥男友…"
     "操…我不能再像个变态一样看来看去了。"
-    "虽然好像没人注意到我下方的微微鼓起，但我还是决定加快脚步去羽毛球场了。"
+    "我决定加快脚步，朝着羽毛球场的方向前进。"
     "…"
     $p.stime(23)
     scene court with dissolve
@@ -542,7 +597,7 @@ label solitus_route_2:
     "似乎是一只白熊啊。"
     $p.stime(24)
     show halluke at look
-    "不过怎么会这么矮小，熊族不都是高大健壮的吗？"
+    "不过怎么会这么矮小，熊兽人通常来说不应该是高大健壮的类型吗？"
     "我把球拍放在窗台边，仔细打量那只白熊。"
     "看样子，完全只有一米六多一点的身高吧？身材也是保持在匀称之上一点点，看着也不是那种娇弱的样子，但也不是那种浑身肌肉的可怕家伙。"
     "倒不如说是那种很可爱的类型，短头发，圆眼镜，看着有些冷淡的样子呢。"
@@ -627,7 +682,7 @@ label solitus_route_2:
     if replaying:
         jump afterreplay
     $p.newDay()
-    $Save.save(p)
+    $Saver.save(p)
     $Notice.add('存档已保存！')
     $Notice.show()
     call loading from _call_loading_6 

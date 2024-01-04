@@ -26,8 +26,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(5 * cls.getRecoScale(player))
-            player.mental += reco
-            Notice.add(_('恢复了%s点精神状态。') % reco)
+            player.gain_mental(reco)
             WarmupEffect.add(player)
 
 
@@ -43,12 +42,9 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(5.5 * cls.getRecoScale(player))
-            player.mental += reco
+            player.gain_mental(reco)
             g = ra(player, 0, 1) * 0.01
-            player.physical += g
-            Notice.add(_('恢复了%s点精神状态。') % reco)
-            if g>0:
-                Notice.add(_('升高了%s点身体素质。') % int(g * 100))
+            player.gain_abi(g, 'phy')
             Soreness.add(player, 2)
             PhysRezB.add(player)
             cls.setInjured(player, 20)
@@ -66,11 +62,9 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(5.5 * cls.getRecoScale(player))
-            player.mental += reco
+            player.gain_mental(reco)
             g = ra(player, 0, 2) * 0.01
-            player.severity -= g
-            Notice.add(_('恢复了%s点精神状态。') % reco)
-            Notice.add(_('降低了%s点严重程度。') % int(g * 100))
+            player.gain_abi(g, 'sev')
             Soreness.add(player, 2)
             cls.setInjured(player, 20)
 
@@ -99,15 +93,13 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
-            player.mental += reco
-            if MuscleFatigue.has(player):
+            player.gain_mental(reco)
+            if GymLimited.has(player):
                 g = 0.01 * ra(player, 1, 2)
             else:
                 g = 0.01 * ra(player, 1, 2) + player.physicalGain
-                MuscleFatigue.add(player)
-            player.physical += g
-            Notice.add(_('恢复了%s点精神状态。') % reco)
-            Notice.add(_('升高了%s点身体素质。') % int(g * 100))
+                GymLimited.add(player)
+            player.gain_abi(g, 'phy')
             Soreness.add(player, 2)
             cls.setInjured(player, 50)
 
@@ -135,10 +127,9 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if Soreness.has(player):
-                if Soreness.getstack(player) >= 15:
-                    Soreness.subByType(player, 15)
-                    Physique.add(player, 2)
+            if Soreness.getstack(player) >= 15:
+                Soreness.subByType(player, 15)
+                Physique.add(player, 2)
             cls.setInjured(player, 50)
 
     
@@ -166,15 +157,13 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3.5 * cls.getRecoScale(player))
-            player.mental += reco
-            if MuscleFatigue.has(player):
+            player.gain_mental(reco)
+            if GymLimited.has(player):
                 g = 0.01 * ra(player, 2, 3)
             else:
                 g = 0.01 * ra(player, 2, 3) + player.physicalGain
-                MuscleFatigue.add(player)
-            player.physical += g
-            Notice.add(_('恢复了%s点精神状态。') % reco)
-            Notice.add(_('升高了%s点身体素质。') % int(g * 100))
+                GymLimited.add(player)
+            player.gain_abi(g, 'phy')
             Soreness.add(player, 3)
             PhysRezB.add(player)
             cls.setInjured(player, 80)
@@ -186,7 +175,7 @@ init python early:
         kind = _('高难度')
         unlocked = False
         info = _('基础恢复：3\n获得3~5层酸痛，获得1层良好的运动。\n\n大概率会在运动中受伤。\n\n解锁条件 1.4身体素质解锁。')
-        ad = _('“世间泰坦仅允我喘息，深陷其足下泥泞。”')
+        ad = _('“痛苦总是折磨着那些停滞不前的人。”')
 
         @classmethod
         def checkAvailable(cls, player, day, time):
@@ -204,8 +193,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
-            player.mental += reco
-            Notice.add(_('恢复了%s点精神状态。') % reco)
+            player.gain_mental(reco)
             Soreness.add(player, ra(player, 3, 5))
             PhysRezB.add(player)
             cls.setInjured(player, 80)
@@ -235,8 +223,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
-            player.mental += reco
-            Notice.add(_('恢复了%s点精神状态。') % reco)
+            player.gain_mental(reco)
             Physique.add(player, rca(player, (1,1,1,2)))
             cls.setInjured(player, 120)
 
@@ -266,11 +253,9 @@ init python early:
         def executeTask(cls, player):
             
             reco = r2(5 * cls.getRecoScale(player))
-            player.mental += reco
+            player.gain_mental(reco)
             g = ra(player, 2, 4) * 0.01
-            player.severity -= g
-            Notice.add(_('恢复了%s点精神状态。') % reco)
-            Notice.add(_('降低了%s点严重程度。') % int(g * 100))
+            player.gain_abi(-g, 'sev')
             cls.setInjured(player, 120)
             
 

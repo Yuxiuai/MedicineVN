@@ -21,7 +21,8 @@ label CuredWork_beginning:
         "工作。"
     else:
         $renpy.say(None, CuredTask.gt())
-    call Task_processing from _call_Task_processing_31
+    call Task_processing from _call_Task_processing_26
+    
     $p.times+=1
     $CuredWork.executeTask(p)
     jump CuredWork_result
@@ -55,7 +56,8 @@ label CuredRest_beginning:
     else:
         $renpy.say(None, CuredTask.gt())
     
-    call Task_processing from _call_Task_processing_32
+    call Task_processing from _call_Task_processing_27
+    
     $p.times+=1
     $CuredRest.executeTask(p)
     jump CuredRest_result

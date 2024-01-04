@@ -23,7 +23,7 @@ label work_overtime_h:
     jump before_operate_screen_label
 
 label tornado_event:
-    scene workarea at setcolor with fade
+    scene workarea with fade
     "看来今天有台风过境啊……那应该就不用上班了……"
     $ per = p.achievedGoal/p.goal
     if per <= 60:
@@ -34,10 +34,82 @@ label tornado_event:
         "好耶！工作都弄完了，可以在家里狂摸鱼咯——"
     
     $ p.times = 2
-    $ beforemusic=renpy.music.get_playing()
-    $ p.beforeSchedule()
     jump before_operate_screen_label
 
+label hotel_event:
+    $HotelBuff.clearByType(p)
+    scene hotelcheckin with fade
+    "办完了退房手续……"
+    if p.today in (1,2,3,4,5) and p.experience != 'wri':
+        "直接去公司吧……"
+        $ p.times = 2
+        jump before_go_office
+    else:
+        "虽然很念念不舍，但还是得回家去了……"
+        $ p.times = 2
+        jump before_operate_screen_label
+    
+label fish_event:
+    scene livingroom with fade
+    show yxi 2 with dissolve
+    yxi"“嗨~我是这个游戏的作者哦~”"
+    show yxi 4 with dissolve
+    yxi"“不知道你这个游戏玩的开不开心呢~（坏笑）”"
+    show yxi 1 with dissolve
+    yxi"“总之我是来送给你新版本的东西的，需要你帮忙测试一下0.6版本的钓鱼系统哦。”"
+    
+    $GoFishing.unlock(p)
+    show yxi 2 with dissolve
+    yxi"“我已经帮你解锁了钓鱼日程，你可以在周六周日的上午和下午选择去森林公园钓鱼日程进行钓鱼。”"
+    $FishingRod1.add(p)
+    $Notice.show()
+    yxi"“还有一根新手钓竿，没有这个可不能进行日程。”"
+    show yxi 4 with dissolve
+    yxi"“商店街的工具店可以买到更好的钓竿，只不过价格有那么一丢丢贵啦~”"
+    show yxi 1 with dissolve
+    yxi"“钓鱼系统增加了更多的属性，比如渔力，捕获力等等，具体说明可以去问问鱼店老板。”"
+    yxi"“钓鱼能获得生鱼，你可以卖给公园里的鱼店老板，也可以在公园里烤成熟鱼，能加很多很多属性哦。”"
+    show yxi 2 with dissolve
+    yxi"“钓鱼还能获得各种新奇道具，总之你自己摸索一下吧！”"
+    yxi"“最后就是遇到bug一定一定要发到频道里！”"
+    show yxi 5 with dissolve
+    yxi"“祝你钓到手软，赚到盆满！！（光靠卖鱼真的能致富么……）”"
+    hide yxi with dissolve
+    $ p.times = 2
+    jump before_operate_screen_label
+    
+    
+
+
+label give_ticket_writer_h:
+    scene livingroom with fade
+    play sound audio.knocktable
+    "突然传来一阵敲门声。"
+    play sound audio.door
+    "打开门后并没有任何人，但地上有个信封。"
+    "我捡起了信封，拆开封口之后，从信封里掉出来两张泛着光的硬纸。"
+    "这是……"
+    "我观察着纸身，左上角赫然印着德里莫游轮公司的logo。"
+    $ SteamerTicket.add(p, 2)
+    $ Notice.show()
+    "我瞪大了眼睛。"
+    "我去，这…这么珍贵的东西……甚至还有两张！是谁寄来的！"
+    "我检查着信封表面，根本没有任何信息。"
+    
+    "…"
+    "德里莫游轮是最近停靠在A市附近的世界知名的豪华游轮酒店。"
+    "曾经是交通工具的它现在变成了酒店，在各大海域运行，让游客欣赏海景。"
+    "价格十分昂贵的同时也有完美的服务和绝佳的口碑。"
+    "我从没想过自己有朝一日能去那样的酒店住宿一天…"
+    "太牛逼了！"
+    "就算我不去，这船票也能转手卖个几万块…"
+    "呼…不过还是要冷静下来。"
+    "Halluke…如果我带他去游轮上玩一天的话，应该会让他很开心吧。"
+    "多出去玩的话……我到那个时候，应该也会逐渐喜欢上他吧…"
+    "到时候在甲板上喂海鸥，在房间里和他独处…"
+    "应该会很开心吧。"
+    "那就邀请他好了。"
+    jump operate_screen_label
 
 label give_ticket_h:
     "当我刚坐在工位的椅子上准备打开电脑时，突然听到了有什么人在我身后故意咳嗽的声音。"
@@ -45,7 +117,9 @@ label give_ticket_h:
     "白狼斟酌了一下，看上去十分别扭的样子。"
     $ SteamerTicket.add(p, 2)
     $ Notice.show()
-    ar "“这是……嗯，这是这周六的游轮酒店船票…我去参加招标会给的赠礼。送你两张！别多话，别问我为什么送你，就这样。”"
+    show arnel with dissolve
+    ar "“这是……嗯，这是这周六的游轮酒店船票…我去参加招标会给的赠礼，估计你会需要这东西的。”"
+    hide arnel with dissolve
     "我瞪大了眼睛，但是白狼却躲闪着我的目光，稍显急切地把两张船票拍在我的桌子上后便匆匆离开。"
     "我手忙脚乱的把手机连同船票一起放到桌子上，当我想道谢的时候，Arnel已经跑开了。"
     "…"
@@ -68,31 +142,28 @@ label give_ticket_h:
     jump operate_screen_label
 
 label give_ticket_a:
-    "当我刚坐在工位的椅子上准备打开电脑时，突然听到了有什么人在我身后故意咳嗽的声音。"
-    "我回头看，是管理着这个部门的主管Arnel。"
-    "白狼斟酌了一下，看上去十分别扭的样子。"
+    "当我刚坐在工位的椅子上准备打开电脑时，突然看到桌子上多了个奇怪的信封。"
+    "是谁放在这里的呢？"
+    "我打开信封，里面是一张明信片和一张像是演唱会门票一样的偏硬纸张。"
+    "我抽出明信片，端详着上面所写的字迹。"
     $ SteamerTicket.add(p, 2)
     $ Notice.show()
-    ar "“这是……嗯，这是这周六的游轮酒店船票…我去参加招标会给的赠礼。送你两张！别多话，别问我为什么送你，就这样。”"
-    "我瞪大了眼睛，但是白狼却躲闪着我的目光，稍显急切地把两张船票拍在我的桌子上后便匆匆离开。"
-    "我手忙脚乱的把手机连同船票一起放到桌子上，当我想道谢的时候，Arnel已经跑开了。"
+    "“这是这周六的游轮酒店船票，希望你能陪我一起来。——Acolas”"
     "…"
     "什么游轮啊？"
-    "我拿起桌子上的船票，一搭眼便看到了德里莫游轮公司的logo。"
-    "我去，这…这么珍贵的东西？就送我了？"
+    "我将目光停留于传票上，一搭眼便看到了德里莫游轮公司的logo。"
+    "我去，这…这么珍贵的东西？"
     "…"
     "德里莫游轮是最近停靠在A市附近的世界知名的豪华游轮酒店。"
     "曾经是交通工具的它现在变成了酒店，在各大海域运行，让游客欣赏海景。"
     "价格十分昂贵的同时也有完美的服务和绝佳的口碑。"
     "我从没想过自己有朝一日能去那样的酒店住宿一天…"
     "太牛逼了！"
-
     "呼…不过还是要冷静下来。"
-    "Acolas…如果我带他去游轮上玩一天的话，应该会让他暂时脱离工作的事，好好放松吧。"
+    "Acolas…如果我们能一起去那种地方玩一天的话，应该会让他暂时脱离工作的事，好好放松吧。"
     "这家伙……居然真的把自己工作到差点死掉了……"
     "到时候在甲板上喂海鸥，在房间里和他独处…"
     "应该会很开心吧。"
-    "那就邀请他好了。"
     jump operate_screen_label
 
 
@@ -121,7 +192,7 @@ label prepare_for_surgery_1:  # 有恋人
     s "“啊…”"
     $ sh()
     "可以说我被这个突如其来的喜讯冲昏了头。"
-    "那么，折磨了我二十多年的头疼终于要在这周五画上等号了吗？"
+    "那么，折磨了我二十多年的头疼终于要在这周五写下句点了吗？"
     "这种感觉很微妙，我是不是应该兴奋得上蹿下跳呢？"
     "但我为什么感觉没那么开心？或者说，我总觉得有什么不好的事就要发生了？"
     $ ss()
@@ -190,20 +261,89 @@ label prepare_for_surgery_2:  # 无恋人
 
 label prepare_for_surgery_1_1:
     $ routine_bg(p)
-    stop music fadeout 5
-    "呼，虽然我不是什么喜欢拖延的人，但终于到了周六，也该做一下决定了。"
+    play music audio.phonering
+    menu:
+        "接电话" if True:
+            stop music
+    "……"
+    stop music
+    pathos "“早，[p.name]先生。”"
+    pathos "“想必你应该知道今天就是做手术的日子了，不过我打电话来并不只是为了提醒你这个。”"
+    pathos "“我已经把你的身体状况报告单发给你了，在你来之前可以看一看，这代表了你这段时间对身体的培养成果之类的，下面还有我的打分……”"
+    $ ss('normal2_eyes')
+    s "“那个……”"
+    $ sh()
+    pathos "“我还得准备手术呢，没时间和你聊天，挂了。”"
+    play sound audio.interruption
+    "电话断了。"
+    "他还是那么爱挂电话……有这么着急么？"
+    "我打开手机，接收了他发过来的图片。"
+    if GameDifficulty5.has(p):
+        $Achievement600.achieve()
+    if GameDifficulty5.has(p):
+        $Achievement601.achieve()
+    if p.medinfo == {}:
+        $Achievement603.achieve()
+    if p.hal_achievement451_able and p.route == 'h':
+        $Achievement452.achieve()
+    $Achievement.show()
+    call screen screen_report(p)
+    if not GameDifficulty1.has(p) and not p.cheat:
+        $score = int(Achievement.calScore(p))
+        $score /= max(1, p.week)
+        $score = int(score)
+        $persistent.highestscore = max(score, persistent.highestscore)
+
+    "……"
+    "总之也该做一下决定了。"
     "去游轮酒店的的机会难得，而手术什么时候都能做，但我又何尝不想快点摆脱头疼呢？"
-    "如果去游轮的话，我给Pathos打电话把手术推到下周；如果去做手术的话，就把票再还给Arnel，让他去送给别人好了。"
+    if p.route == 'h':
+        "如果去游轮的话，我就给Pathos打回去，把手术推到下周；如果去做手术的话，就给Halluke发个信息跟他说自己得做手术，做完就陪他去玩别的……"
+    elif p.route == 'a':
+        "如果去游轮的话，我就给Pathos打回去，把手术推到下周；如果去做手术的话，就给Acolas打个电话通知他一下，他应该会原谅我的吧……"
     "怎么办呢……"
-    $ Achievement.calScore(p)
     if SteamerTicket.has(p):
-        $ SteamerTicket.get(p).sub(p, 2)
+        $ p.items.remove(SteamerTicket.get(p))
+    if p.medinfo == {} and p.route:
+        menu:
+            "……":
+                "……"
+                "我，我的头，真的还疼么？"
+                "是因为痛得太久已经让我麻木了，还是它其实真的没有很痛？"
+                "我有很长一段时间没有使用过药物了吧。"
+                "失去了药物的帮助，我还仍然活到了现在。"
+                "那个所谓主治医生的家伙，对我做过什么治疗么？他只是和我聊聊天而已，然后让我买药，他脖子上的听诊器都没对我用过吧？"
+                "甚至我最近连体检都没有过，他是怎么得知我的身体状况，还给我写成一个单子的？"
+                "说真的，这上面都是什么啊？工作能力……？他又不是我的上司，他是怎么知道我工作表现如何的？"
+                "……不……不对，这一切都……不对……"
+                "我有能力当他的面问他这单子上的数据是怎么来的吗？"
+                "我……"
+                "放弃药物之后，我只感觉自己的一切都十分怪异，一举一动仿佛都被什么人盯着，甚至每一个操作都是被人控制着进行的……"
+                "我……我本来不应该是个热衷于求死，对生活失去希望的人么？怎么会……"
+                "……不……不对……"
+                "我……我必须……"
+                "只有一个办法……"
+                "我要……"
+                "我……"
+                "我得离开……"
+                "我得逃离这里才行……"
+                scene black with None
+                $clearscreens()
+                call screen cfreeze(12)
+                if p.route == 'h':
+                    jump se_h
+                elif p.route == 'a':
+                    jump se_a
+                else:
+                    "出现错误。"
+                    return
+
     menu:
         "准备去医院做手术" if True:
             if Achievement402.has():
                 menu:
                     "是否直接抵达已经完成过的内容？"
-                    "治愈线坏结局":
+                    "治愈线坏结局" if Achievement105.has():
                         $p.cured = 0
                         jump CuredBE
                     "治愈线普通结局":
@@ -211,7 +351,7 @@ label prepare_for_surgery_1_1:
                             for i in range(105 - p.cured):
                                 p.newDay()
                         $p.cured = 105
-                        jump CE
+                        jump ce
                     "不需要":
                         pass
                     
@@ -226,14 +366,55 @@ label prepare_for_surgery_1_1:
 
 label prepare_for_surgery_2_1:
     $ routine_bg(p)
-    stop music fadeout 5
-    "呼，终于，我的病要被治好了。"
-    "我从未想过自己有一日真的能摆脱如此病痛，甚至不用额外花一分钱。"
+    play music audio.phonering
+    menu:
+        "接电话" if True:
+            stop music
+    "……"
+    stop music
+    pathos "“早，[p.name]先生。”"
+    pathos "“想必你应该知道今天就是做手术的日子了，不过我打电话来并不只是为了提醒你这个。”"
+    pathos "“我已经把你的身体状况报告单发给你了，在你来之前可以看一看，这代表了你这段时间对身体的培养成果之类的，下面还有我的打分……”"
+    $ ss('normal2_eyes')
+    s "“那个……”"
+    $ sh()
+    pathos "“我还得准备手术呢，没时间和你聊天，挂了。”"
+    play sound audio.interruption
+    "电话断了。"
+    "他还是那么爱挂电话……有这么着急么？"
+    "我打开手机，接收了他发过来的图片。"
+    if GameDifficulty5.has(p):
+        $Achievement600.achieve()
+    if p.medinfo == {}:
+        $Achievement603.achieve()
+    call screen screen_report(p)
+    if not p.cheat and not GameDifficulty1.has(p):
+        $score = int(Achievement.calScore(p))
+        $score /= max(1, p.week)
+        $score = int(score)
+        $persistent.highestscore = max(score, persistent.highestscore)
+    "……无论怎样，这场噩梦马上就要结束了。"
+    "我从未想过自己有一日真的能摆脱如此病痛，甚至不用花一分钱。"
     "我一直没有放弃，坚持到现在，都是完全值得的。"
     "那么，准备去医院吧。"
-    $ Achievement.calScore(p)
     menu:
-        "准备去医院做手术" if True:
+        "准备去医院做手术":
+            if Achievement402.has():
+                menu:
+                    "是否直接抵达已经完成过的内容？"
+                    "治愈线坏结局" if Achievement105.has():
+                        $p.cured = 0
+                        jump CuredBE
+                    "治愈线普通结局":
+                        python:
+                            for i in range(105 - p.cured):
+                                p.newDay()
+                        $p.cured = 105
+                        jump ce
+                    "不需要":
+                        pass
+                    
+            $p.onOutside = True
             jump CureEndingBeginning
 
 

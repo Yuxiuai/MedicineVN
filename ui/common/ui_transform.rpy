@@ -1,3 +1,11 @@
+transform bright:
+    matrixcolor BrightnessMatrix((persistent.brightvar-1.0))
+
+transform sprite_test():
+    zoom 0.45
+    xcenter 0.5
+    yalign 1.0
+
 transform sprite_appear():
     matrixcolor SaturationMatrix(value=getcolor())
     xoffset -100
@@ -126,7 +134,9 @@ transform sit:
     parallel:
         ease 1 yoffset 250
 
-
+transform tdissolve(time=0.5):
+    alpha 0.0
+    linear time alpha 1.0
 
 transform trans_mainmenu(wait = 0):
     xoffset 100
@@ -142,6 +152,10 @@ transform map_appear:
     xoffset 1000
     alpha 0.0
     easein 0.3 xoffset 0 alpha 1
+
+transform colorize(color):
+    matrixcolor TintMatrix(color)
+
 
 transform trans_app(xo, yo):
     on show:
@@ -188,6 +202,17 @@ transform jumpscare:
     yalign -1.0
     ease 0.5 yalign 0.35
 
+transform jumpscare_p:
+    parallel:
+        easeout 0.3 zoom 4.5 yoffset 3000
+    parallel:
+        ease 0.025 xoffset 70
+        ease 0.025 xoffset 110
+        repeat
+    #parallel:
+    #    linear 0.35 zoom 4.0
+    #parallel:
+    #    linear 0.35 yoffset 2500
 
 init python:
     def getcolor():
@@ -198,7 +223,26 @@ init python:
         
 
 transform setcolor:
-    matrixcolor SaturationMatrix(value=getcolor())
+    matrixcolor SaturationMatrix(value=1.0 if not p else p.color)
+
+transform headache_trans:
+    parallel:
+        xcenter 0.5
+        ycenter 0.5
+        easein 0.5 zoom 1.01
+        easein 0.5 zoom 1.0
+        0.5
+        repeat
+    parallel:
+        easein 0.2 xoffset 1
+        easeout 0.2 xoffset 0
+        easein 0.2 xoffset -1
+        repeat
+    parallel:
+        easein 0.2 yoffset 1
+        easeout 0.2 yoffset 0
+        easein 0.2 yoffset -1
+        repeat
 
 transform blurr_concentration(p):
     alpha (1-(-0.048 * p.cured + 5))

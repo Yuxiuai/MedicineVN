@@ -202,6 +202,7 @@ layeredimage pathos:
     group outfit:
         attribute normal default
         attribute pants
+        attribute ghost
         attribute naked null
 
     group eyebrow:
@@ -210,6 +211,7 @@ layeredimage pathos:
         attribute awkward_eyebrow
         attribute surprised_eyebrow
         attribute annoy_eyebrow
+        attribute none_eyebrow null
 
     group eyes:
         attribute normal_eyes default:
@@ -223,6 +225,7 @@ layeredimage pathos:
         attribute annoy_eyes:
             "pathos_eyes_annoy"
         attribute closed_eyes
+        attribute none_eyes null
 
     group mouth:
         attribute normal_mouth default
@@ -234,6 +237,7 @@ layeredimage pathos:
         attribute annoy_mouth
         attribute saying:
             "pathos_mouth_saying"
+        attribute none_mouth null
 
     group blush:
         attribute no_blush null default

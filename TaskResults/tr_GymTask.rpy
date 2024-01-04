@@ -25,7 +25,7 @@ label GymSport_beginning:
         $p.times+=2
         $ p.onOutside = False
         jump after_executing_task_label
-    elif p.money < r2(0.4*p.price):
+    elif p.money < r2(0.4*p.price) and not GymTicket.has(p):
         jump gym_nomoney
     else:
         scene gymsport with fade
@@ -40,6 +40,8 @@ label GymSport_beginning:
 
 
 label gym_result:
+    $GymSport.executeTask(p)
+    $Notice.show()
     $temp = rd(1,3)
     if temp == 1:
         jump GymSport_result_exce
@@ -68,8 +70,8 @@ label GymSport_result_good:
 label GymSport_result_norm:
     scene gymsport with fade
     "举哑铃真的好累，手都要断了……"
-    "而且从家里到这边要坐好久的车，要不是贪那几块办卡便宜的钱我就去家门口那家了，然后还要听教练的限制食物摄取……"
-    "唉，钱都花了，不是抱怨的时候，继续练习吧。"
+    "而且从家里到这边要坐好久的车，要不是贪那几块办卡便宜的钱我就去家门口那家了，然后还要听教练的限制去控制食谱……"
+    "唉，钱都花了，不是抱怨的时候，至少我已经流下了足够的汗水。"
     $p.times+=1
     $ p.onOutside = False
     jump after_executing_task_label

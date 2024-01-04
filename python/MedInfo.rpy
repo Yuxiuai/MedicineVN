@@ -13,21 +13,16 @@ init python early:
 
             self.lastuse = max(-5, self.lastuse - 5)
 
-            if player.week == 0 or Despair.has(player) or player.cured > -1:
+            if player.week == 0 or player.finalStageDays > -1 or player.cured > -1:
                 return
 
-            if rra(player, self.giveDependenceChance(player)):
-                self.med.d_.add(player)
+            
 
             
 
         def punish(self):
-            punish = 1.0
-            if self.lastuse > 0:
-                punish = 0.5
-            elif self.lastuse == -5:
-                punish = 1.5
-            return punish
+            punishlist = [-1, 0.75, 0.625, 0.5, 0.325, 1.5, 1.375, 1.25, 1.125, 1.0]
+            return punishlist[self.lastuse]
         
         def time(self):
             d = {

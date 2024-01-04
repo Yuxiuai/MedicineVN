@@ -1,208 +1,364 @@
-screen screen_phone_video_address(player):
-    #tag gamegui
-    modal True
+init python:
+    def hasending(endings):
+        for i in endings:
+            if type(i) == list:
+                for j in i:
+                    if renpy.seen_label(j[0]) or persistent.unlockcharacterplot:
+                        return True
+        return False
+
+screen screen_phone_video(player):
+
+    predict False
     style_prefix "gameUI"
     zorder 600
     
+    python:
 
-    frame:
-        at trans_app(70, 50)
-        background None
-        xalign 0.5
-        yalign 0.5
-        ysize 750
-        xsize 400
+        sol_i = _('个人剧情')
+        sol_a = _('《社畜福瑞重度头疼》')
+        pa_i = _('和Pathos曾发生过的故事')
+        pa_a = _('《从小白鼠到PUA》')
+        aco_i = _('和Acolas曾发生过的故事')
+        aco_a = _('《霸道总裁爱上我》')
+        hal_i = _('和Halluke曾发生过的故事')
+        hal_a = _('《社恐之间的交流》')
+        des_i = _('和Destot曾发生过的故事')
+        des_a = _('《桌子底下怎么有奇怪的声音》')
 
-        add "gui/phone/address/address.png":
-            xcenter 0.51
-            ycenter 0.46
-
-        frame:
-            ypos 90
-            background None
-            vbox:
-                spacing 2
-
-                frame:
-                    ysize 75
-                    xfill True
-                    background None
-                    $sol_i = _('个人剧情')
-                    $sol_a = _('《社畜福瑞重度头疼》')
-                    imagebutton idle "gui/phone/address/Solitus.png":
-                        action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='solitus', player=player)]
-                        hovered Show(screen="info", i=sol_i, a=sol_a)
-                        unhovered Hide("info")  
-                        background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                        activate_sound audio.cursor
-                        xfill True
-                        yalign 0.5
-                    textbutton "Solitus":
-                        xpos 0.25
-                        hover_sound audio.cursor
-                        text_style "white"
-                        yalign 0.5
-                            
-                null height 2
-                if p.sol_p > 0 or Achievement400.has() or Achievement402.has():
-                    frame:
-                        ysize 75
-                        xfill True
-                        background None
-                        $pa_i = _('和Pathos曾发生过的故事')
-                        $pa_a = _('《从小白鼠到感情PUA》')
-                        imagebutton idle "gui/phone/address/Pathos.png":
-                            action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='pathos', player=player)]
-                            hovered Show(screen="info", i=pa_i, a=pa_a)
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "Pathos":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
-                                
-                    null height 2
-                if p.aco_p > 0 or Achievement501.has():
-                    frame:  
-                        ysize 75
-                        xfill True
-                        background None
-                        $aco_i = _('和Acolas曾发生过的故事')
-                        $aco_a = _('《霸道总裁爱上我》')
-                        imagebutton idle "gui/phone/address/Acolas.png":
-                            action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='acolas', player=player)]
-                            hovered Show(screen="info", i=aco_i, a=aco_a)
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "Acolas":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
-
-                    null height 2
-                if p.hal_p > 0 or Achievement502.has():
-                    frame:
-                        ysize 75
-                        xfill True
-                        background None
-                        $hal_i = _('和Halluke曾发生过的故事')
-                        $hal_a = _('《社恐之间的交流》')
-                        imagebutton idle "gui/phone/address/Halluke.png":
-                            action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='halluke', player=player)]
-                            hovered Show(screen="info", i=hal_i, a=hal_a)
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "Halluke":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
-
-                    null height 2
-
-                if False:
-                    frame:
-                        ysize 75
-                        xfill True
-                        background None
-                        $dep_i = _('和？？？曾发生过的故事\n（当前版本尚未开放）')
-                        $dep_a = _('……')
-                        imagebutton idle "gui/phone/address/Depline.png":
-                            #action [Hide("info"),Hide("screen_phone_video_address"),Show(screen="screen_phone_video_show",who='depline', player=player)]
-                            action NullAction()
-                            hovered Show(screen="info", i=dep_i, a=dep_a)
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "？？？":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
+        dep_i = _('和？？？曾发生过的故事\n（当前版本尚未开放）')
+        dep_a = _('……')
 
 
 
-        frame:
-            background None
-            xpos 0.8
-            ypos 0.83
-            imagebutton auto "gui/phone/back_%s.png":
-                action [Hide("screen_phone_video_address"),Hide("info"),Show(screen="screen_phone", player=player)]
-                hover_sound audio.cursor
+        routes = {
+            'solitus':[
+                '序章',[
+                    ["solitus_route_0", _('平庸的社畜：第一天')], 
+                    ["solitus_route_1", _('平庸的社畜：第二天')], 
+                    ["solitus_route_2", _('平庸的社畜：第三天')], 
+                    ["writer_day0", _('全职小说家：第一天')], 
+                    ["writer_day1", _('全职小说家：第二天')], 
+                    ["writer_day2", _('全职小说家：第三天')], 
+                ],
 
-    key 'K_ESCAPE' action [Hide("screen_phone_video_address"),Hide("info"),Show(screen="screen_phone", player=player)]
+                '个人剧情',[
+                    ["solitus_route_3", _('焦虑与疲倦')] , 
+                    ["solitus_route_4", _('咽喉的燃烧感')] , 
+                    ["solitus_route_5", _('以创作发泄焦虑')] , 
+                    ["solitus_route_6", _('梦醒时分')] , 
+                    ["solitus_route_7", _('劳累')] , 
+                    ["solitus_route_8", _('饥饿感')] , 
+                    ["solitus_route_9", _('关于自慰')] ,
+                ],
+            ],
 
+            'pathos':[
+                [
+                    ["pathos_route_0", _('解锁第二种药物')] , 
+                    ["pathos_route_1", _('解锁第三种药物')] , 
+                    ["pathos_route_2", _('签订手术知情书')] ,
+                ],
+
+            ],
+
+            'halluke':[
+                [
+                    ["halluke_route_0", _('初次偷拍')] ,
+                    ["halluke_route_1", _('Halluke的能力展示')] ,
+                    ["halluke_route_2", _('厕所自慰')] ,
+                    ["halluke_route_3", _('初次留下印象')] ,
+                    ["halluke_route_4", _('自我怀疑')] ,
+                    ["halluke_route_5", _('初次开口')] ,
+                    ["halluke_route_6", _('周末约球')] ,
+                    ["halluke_route_7", _('特别的约会')] ,
+                    ["halluke_route_8", _('获得护膝')] ,
+                    ["halluke_route_9", _('粉丝店的思考')] ,
+                    ["halluke_route_11", _('体育馆的亲吻与诉苦')] ,
+                    ["halluke_route_12", _('对一切失去兴趣')] ,
+                    ["halluke_route_13", _('与Halluke的轮渡酒店之一')] ,
+                    ["halluke_route_14", _('与Halluke的轮渡酒店之二')] ,
+                ],
+
+            ],
+
+            'acolas':[
+                '个人剧情',[
+                    ["acolas_route_0", _('电梯偶遇')] ,
+                    ["acolas_route_1", _('性骚扰式自我介绍')] ,
+                    ["acolas_route_2", _('道歉与游戏项目')] ,
+                    ["acolas_route_3", _('火锅与第一次项目')] ,
+                    ["acolas_route_4", _('结束第一次项目')] ,
+                    ["acolas_route_5", _('咖啡营地与第二次项目')] ,
+                    ["acolas_route_6", _('缺席会议的Acolas')] ,
+                    ["acolas_route_7", _('医院看望')] ,
+                    ["acolas_route_8", _('Acolas的公寓与结束第二次项目')] ,
+                    ["acolas_route_9", _('游戏发布与获得旧笔记')] ,
+                    ["acolas_route_10", _('Acolas的办公室')] ,
+                    ["acolas_route_11", _('Acolas的醒悟')] ,
+                    ["acolas_route_12", _('与Acolas的轮渡酒店之一')] ,
+                    ["acolas_route_13", _('与Acolas的轮渡酒店之二')] ,
+                ],
+                '其他剧情',[
+                    ["dream_acolas", _('入迷之梦')],
+                ]
+
+    
+            ],
+
+            'destot':[
+                [
+                    ["destot_route_0", _('新实习生')] ,
+                    ["destot_route_1", _('实习生报道')] ,
+                    ["destot_route_2", _('牵手与自助餐')] ,
+                    ["destot_route_3", _('面馆与沉寂的氛围')] ,
+                    ["destot_route_4", _('Destot的告白')] ,
+                    ["destot_route_5", _('他已经离开了')],
+                ],
+
+    
+            ],
+
+        }
+
+        endings = {
+            'solitus':[
+                [
+                    ['ending0', _('BE0：我已经站在你世界的顶端了')], 
+                    ['ending1', _('BE1：在我品尝爱或咖啡的苦涩之前')], 
+                    ['ending2', _('BE2：用剪刀剪下连接着我的牵线')], 
+                    ['earthquakeBE', _('BE3：肉与肉与肉与肉的豪华盛宴')], 
+                    ['despairBE', _('BE4：不能重启的我们只能前进')], 
+                    ['CuredBE', _('BE5：我们的神灵从未向这里看过一眼')], 
+                    ['hardcorebe1', _('BE6：想象你依然存在（体弱）')], 
+                    ['hardcorebe2', _('BE6：想象你依然存在（谵妄）')], 
+                    ['hardcorebe3', _('BE6：想象你依然存在（衰退）')], 
+                    ['ne', _('NE：为了能够让你学会如何去爱')], 
+                    ['te', _('TE：如果能成为你就好了')], 
+                    ['ce', _('CE：我已经一无所有')],
+                    ['we', 'WE：融解'],
+                ],
+            ],
+            'halluke':[
+                [
+                    ['fe_h', _('FE：我们活在一个没有生命的茧中')],
+                    ['se_h', _('SE：存在')],
+                ],
+            ],
+            'acolas':[
+                [
+                    ['fe_a', _('FE：我们活在一个没有生命的茧中')],
+                    ['se_a', _('SE：存在')],
+                ],
+            ],
+            'pathos':[],
+            'destot':[],
+        }
 
 
         
-screen screen_phone_video_show(player, who='pathos'):
-
-    default d_routes = {
-        'pathos':[_('解锁第二种药物'), _('解锁第三种药物')],
-        'halluke':[_('初次偷拍'),_('Halluke的能力展示'),_('厕所自慰'),_('初次留下印象'),_('自我怀疑'),
-            _('初次开口'),_('周末约球'),_('特别的约会'),_('获得护膝'),_('粉丝店的思考'),'',
-            _('体育馆的亲吻与诉苦'),_('对一切失去兴趣'),_('与Halluke的轮渡酒店之一'),_('与Halluke的轮渡酒店之二')],
-        'acolas':[_('电梯偶遇'),_('性骚扰式自我介绍'),_('道歉与游戏项目'),_('火锅店与第一次项目'),_('结束第一次项目'),
-        _('咖啡营地与第二次项目'),_('缺席会议的Acolas'),_('医院看望'),_('Acolas的公寓与结束第二次项目'),_('游戏发布与获得旧笔记'),
-        _('Acolas的办公室'),_('报复性工作的Acolas'),_('与Acolas的轮渡酒店之一'),_('与Acolas的轮渡酒店之二')],
-    }
-
-    #tag gamegui
-    modal True
-    style_prefix "gameUI"
-    zorder 600
-    frame:
-        at trans_Down()
-        background None
-        xalign 0.5
-        yalign 0.5
-        ysize 750
-        xsize 430
-        frame:
-            background Frame("gui/style/white_hover_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-            ypos 0.05
-            xpos 0.05
-            xsize 380
-            text _("以下为已解锁的相关剧情：") style "white"
-
-        frame:
-            background None
     
+    frame:
+        
+        if phone_page == 4:
+            at app_inner_show(110, -65)
+        else:
+            at app_inner_hide(110, -65)
+        
+
+        
+        background None
+        xcenter 0.5
+        ycenter 0.5
+        yoffset -10
+        
+        use barrier('', 0)
+
+        add "gui/phone/wallpaper/camera.webp":
+            xcenter 0.5
+
+        text "剧情回顾" xpos 0.92 xanchor 1.0 ypos 0.085 size 40 style "phonew"
+
+        frame:
+            
+            background None
+            xalign 0.5
+            ypos 150
+            ysize 800
+            xsize 582
+            
             viewport:
-                ypos 0.15
-                ysize 530
+                xcenter 0.5
                 mousewheel True
                 draggable True
                 scrollbars "vertical"
-                yinitial 0.01
-                if who != 'solitus':
-                    use screen_phone_videos(player, who, d_routes[who])
-                else:
-                    use screen_phone_videos_sol(player)
-        
+
+                frame:
+                    background None
+                    xsize 540
+                    
+
+                    
+                        
+
+                    vbox:
+                        spacing 20
+                        if True:
+                            vbox:
+                                frame:
+                                    background None
+                                    xsize 530
+                                    ysize 176
+                                    imagebutton idle 'gui/phone/camera/1.jpg':
+                                        action NullAction()
+                                        hovered Show(screen="info", i=sol_i, a=sol_a)
+                                        unhovered Hide("info")
+                                        at app_transform
+                                        
+                                    text "Solitus":
+                                        style "phonew"
+                                        xfill True
+                                        yalign 1.0
+                                        size 35
+                                        xpos 0.02
+                                use screen_phone_videos(player, 'solitus', routes['solitus'], endings['solitus'])
+                        
+                        if hasending(routes['pathos']) or hasending(endings['pathos']):
+                            vbox:
+                                frame:
+                                    background None
+                                    xsize 530
+                                    ysize 176
+                                    imagebutton idle 'gui/phone/camera/2.jpg':
+                                        action NullAction()
+                                        hovered Show(screen="info", i=pa_i, a=pa_a)
+                                        unhovered Hide("info")
+                                        at app_transform
+                                        
+                                    text "Pathos":
+                                        style "phonew"
+                                        xfill True
+                                        yalign 1.0
+                                        size 35
+                                        xpos 0.02
+                                use screen_phone_videos(player, 'pathos', routes['pathos'], endings['pathos'])
+                        
+                        if hasending(routes['acolas']) or hasending(endings['acolas']):
+                            vbox:
+                                frame:
+                                    background None
+                                    xsize 530
+                                    ysize 176
+                                    imagebutton idle 'gui/phone/camera/3.jpg':
+                                        action NullAction()
+                                        hovered Show(screen="info", i=aco_i, a=aco_a)
+                                        unhovered Hide("info")
+                                        at app_transform
+                                        
+                                    text "Acolas":
+                                        style "phonew"
+                                        xfill True
+                                        yalign 1.0
+                                        size 35
+                                        xpos 0.02
+                                use screen_phone_videos(player, 'acolas', routes['acolas'], endings['acolas'])
+                        
+                        if hasending(routes['halluke']) or hasending(endings['halluke']):
+                            vbox:
+                                frame:
+                                    background None
+                                    xsize 530
+                                    ysize 176
+                                    imagebutton idle 'gui/phone/camera/4.jpg':
+                                        action NullAction()
+                                        hovered Show(screen="info", i=hal_i, a=hal_a)
+                                        unhovered Hide("info")
+                                        at app_transform
+                                        
+                                    text "Halluke":
+                                        style "phonew"
+                                        xfill True
+                                        yalign 1.0
+                                        size 35
+                                        xpos 0.02
+                                use screen_phone_videos(player, 'halluke', routes['halluke'], endings['halluke'])
+                        
+                        if hasending(routes['destot']) or hasending(endings['destot']):
+                            vbox:
+                                frame:
+                                    background None
+                                    xsize 530
+                                    ysize 176
+                                    imagebutton idle 'gui/phone/camera/6.jpg':
+                                        action NullAction()
+                                        hovered Show(screen="info", i=des_i, a=des_a)
+                                        unhovered Hide("info")
+                                        at app_transform
+                                        
+                                    text "Destot":
+                                        style "phonew"
+                                        xfill True
+                                        yalign 1.0
+                                        size 35
+                                        xpos 0.02
+                                use screen_phone_videos(player, 'destot', routes['destot'], endings['destot'])
+
+                    
+
+                        null height 300
+                                
+
 
         frame:
             background None
-            xpos 0.8
-            ypos 0.83
-            imagebutton auto "gui/phone/back_%s.png":
-                action [Hide("screen_phone_video_show"),Hide("info"),Show(screen="screen_phone_video_address", player=player)]
+            xpos 0.03
+            ypos 0.06
+            imagebutton auto "gui/phone/backw_%s.png":
+                action SetVariable("phone_page", 0), Hide("info")
                 hover_sound audio.cursor
+            
 
-    key 'K_ESCAPE' action [Hide("screen_phone_video_show"),Hide("info"),Show(screen="screen_phone_video_address", player=player)]
+                
+    
+    key 'K_ESCAPE' action SetVariable("phone_page", 0), Hide("info")
+
+
+
+
+
+
+
+screen screen_phone_videos(player, who, routes, endings):
+
+    frame:
+        background None
+        vbox:
+            xfill True
+            if hasending(routes):
+                for i in routes:
+                    if type(i) == list:
+                        for j in i:
+                            if renpy.seen_label(j[0]) or persistent.unlockcharacterplot:
+                                use video_slot(player, j[1], j[0])
+                    else:
+                        text '{size=-5}%s{/size}'%i style "white":
+                            xfill True
+
+
+            if hasending(endings):
+                text _('{size=-5}分支结局{/size}') style "white":
+                    xfill True
+
+                for i in endings:
+                        
+                    if type(i) == list:
+                        for j in i:
+                            if renpy.seen_label(j[0]) or persistent.unlockcharacterplot:
+                                use video_slot(player, j[1], j[0])
+
+
+
+
 
 
 
@@ -213,72 +369,17 @@ screen screen_phone_video_show(player, who='pathos'):
 screen video_slot(player, routename, labelname):
     frame:
         ysize 70
-        xsize 340
-        xpos 15
-        background Frame("gui/style/transparent.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-        hbox:
-            imagebutton idle "gui/phone/video.png":
-                yalign 0.5
-                xalign 0.05
-                background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-
-            textbutton routename text_style "white":
-                action [SetVariable("replaying", True), SetVariable("replaying_times", player.times), Hide("screen_phone_video_show"),Hide("screen_phone_bg"),Function(renpy.hide_screen,"screen_dashboard"), Jump(labelname)]
-                background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                xfill True
-                yfill True
-                activate_sound audio.cursor
+        xfill True
+        background None
+        textbutton routename text_style "white":
+            action SetVariable("replaying", True), SetVariable("replaying_times", player.times), Hide("screen_phone"), SetVariable("phone_page", 0), Hide("info"), Function(renpy.hide_screen,"screen_dashboard"), Jump(labelname)
+            background Frame("#494949")
+            xfill True
+            yfill True
+            xalign 0.5
+            activate_sound audio.cursor
+            at app_transform
+            
             
     null height 2
 
-
-
-
-
-
-screen screen_phone_videos(player, who, routes):
-    frame:
-        background None
-        vbox:
-            xsize 330
-            for i in range(len(routes)): 
-                $labelname = who + _('_route_') + str(i)
-                if renpy.has_label(labelname):
-                    if renpy.seen_label(labelname):
-                        use video_slot(player, routes[i], labelname)
-            null height 10
-            textbutton ''
-
-
-screen screen_phone_videos_sol(player):
-
-    default routes = [_('第一天'), _('第二天'), _('第三天'), _('焦虑与疲倦'), _('咽喉的燃烧感'), _('以创作发泄焦虑'), _('梦醒时分'), _('劳累'), _('饥饿感'), _('关于自慰')]
-    default endings = {
-        Achievement100:[_('我已经站在你世界的\n顶端了'), 'ending0'], 
-        Achievement101:[_('世间泰坦仅允我喘息'), 'ending1'], 
-        Achievement102:[_('深陷其足下泥泞'), 'ending2'], 
-        Achievement103:[_('肉与肉与肉与肉的豪\n华盛宴'), 'earthquakeBE'], 
-        Achievement104:[_('不能重启的我们只能\n前进'), 'despairBE'], 
-        Achievement105:[_('我们的神灵从未向这\n里看过一眼'), 'CuredBE'], 
-        Achievement400:[_('为了能够让你学会如\n何去爱'), 'ne'], 
-        Achievement401:[_('如果能成为你就好了'), 'te'], 
-        Achievement402:[_('我已经一无所有'), 'CE']}
-
-    frame:
-        background None
-        vbox:
-            xsize 370
-
-            for i in range(len(routes)): 
-                $labelname = 'solitus_route_' + str(i)
-                if renpy.has_label(labelname):
-                    if renpy.seen_label(labelname):
-                        use video_slot(player, routes[i], labelname)
-            
-            for i in list(endings.keys()): 
-                if i.has():
-                    use video_slot(player, endings[i][0], endings[i][1])
-                        
-
-            null height 10
-            textbutton ''

@@ -111,6 +111,8 @@ init -505 python early:
     def allE(player):
         for i in ALLEFFECTS:
             i.add(player, rd(1,5))
+        LifeIsColorless.clearByType(player)
+        Despair.clearByType(player)
 
     def allI(player):
         for i in ALLITEMS:
@@ -149,6 +151,27 @@ init -505 python early:
             return dictDayFormat[day]
         else:
             return dictDayFormat[0]
+
+    def teweekday():
+        
+        dictDayFormat = {
+            1:'星期一',
+            2:'星期二', 
+            3:'星期三', 
+            4:'星期四',
+        }
+ 
+        dictDayFormatENG = {
+            1:'Monday',
+            2:'Tuesday', 
+            3:'Wednesday', 
+            4:'Thurday', 
+        }
+
+        if _preferences.language == 'english':
+            return dictDayFormatENG[persistent.te_weekday]
+
+        return dictDayFormat[persistent.te_weekday]
 
     def glitchtext(length):
         gt = "¡¢£¤¥¦§¨©ª«¬®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž"
@@ -252,19 +275,35 @@ init -505 python early:
         for i in mr.playlist:
             renpy.music.play(i)
         renpy.music.play(before)
+        Achievement604.achieve()
+        Achievement.show()
 
     def start_plot():
         renpy.block_rollback()
         config.rollback_enabled = True
+        if persistent.clearscreenwhenplot:
+            clearscreens()
     
     def end_plot():
         config.rollback_enabled = False
         renpy.block_rollback()
+        if persistent.clearscreenwhenplot:
+            renpy.show_screen(_screen_name='screen_dashboard',player=p)
 
     def setfold(i, v):
         i[1]=v
+    
+    def clearscreens():
+        renpy.sound.stop(channel="chara_voice")
+        renpy.hide('blackmask', layer='mask')
+        sh()
+        for i in renpy.get_zorder_list('screens'):
+            renpy.hide(i[0], layer='screens')
+        
 
     def ss(str=None):
+        if persistent.nosolitussprite:
+            return
         renpy.transition(Dissolve(0.2, alpha=True), layer='headimage')
         atl =[]
         if not renpy.showing('solitus',layer='headimage'):
@@ -275,7 +314,17 @@ init -505 python early:
         else:
             renpy.show('solitus '+str, at_list=atl, zorder=1000, layer='headimage')
 
+    #def inspe():
+        #import inspect
+        #caller_frame = inspect.currentframe().f_back
+        #caller_file = inspect.getfile(caller_frame)
+        #caller_line = caller_frame.f_lineno
+        #print(caller_file)
+        #print(caller_line)
+
     def sh():
+        if persistent.nosolitussprite:
+            return
         renpy.transition(Dissolve(0.2), layer='headimage')
         renpy.hide('solitus', layer='headimage')
 
@@ -300,50 +349,90 @@ init -505 python early:
             renpy.music.play(pm, channel='music', loop=True, fadeout=3, fadein=3)
 
     def routine_music(player):
-        if Despair.has(player):
+        
+
+        if player.finalStageDays > -1:
             if player.mental <= 0:
-                playmusic(audio.impendingdeath)
+                bgm = audio.impendingdeath
             else:
-                playmusic(audio.drownedindespair)
+                bgm = audio.drownedindespair
 
         elif player.cured > 0:
+            
+
             if player.onVacation:
                 if player.cured<21:
-                    playmusic(audio.rareleisure)
+                    bgm = audio.rareleisure
                 elif player.cured<42:
-                    playmusic(audio.rl1)
+                    bgm = audio.rl1
                 elif player.cured<63:
-                    playmusic(audio.rl2)
+                    bgm = audio.rl2
+                else:
+                    bgm = audio.cured
             else:
                 if player.cured<21:
-                    playmusic(audio.survivingdawn)
+                    bgm = audio.survivingdawn
                 elif player.cured<42:
-                    playmusic(audio.sd1)
+                    bgm = audio.sd1
                 elif player.cured<63:
-                    playmusic(audio.sd2)
+                    bgm = audio.sd2
+                else:
+                    bgm = audio.cured
 
         else:
-            if player.mental <= 10:
-                playmusic(audio.enjoysuffering)
+            
+            if player.mental <= 20:
+                bgm = audio.enjoysuffering
                     
             else:
-                if player.onVacation:
-                    playmusic(audio.rareleisure)
+                if ParkBuff.has(player):
+                    bgm = audio.lakesidebreeze
+                elif HotelBuff.has(player):
+                    bgm = audio.locationhotel
+                elif CafeBuff.has(player):
+                    bgm = audio.locationcafe
+                elif BookstoreBuff.has(player):
+                    bgm = audio.locationbookstore
+                elif player.onVacation:
+                    bgm = audio.rareleisure
                 else:
-                    playmusic(audio.survivingdawn)
+                    bgm = audio.survivingdawn
+
+        
+
+        if player.times > 0:
+            playmusic(bgm)
+
+        if not Achievement604.has() and len(mr.playlist) == len(mr.unlocked_playlist()):
+            Achievement604.achieve()
+            Achievement.show()
+
         blackmask(player)
     
     def blackmask(player):
-        if player.mental <= 10:
-            renpy.transition(Dissolve(0.5, alpha=True))
+        if player.mental <= 20:
+            renpy.transition(Dissolve(0.5, alpha=True), layer='mask')
             renpy.show('blackmask', layer='mask')
+            renpy.transition(None)
                 
         else:
-            renpy.transition(Dissolve(0.5, alpha=True))
+            renpy.transition(Dissolve(0.5, alpha=True), layer='mask')
             renpy.hide('blackmask', layer='mask')
+            renpy.transition(None)
         
 
+    def funcruntime(fun, *args):
+        import time
+        before = time.time()
+        fun(*args)
+        return time.time() - before
+
+
+
+
     def routine_bg(player):
+        if player.finalStageDays > -1:
+            return 'ruins'
 
         bg = 'office'
 
@@ -362,18 +451,25 @@ init -505 python early:
             else:
                 bg = 'office'
                 
-                
+        if HotelBuff.has(player):
+            bg = 'location_hotel'
+        if CafeBuff.has(player):
+            bg = 'location_cafe'
+        if BookstoreBuff.has(player):
+            bg = 'location_bookstore'
+        
         
         renpy.scene()
         
-
-        renpy.show(bg, at_list=[setcolor])
+        atl = [setcolor]
+        if player.mental <= 20:
+            atl.append(hardcorebe1_transform)
+        renpy.show(bg, at_list=atl)
         renpy.with_statement(trans=Fade(0.5, 0.0, 0.5, color=_('#000')))
         
         renpy.transition(None)
         renpy.show('blurred', at_list=[blurr_concentration(p)])
         
-
 
 
 
@@ -391,9 +487,7 @@ init -505 python early:
         if str:
             return '{color=#%s}%s{/color}' % (rand_color, str)
         return '{color=#%s}' % rand_color
-
-
-
+    
 
 
 

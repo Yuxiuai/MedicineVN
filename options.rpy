@@ -2,7 +2,7 @@ define config.name = _("药：绝望的解决手段")
 
 define gui.show_name = False
 
-define config.version = "0.4.2.1400"
+define config.version = "0.5.31"
 
 define gui.about = _p("""
 """)
@@ -35,21 +35,29 @@ define config.window_icon = "gui/window_icon.png"
 
 init python:
 
+    build.archive('images')
+    build.archive('audio')
+    build.archive('scripts')
+    build.archive('fonts')
+
     build.classify('**~', None)
     build.classify('**.bak', None)
     build.classify('**/.**', None)
     build.classify('**/#**', None)
     build.classify('**/thumbs.db', None)
 
-    build.classify('game/images/**.png', 'archive')
-    build.classify('game/images/**.jpg', 'archive')
-    build.classify('game/audio/**.mp3', 'archive')
-    build.classify('game/audio/**.ogg', 'archive')
-    build.classify('game/audio/**.wav', 'archive')
-    build.classify('game/audio/**.flac', 'archive')
-    build.classify('game/**.rpy', 'archive')
-    build.classify('game/**.rpyc', 'archive')
-    build.classify('game/**.ttf', 'archive')
+    build.classify('game/**.png', 'images')
+    build.classify('game/**.jpg', 'images')
+    build.classify('game/**.webm', 'images')
+    build.classify('game/**.mp3', 'audio')
+    build.classify('game/**.ogg', 'audio')
+    build.classify('game/**.wav', 'audio')
+    build.classify('game/**.flac', 'audio')
+    build.classify('game/**.rpy', 'scripts')
+    build.classify('game/**.rpyc', 'scripts')
+    build.classify('game/**.rpyb', 'scripts')
+    build.classify('game/**.rpym', 'scripts')
+    build.classify('game/**.rpymc', 'scripts')
+    build.classify('game/**.txt', 'scripts')
+    build.classify('game/**.ttf', 'fonts')
 
-    build.documentation('*.html')
-    build.documentation('*.txt')

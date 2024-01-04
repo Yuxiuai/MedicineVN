@@ -23,9 +23,12 @@ label explore_shop_1_catch:
                 "夹子马上就要靠近出口了……！"
                 "马上要抓到了！……"
                 "啊…！娃娃从出口出来了！不可思议！"
-                $PathosDoll.add(p)
-                $p.severity -= 0.06
-                $showNotice(['降低了6点严重程度。'])
+                
+                if not PathosDoll.has(p):
+                    $PathosDoll.add(p)
+                    $p.gain_abi(-0.1, 'sev')
+                else:
+                    $PathosDoll.add(p)
                 scene arcade with fade
                 "心满意足了，该回去了。"
                 jump GoOutside_result
@@ -36,8 +39,8 @@ label explore_shop_1_catch:
                 "夹子马上就要靠近出口了……！"
                 "马上要抓到了！……"
                 "啊…！娃娃掉在了出口边上，就差一点点！"
-                $p.severity += 0.02
-                $showNotice(['提升了2点严重程度。'])
+                $p.gain_abi(0.02, 'sev')
+                $Notice.show()
                 pass
             elif temp==4 or temp==5:
                 "你看着夹子缓缓下落，张开爪子，抓住那只黑色的有点像你认识的那个医生一样的娃娃。"
@@ -45,8 +48,8 @@ label explore_shop_1_catch:
                 "夹子正在夹着娃娃，缓缓移动到出口上方……"
                 "夹子马上就要靠近出口了……！"
                 "啊…！娃娃离开了夹子，掉下去了，就差一点！"
-                $p.severity += 0.01
-                $showNotice(['提升了1点严重程度。'])
+                $p.gain_abi(0.01, 'sev')
+                $Notice.show()
                 pass
             elif temp==6:
                 "你看着夹子缓缓下落，张开爪子，抓住那只黑色的有点像你认识的那个医生一样的娃娃。"
@@ -101,7 +104,7 @@ screen screen_explore_store(player):
                 frame:
                     background None
                     yalign 0.001
-                    textbutton '{size=+10}小卖店{/size}':
+                    textbutton '{size=+10}零食店{/size}':
                         text_style "gameUI"
                         xoffset -5
                         yoffset -5
@@ -123,26 +126,23 @@ screen screen_explore_store(player):
                             draggable True
                             #scrollbars "vertical"
                             python:
-                                drinks = [Cola]
-                                if AppleJuiceSticker.has(p):
-                                    drinks.append(AppleJuice)
-                                if CitrusJuiceSticker.has(p):
-                                    drinks.append(CitrusJuice)
+                                drinks = [AppleJuice, CitrusJuice, Cola]
+                                
                                 cookie = [SolitusCookie]
-                                if Achievement401.has():
+                                if DecayCookie in persistent.unlocked_items:
                                     cookie.append(DecayCookie)
-                                if Achievement402.has():
+                                if PathosCookie in persistent.unlocked_items:
                                     cookie.append(PathosCookie)
-                                if Achievement107.has():
+                                if AcolasCookie in persistent.unlocked_items:
                                     cookie.append(AcolasCookie)
-                                if Achievement106.has():
+                                if HallukeCookie in persistent.unlocked_items:
                                     cookie.append(HallukeCookie)
                             vbox:
-                                use screen_buylist(player, [StreetFood9, StreetFood10], p=0.2, d=15, n='货架1')
+                                use screen_buylist(player, [StreetFood9, StreetFood10, ChewingGum], p=0.2, d=15, n='零食')
                                 null height 10
-                                use screen_buylist(player, drinks, p=0.35, d=20, n='货架2')
+                                use screen_buylist(player, drinks, p=0.15, d=20, n='饮料')
                                 null height 10
-                                use screen_buylist(player, cookie, p=0.1, d=0, n='货架3')
+                                use screen_buylist(player, cookie, p=0.1, d=0, n='饼干')
                                 null height 30
                                 textbutton ''
                     
@@ -199,9 +199,12 @@ screen screen_explore_buystreetfood(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [StreetFood1, StreetFood2], p=0.2, d=30, n='货架1')
+                                use screen_buylist(player, [StreetFood1, StreetFood2], p=0.2, d=30, n='热食')
                                 null height 10
-                                use screen_buylist(player, [StreetFood3, StreetFood4], p=0.1, d=30, n='货架2')
+                                use screen_buylist(player, [StreetFood3, StreetFood4], p=0.1, d=30, n='冷食')
+                                if player.dep_p > 4:
+                                    null height 10
+                                    use screen_buylist(player, [StreetFood11,StreetFood12,StreetFood13], p=-1, d=30, n='饮料')
                                 null height 30
                                 textbutton ''
 
@@ -259,29 +262,45 @@ screen screen_explore_buystreetgift(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [Humidifier, MusicBox, ClockTower, TomatoBrooch, ToyDuck], p=1.5, d=30, n='礼品')
-                                if Achievement400.has() and not Sandglass.has(player):
-                                    null height 10
-                                    use screen_buylist(player, [Sandglass], p=1.0, d=30, n='？？？')
-                                if Achievement401.has() and not ChaoticPendulum.has(player):
-                                    null height 10
-                                    use screen_buylist(player, [ChaoticPendulum], p=1.0, d=30, n='？？？')
+                                use screen_buylist(player, [TomatoBrooch, ToyDuck, SunnyDoll], p=0.8, d=30, n='礼品')
+                                null height 10
+                                use screen_buylist(player, [Humidifier, MusicBox, ClockTower], p=1.5, d=30, n='贵重礼品')
                                 null height 30
                                 textbutton ''
 
 
 label explore_shop_5:
     scene cafe with fade
-    "难得出门，喝点新鲜的咖啡好了。"
+    if p.times<11:
+        "咖啡渣的气味充斥着这家咖啡厅，如果我想在这里呆一段时间，应该去买杯咖啡……"
+    else:
+        "已经很晚了，买完咖啡就尽快离开好了……"
     $temp = p.money
     call screen screen_explore_buycoffee(p)
     $p.visitedStore.add(5)
     if p.money==temp:
         "算了，都太贵了。"
+        jump GoOutside_result
     else:
-        "今晚加班的时候喝……"
-    jump GoOutside_result
-
+        if p.times<11:
+            menu:
+                "要去找个座位呆一会么？"
+                "找一个空位":
+                    pass
+                "离开":
+                    jump GoOutside_result
+        else:
+            jump GoOutside_result
+    $p.times+=1
+    $CafeBuff.add(p)
+    $Notice.show()
+    $p.onOutside = False
+    jump after_executing_task_label
+    
+label explore_shop_5_end:
+    "差不多该回去了……"
+    $CafeBuff.clearByType(p)
+    jump before_operate_screen_label
 
 screen screen_explore_buycoffee(player):
     #tag gamegui
@@ -326,6 +345,10 @@ screen screen_explore_buycoffee(player):
                                 use screen_buylist(player, [StreetFood5, StreetFood6, StreetFood7, StreetFood8], p=0.4, d=30, n='咖啡')
                                 null height 10
                                 use screen_buylist(player, [CreamCake, StrawberryCake, OrangeCake], p=0.4, d=20, n='蛋糕')
+                                if CoffeeMachine.has(player):
+                                    null height 10
+                                    use screen_buylist(player, [Coffee1, Coffee2, Coffee3], p=-1, d=0, ds=False, n='咖啡材料')
+
                                 null height 30
                                 textbutton ''
 
@@ -384,7 +407,10 @@ screen screen_explore_buystreetflower(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [Flower1, Flower2, Flower3], p=0.6, d=30, n='鲜花')
+                                $flowers = [Flower1, Flower2, Flower3]
+                                if player.mon == 5 and player.day in (20, 21):
+                                    $flowers.append(Flower4)
+                                use screen_buylist(player, flowers, p=0.6, d=30, n='鲜花')
                                 null height 10
 
                                 if not Cactus.has(player) and not WellCactus.has(player):
@@ -443,15 +469,22 @@ screen screen_explore_store2(player):
                         viewport:
                             mousewheel True
                             draggable True
-                            #scrollbars "vertical"
+                            scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [Knife], p=0.5, d=20, n='货架1')
+                                use screen_buylist(player, [Knife], p=0.5, d=20, n='刀具')
                                 null height 10
-                                use screen_buylist(player, [FixKit, Bondage], p=0.8, d=20, n='货架2')
+                                use screen_buylist(player, [FixKit, Bondage], p=0.8, d=20, n='工具组')
                                 null height 10
-                                use screen_buylist(player, [RecordingPen, FasciaGun], p=1, d=20, n='货架3')
+                                use screen_buylist(player, [RecordingPen, FasciaGun], p=1, d=20, n='小电器')
                                 null height 10
-                                use screen_buylist(player, [Fridge], p=1.5, d=10, n='货架4')
+                                use screen_buylist(player, [Tarot, D6, D20, D1000], p=0.35, d=10, n='玩具')
+                                null height 10
+                                use screen_buylist(player, [Knife], p=0.5, d=20, n='刀具')
+                                if GoFishing.isUnlocked(player):
+                                    null height 10
+                                    use screen_buylist(player, [FishingRod1,FishingRod2,FishingRod3,FishingRod4,FishingRod99], p=-1, d=50, n='鱼竿')
+                                    null height 10
+                                    use screen_buylist(player, [FishingAccessory1,FishingAccessory3,FishingAccessory4], p=-1, d=50, n='渔具')
                                 null height 30
                                 textbutton ''
 
@@ -507,6 +540,6 @@ screen screen_explore_store3(player):
                             draggable True
                             #scrollbars "vertical"
                             vbox:
-                                use screen_buylist(player, [BadmintonRacket, Sneakers, NotePad, FileFolder], p=0.8, d=20, n='货架1')
+                                use screen_buylist(player, [BadmintonRacket, Sneakers, NotePad, FileFolder], p=0.8, d=20, n='文体用品')
                                 null height 30
                                 textbutton ''

@@ -1,5 +1,6 @@
 label end_call:
     $renpy.sound.stop(channel="chara_voice")
+    $calling = True
     jump operate_screen_label
 
 
@@ -7,45 +8,61 @@ label call_parents:
     if p.hadAskedForMoney:
         "算了……"
         "我已经管他们要过钱了。"
-    elif p.meds()*p.price+p.money>500:
+    elif p.money>500:
         "没什么必要还是不要给他们打电话了……"
     else:
         stop music fadeout 5
         "拨通了电话……"
         "……"
-        mom"“[p.name]！好久没听到你声音啦！”"
-        dad"“你在大城市找了份好工作啊，不愧是我的好儿子。”"
-        dad"“爸爸妈妈在家里过的很好，开了一家超市，平时卖一些烟酒零食，也能养活得起自己，不用担心我们啦！”"
-        mom"“是啊，我和你爸现在的日子过得很好，你只需要在那边好好上班，养活好自己就行啦！”"
-        mom"“过年还回来不？啥时候找个女朋友啊？”"
-        dad"“哎呀，你少说几句吧，不然他又不乐意了。”"
-        mom"“宝贝打电话给爸妈有什么事呀？心情不好也可以来和妈聊聊，你都挺长时间没和我们说点啥了！”"
-        menu:
-            "要钱":
-                mom"“啊……是这个事啊。”"
-                mom"“你在那边工作困难的话，尽管和我们要钱就是，要是丢了工作或者受了欺负，就回家里就行。”"
-                mom"“钱打过去了，爸妈不在你身边，你已经是个大人了，在那边照顾好自己啊。”"
-                if p.onVacation:
-                    $temp = 'normal2_eyebrow'
-                else:
-                    $temp = 'normal2_eyebrow glasses white no_hat'
-                $ss(temp)
-                s"“嗯，没什么事我就挂了。”"
-                $sh()
-                mom"“妈啥也不懂，也就不多问了，怕你被我们问得烦。”"
-                mom"“有啥事下次再打电话给我们啊。”"
-                if p.onVacation:
-                    $temp = 'sad_eyebrow'
-                else:
-                    $temp = 'sad_eyebrow glasses white no_hat'
-                $ss(temp)
-                s"“嗯。”"
-                $sh()
-                play sound audio.interruption
-                "……挂断了电话。"
-                $p.hadAskedForMoney = True
-                $p.money += 2000.0
-                $showNotice(['X付宝到账：2000元！'])
+        if p.experience == 'wri':
+            mom"“你还有脸打电话来？”"
+            mom"“上了那么多年大学，好不容易整个工作，还让你给辞了？”"
+            mom"“你是不是有病？”"
+            mom"“别想着让我们养活你，你就算是饿死也是活该！”"
+            if p.onVacation:
+                $temp = 'sad_eyebrow'
+            else:
+                $temp = 'sad_eyebrow glasses white no_hat'
+            $ss(temp)
+            s"“嗯。”"
+            $sh()
+            play sound audio.interruption
+            "……挂断了电话。"
+            $p.hadAskedForMoney = True
+        else:
+            mom"“[p.name]！好久没听到你声音啦！”"
+            dad"“你在大城市找了份好工作啊，不愧是我的好儿子。”"
+            dad"“爸爸妈妈在家里过的很好，开了一家超市，平时卖一些烟酒零食，也能养活得起自己，不用担心我们啦！”"
+            mom"“是啊，我和你爸现在的日子过得很好，你只需要在那边好好上班，养活好自己就行啦！”"
+            mom"“过年还回来不？啥时候找个女朋友啊？”"
+            dad"“哎呀，你少说几句吧，不然他又不乐意了。”"
+            mom"“宝贝打电话给爸妈有什么事呀？心情不好也可以来和妈聊聊，你都挺长时间没和我们说点啥了！”"
+            menu:
+                "要钱":
+                    mom"“啊……是这个事啊。”"
+                    mom"“你在那边工作困难的话，尽管和我们要钱就是，要是丢了工作或者受了欺负，就回家里就行。”"
+                    mom"“钱打过去了，爸妈不在你身边，你已经是个大人了，在那边照顾好自己啊。”"
+                    if p.onVacation:
+                        $temp = 'normal2_eyebrow'
+                    else:
+                        $temp = 'normal2_eyebrow glasses white no_hat'
+                    $ss(temp)
+                    s"“嗯，没什么事我就挂了。”"
+                    $sh()
+                    mom"“妈啥也不懂，也就不多问了，怕你被我们问得烦。”"
+                    mom"“有啥事下次再打电话给我们啊。”"
+                    if p.onVacation:
+                        $temp = 'sad_eyebrow'
+                    else:
+                        $temp = 'sad_eyebrow glasses white no_hat'
+                    $ss(temp)
+                    s"“嗯。”"
+                    $sh()
+                    play sound audio.interruption
+                    "……挂断了电话。"
+                    $p.hadAskedForMoney = True
+                    $p.money += 3000.0
+                    $showNotice(['X付宝到账：3000元！'])
     jump end_call
 
 label call_Arnel:
@@ -67,8 +84,46 @@ label arnel_q:
     menu:
         ar"“干嘛？又想请假？”{fast}"
         "请假":
+            if PhysPun.has(p) and p.hadAskedForSickLeave and p.hadAskedForLeave:
+                ar"“你这周不是请过病假了吗？”"
+                ar"“我看你的工作也没完成多少啊，身体那么差那就去人事处办一下辞职手续吧？”"
+                ar"“我们可供不起养病的大爷。”"
+                $ss('glasses white no_hat scared_eyebrow awkward_mouth')
+                s"“……不……不用了……”"
+                $sh()
+                ar"“有话快说，我还忙着呢。”"
+                jump arnel_q
+            if PhysPun.has(p) and not p.hadAskedForSickLeave:
+                $ss('glasses white no_hat normal2_eyebrow smile_eyes awkward_mouth sweat')
+                s"“生病了……想请病假……”"
+                $sh()
+                ar"“哦，那要去医院赶紧治好，早点回来。”"
+                ar"“要是把公司里的别人都传染了，你就直接卷铺盖走人吧！”"
+                $ss('glasses white no_hat sad_eyebrow sweat mood')
+                s"“好……”"
+                $sh()
+                $ss('glasses white no_hat sad_eyebrow sad_eyes awkward_mouth sweat mood')
+                ar"“你这周的工资我已经给你扣了，公司规定病假也不能带薪休息，这周的任务在家里也得给我做些，别堆到明天。”"
+                $sh()
+                s"“嗯。”"
+                play sound audio.interruption
+                "挂断了电话。"
+                "呼，可以回家歇一会了。"
+                "……"
+                
+                scene workarea with fade  
+                $p.wages = r2(p.wages * 0.95)
+                $p.onVacation = True
+                $p.stime(55)
+                $p.morning_checkTask()
+                $p.hadAskedForSickLeave = True
+                $routine_music(p)
+                "光速打车回家了……"
+                jump end_call
+
+
             if p.hadAskedForLeave:
-                ar"“你这周不是请过假了吗？”"
+                ar"“你这周不是请过事假了吗？”"
                 ar"“我看你的工作也没完成多少啊，这么喜欢在家呆着那就去人事处办一下辞职手续吧？”"
                 $ss('glasses white no_hat scared_eyebrow awkward_mouth')
                 s"“……不……不用了……”"
@@ -136,34 +191,34 @@ label arnel_q:
             $temp=rd(0,13)
             if temp==0:
                 ar"“你把你的活都干完了再约我出门吧。”"
-            if temp==1:
+            elif temp==1:
                 ar"“哟，你不是应该很讨厌我吗？”"
                 ar"“想不到你也会对我感兴趣啊啊哈哈哈……”"
                 ar"“等你长大一点再来约我吃饭吧？”"
-            if temp==2:
+            elif temp==2:
                 ar"“想透我？”"
-            if temp==3:
+            elif temp==3:
                 ar"“有时候看到你请假直接跑去医院，是不是就是着急治脑子啊？”"
-            if temp==4:
+            elif temp==4:
                 ar"“好了，再说就烦了。”"
-            if temp==5:
+            elif temp==5:
                 ar"“说点有用的行吗？”"
-            if temp==6:
+            elif temp==6:
                 ar"“你觉得现在是聊这个的时候吗？”"
-            if temp==7:
+            elif temp==7:
                 ar"“你认真的？”"
                 ar"“带我吃楼下的麻辣烫还是扬州炒面啊？”"
-            if temp==8:
+            elif temp==8:
                 ar"“……别吧？”"
-            if temp==9:
+            elif temp==9:
                 ar"“无语，你是不是没事闲的啊。”"
-            if temp==10:
+            elif temp==10:
                 ar"“你给我打电话不会就因为这个吧？”"
-            if temp==11:
+            elif temp==11:
                 ar"“我还不如从咱们的楼层直接跳下去。”"
-            if temp==12:
+            elif temp==12:
                 ar"“呃，你是不是有病啊？”"
-            if temp==13:
+            elif temp==13:
                 ar"“公司帮你缴的电话费不是为了让你打电话和我开玩笑的。”"
             $ss('glasses white no_hat normal2_eyes mood')
             s"“呃……”"
@@ -196,6 +251,16 @@ label pathos_q:
     
     menu:
         pathos"“是我，有什么想问的就说吧，我赶时间。”{fast}"
+
+        "告诉他自己抓到了一个和他长得差不多的娃娃" if PathosDoll.has(p):
+            $ss(clothes)
+            s"“……”"
+            $ss(clothes+'scared_mouth normal2_eyes awkward_eyebrow')
+            s"“……说起来，我前几天去游乐场，抓到了一个和你长得差不多的娃娃诶。”"
+            $sh()
+            pathos"“……神经病，屁大点事也来烦我，没事我就挂了。”"
+            "狗东西态度怎么那么差，我还把你当朋友分享这事呢……"
+            jump pathos_q
         "关于药物使用的疑问":
             pathos"“我就知道你没听我说话，算了，谁让我是你的专属医生呢？”"
             pathos"“使用一次药物后，再次使用相同的药物会降低恢复效率到33\%，使用其他的药物会降低恢复效率到50\%。”"
@@ -252,33 +317,33 @@ label pathos_q:
             $temp=rd(0,13)
             if temp==0:
                 pathos"“没时间。”"
-            if temp==1:
+            elif temp==1:
                 pathos"“下次。”"
                 pathos"“最近很忙。”"
-            if temp==2:
+            elif temp==2:
                 pathos"“我今晚有约了。”"
-            if temp==3:
+            elif temp==3:
                 pathos"“如果你的精神状态还算良好，就不要对你的主治医师发情了。”"
-            if temp==4:
+            elif temp==4:
                 pathos"“其实我有男朋友的。”"
                 pathos"“他今晚好不容易有时间陪我。”"
-            if temp==5:
+            elif temp==5:
                 pathos"“我拒绝。”"
-            if temp==6:
+            elif temp==6:
                 pathos"“没兴趣。”"
-            if temp==7:
+            elif temp==7:
                 pathos"“今天不行。”"
-            if temp==8:
+            elif temp==8:
                 pathos"“……”"
-            if temp==9:
+            elif temp==9:
                 pathos"“你没有其他的事可以做了吗？”"
-            if temp==10:
+            elif temp==10:
                 pathos"“别开玩笑，严肃点。”"
-            if temp==11:
+            elif temp==11:
                 pathos"“下次下次。”"
-            if temp==12:
+            elif temp==12:
                 pathos"“唉，我现在可是在上班时间诶，能不能说点正经的？”"
-            if temp==13:
+            elif temp==13:
                 pathos"“下次你这样我就要收费了。”"
             $ss(clothes+'sweat')
             s"“好吧。”"
@@ -302,18 +367,18 @@ label pathos_q:
 label call_Halluke:
     "给Halluke打电话。"
     "……"
+    if p.hal_p > 90:
+        stop music
+        "无人接听。"
+        play sound audio.interruption
+        "……"
+        jump end_call
     if p.hal_p == 11 and p.today == 6:
         play sound audio.interruption
         "他挂断了电话。"
         jump end_call
-    elif p.hal_p > 90:
-        stop music
-        "“对不起，您拨打的电话是空号。”"
-        play sound audio.interruption
-        "……"
-        jump end_call
 
-    elif not (p.times >= 10 or p.today in (6, 7)):
+    if not (p.times >= 10 or p.today in (6, 7)):
         play sound audio.interruption
         "他挂断了电话。"
         "可能他还在上课吧？晚上或者周末再打给他吧。"
@@ -321,11 +386,7 @@ label call_Halluke:
     h"“诶，是[p.name]啊，是很紧急的事对吧？”"
     jump halluke_q
 
-
-label halluke_q:
-    $clothes = ''
-    if not p.onVacation:
-        $clothes = 'glasses white no_hat '
+label halluke_ques:
     menu:
         "想了解你更多一点":
             h"“诶……什么……”"
@@ -351,44 +412,56 @@ label halluke_q:
             h"“如果你也想开始锻炼身体的话，我建议先从坚持每天走路开始哦。”"
             h"“等走几千步脚也不会很酸的时候，就去试试慢跑和速跑吧？”"
             h"“慢跑能够放松身心，而速跑可以快速提高身体素质。”"
-            h"“如果你觉得跑步也不够了，可以试试去健身房！里面有很多种器械，你可以根据自己想要的效果来选择。”"
-            h"“具体效果快速放松，快速增加酸痛，快速提升身体素质，甚至直接获取体魄……等等器械，有很多不同的器械可以选择。”"
+            h"“如果你觉得跑步也不够了，可以试试去健身房！里面有很多种器械，你可以根据自己喜欢的方式来选择。”"
+            h"“有些可以让你快速放松，快速增加酸痛，快速提升身体素质，甚至直接获取体魄……等等，还有很多不同的运动器械可以选择。”"
             h"“但是最大的问题在于，越是难度高的运动越容易受伤，从15\%~90\%不等。”"
             h"“好消息是这些概率可以被专注度以加算形式降低，需要较高的身体素质来提升运动的专注度，还有各种状态等等……”"
+            h"“加算的意思是，如果你有总计60\%的运动专注度（通用专注度的效果只有50\%），那么做受伤概率为90\%的运动，也只有30\%的概率会受伤。”"
             h"“受伤了也不要担心！多休息，读一些和受伤恢复相关的书，获得的奖励或许比正常运动还要多！”"
             jump halluke_q
+        "返回":
+            jump halluke_q
+
+
+label halluke_q:
+    $clothes = ''
+    if not p.onVacation:
+        $clothes = 'glasses white no_hat '
+    menu:
+        "问些问题":
+            jump halluke_ques
         "随便聊聊":
             $talk = rd(1, p.hal_p)
             if talk == 1:
                 h"“喜欢羽毛球大概也只是因为自己身体太小没法上足球场，篮球场这样的地方吧？”"
                 h"“好像很危险的样子。”"
-            if talk == 2:
+            elif talk == 2:
                 h"“关于我的家人吗……我不是很想聊他们……”"
-            if talk == 3:
+            elif talk == 3:
                 h"“上次课又被老师表扬了……”"
                 h"“哎呀，如果是你的话，努力一点应该也会被表扬的！”"
-            if talk == 4:
+            elif talk == 4:
                 h"“我经常和其他班的人打球？哦……那些人是隔壁班的打球比较厉害的……”"
                 h"“不过其实也不是我去主动认识他们的，和你一样，他们是把我“捡走”的。”"
-            if talk == 5:
+            elif talk == 5:
                 h"“啊……想打球了……但是作业还没写完……”"
                 h"“其实我学习成绩没有很好哦，其实我偶尔也会玩点养成类的单机游戏……”"
-            if talk == 6:
+            elif talk == 6:
                 h"“在大学的生活其实还好……没有想象中的很差劲的室友，课程也不是很满，也没有什么无聊的社团啊强制参加的活动之类的……”"
                 h"“嘿嘿……”"
-            if talk == 7:
+            elif talk == 7:
                 h"“抱歉……我……在现实里……说话经常那样，但我在打电话的时候要比现实见面好得多……”"
                 h"“请不要在意那些事，你的羽毛球打得很棒哦。”"
-            if talk == 8:
+            elif talk == 8:
                 h"“下次再打球的时候要记得带水哦，不然很容易脱水的，你可别觉得我在吓唬你……”"
-            if talk == 9:
+            elif talk == 9:
                 h"“衣服都快给我拽掉了……下次一定要让你好好赔我一件！”"
-            if talk == 10:
+            elif talk == 10:
                 h"“那个……冰淇淋……很好吃……谢谢你……”"
-            if talk == 11:
+            elif talk == 11:
                 h"“体育课这么快就要结课了……在那之后体育馆好像也要重新维修的样子……”"
                 h"“总之，周六一定要来哦……”"
-            if talk >= 12:
+            elif talk >= 12:
                 h"“那个……周末……要出来吃点什么吗……”"
                 h"“[p.name]……我们很久没见了吧？没有很久？但我感觉好想你哦……”"
             jump halluke_q
@@ -403,24 +476,26 @@ label halluke_q:
             $temp=rd(0,7)
             if temp==0:
                 h"“哎呀，今天好像不行诶……”"
-            if temp==1:
+            elif temp==1:
                 h"“今晚有课……要不明天再说吧？”"
-            if temp==2:
+            elif temp==2:
                 h"“不行……我的作业马上就要交了……我还没写……”"
-            if temp==3:
+            elif temp==3:
                 h"“诶？”"
-            if temp==4:
+            elif temp==4:
                 h"“噢啊……我也想出来吃点东西，但我已经吃过了。”"
-            if temp==5:
+            elif temp==5:
                 h"“我本来是有时间的！但是我被辅导员抓来看讲座了……”"
-            if temp==6:
+            elif temp==6:
                 h"“抱歉，我吃过饭了诶。”"
-            if temp==7:
+            elif temp==7:
                 h"“今晚不太饿，明晚吧？”"
             $ss(clothes+'sweat')
             s"“好吧。”"
             $sh()
             jump halluke_q
+
+
         "结束通话":
             $ss(clothes+'normal2_eyes')
             s"“其实……也没什么事啦~”"
@@ -448,18 +523,19 @@ label halluke_q:
 label call_Acolas:
     "给Acolas打电话。"
     "……"
-    if p.aco_p in (9, 10, 11):
-        play sound audio.interruption
-        "他挂断了电话。"
-        jump end_call
-    elif p.aco_p > 90:
+    if p.aco_p > 90:
         stop music
-        "“对不起，您拨打的电话是空号。”"
+        "无人接听。"
         play sound audio.interruption
         "……"
         jump end_call
 
-    elif not (p.times >= 10 or p.today in (6, 7)):
+    if p.aco_p in (9, 10, 11):
+        play sound audio.interruption
+        "他挂断了电话。"
+        jump end_call
+
+    if not (p.times >= 10 or p.today in (6, 7)):
         play sound audio.interruption
         "他挂断了电话。"
         "现在是上班时间……晚上或者周末再打给他吧。"
@@ -468,11 +544,7 @@ label call_Acolas:
     a"“[p.name]？有什么事吗？”"
     jump acolas_q
 
-
-label acolas_q:
-    $clothes = ''
-    if not p.onVacation:
-        $clothes = 'glasses white no_hat '
+label acolas_ques:
     menu:
         "想了解你更多一点":
             a"“了解我？”"
@@ -493,7 +565,7 @@ label acolas_q:
         "该怎样进行工作":
             a"“我知道你经常上班摸鱼……虽然我不支持这种行为，但是如果你实在很累的话，适当摸鱼也是可以的。”"
             a"“在偷懒中可以做很多事，这允许你在工作日期间锻炼身体，练习写作，甚至读书。”"
-            a"“最主要的应该也是读书了，书本能带来很多增益，但在家里的时间很宝贵，所以把书拿到公司来看也不是不能被接受。”"
+            a"“最主要的应该也是读书了，书籍能带来很多增益，但在家里的时间很宝贵，所以把书拿到公司来看也不是不能被接受。”"
             a"“另外，公司里似乎很流行一种……先在工位上睡一上午，午休结束后一直发疯工作到下班……。”"
             a"“看上去似乎比正常上班更有效率？但我好像不适合这种方法。”"
             jump acolas_q
@@ -507,37 +579,48 @@ label acolas_q:
             a"“效果强力，但完全随机……持续时间也是比较随机。”"
             a"“除非你完全不想见到我，不然我还是建议每周都去会议。”"
             jump acolas_q
+        "返回":
+            jump acolas_q
+
+label acolas_q:
+    $clothes = ''
+    if not p.onVacation:
+        $clothes = 'glasses white no_hat '
+    menu:
+        "问些问题":
+            jump acolas_ques
+
         "随便聊聊":
             $talk = rd(1, p.aco_p)
             if talk == 1:
                 a"“没什么特别的事的话我就先去工作了。”"
-            if talk == 2:
+            elif talk == 2:
                 a"“关于我的小时候？……以后再讲给你听吧……”"
-            if talk == 3:
+            elif talk == 3:
                 a"“是啊……是很喜欢你的……”"
                 a"“为什么？喜欢不需要原因哦。”"
-            if talk == 4:
+            elif talk == 4:
                 a"“想吃火锅了吗？”"
                 a"“等下次我们再在会上被表扬的时候我们就去吃吧？”"
-            if talk == 5:
+            elif talk == 5:
                 a"“嗯……虽然我写代码很快，但其实没有你想的那么辛苦。”"
                 a"“就像是画家画画，虽然有不喜欢画画的画家，但也存在热爱画画的画家啊？”"
-            if talk == 6:
+            elif talk == 6:
                 a"“等哪天带你去尝尝咖啡营地的早餐吧？”"
                 a"“感觉你每天早上状态都不是很好的样子，早餐也都是点一些乱七八糟的外卖……”"
-            if talk == 7:
+            elif talk == 7:
                 a"“抱歉……让你担心了吧？”"
                 a"“但我真的没关系的。”"
-            if talk == 8:
+            elif talk == 8:
                 a"“好想你……真的……。”"
                 a"“好像我们有段时间没见了吧……”"
-            if talk == 9:
+            elif talk == 9:
                 a"“我喜欢的动漫吗……”"
                 a"“最近在看一款名叫《城堡与莫梭提斯》的动漫，还没看到结局，但总觉得会发生什么不好的事……”"
-            if talk == 10:
+            elif talk == 10:
                 a"“你可要好好对待我的笔记本哦……”"
-                a"“按某人的说法，我把记录了这么多东西的本子送给你，就像送钻戒一样珍贵……”"
-            if talk >= 11:
+                a"“按某人的说法，我把记录了这么多东西的本子送给你，就像把钻戒送给你一样……”"
+            elif talk >= 11:
                 a"“抱歉，我不是很喜欢被人打搅工作……”"
                 a"“我为我之前的出口伤人道歉。”"
 
@@ -554,31 +637,29 @@ label acolas_q:
             if temp==0:
                 a"“但是我工作还没做完。”"
                 a"“下次。”"
-            if temp==1:
+            elif temp==1:
                 a"“我的泡面已经快泡好了。”"
-            if temp==2:
+            elif temp==2:
                 a"“今晚不行……上面有一个重要的会议……”"
-            if temp==3:
+            elif temp==3:
                 a"“不行，虽然我很想和你出来吃点什么。”"
-            if temp==4:
+            elif temp==4:
                 a"“已经吃过晚饭了。”"
-            if temp==5:
+            elif temp==5:
                 a"“今晚要写报告，还有很多东西，下次吧。”"
-            if temp==6:
+            elif temp==6:
                 a"“这周的工作出了很多问题，我要修一下。”"
-            if temp==7:
+            elif temp==7:
                 a"“明晚吧，今晚事情有点多。”"
             $ss(clothes+'sweat')
             s"“好吧。”"
             $sh()
             jump acolas_q
+
+
         "结束通话":
             $ss(clothes+'normal2_eyes smile_mouth blush')
             s"“没什么事了，只是想和你随便聊聊……”"
-            $sh()
-            a"“你真可爱…”"
-            $ss(clothes+'smile_eyebrow smile_mouth happy blush')
-            s"“哎呀，你这家伙……”"
             $sh()
             a"“那我先挂了。”"
             $ss(clothes+'smile_eyebrow sad_eyes smile_mouth')
@@ -586,6 +667,78 @@ label acolas_q:
             $sh()
             play sound audio.interruption
             "他挂断了电话。"
+            jump end_call
+
+
+label call_Destot:
+    "给Destot打电话。"
+    "……"
+    if p.des_p > 90:
+        stop music
+        "无人接听。"
+        play sound audio.interruption
+        "……"
+        jump end_call
+
+    des"“前辈有什么事要我帮忙嘛！”"
+    jump destot_q
+
+
+label destot_q:
+    $clothes = ''
+    if not p.onVacation:
+        $clothes = 'glasses white no_hat '
+    menu:
+        "想了解你更多一点":
+            des"“那就再来一次我第一次遇见你的时候的自我介绍吧！”"
+            des"“我是Destot，现在就读于A市大学大四，专业是软件，梦想是成为很厉害的程序员！”"
+            des"“其他的信息……22岁，身高1米7，当然是不算耳朵的！”"
+            des"“爱好是编程和工作，喜欢吃素食但也吃肉，毕竟要补充蛋白质。”"
+            des"“……其实我送你东西吃也是看前辈您一忙起来就忘记吃饭了，如果经常不吃饭的话就会头疼。”"
+            des"“前辈有时候很难受的样子就是头疼吧……所以我想让你吃一点东西，可能就会好点。”"
+            jump destot_q
+        "关于能力值":
+            des"“就是说我自己现在的水平吧，因为实习生入职之后需要考核，考核之后才能签合同，在毕业之后入职。”"
+            des"“如果能力值不够的话可能就得离开了。”"
+            if p.des_p == 2:
+                des"“就麻烦前辈经常指导我一下下啦。”"
+                des"“这周末就是考核了，等到考核结束之后我的能力值就不会再变化了。”"
+                des"“虽然这不代表我就不学习了，可能是一种奇妙的‘规则’吧？”"
+                des"“能力值主要通过解锁的新日程‘指导Destot工作’来提升，除此之外，‘完成工作’、‘全力工作’和‘参加周会议’也能提升少量的能力值。”"
+                des"“能力值超过100之后就不会再提升了。”"
+            else:
+                des"“幸亏有前辈的帮忙，我才通过了考核哦？等过一阵子我就是你的同事啦！”"
+                des"“考核结束后，我就不会再提升能力值了。”"
+                des"“但我会在每周开始的时候帮你做一些工作，具体能做多少就取决于我的能力值啦——”"
+                des"“根据能力值，我能做的工作范围在10\%~25\%之间哦，我还是挺能干的吧？”"
+            jump destot_q
+
+        "随便聊聊":
+            $talk = rd(1, p.des_p)
+            if talk == 1:
+                des"“能遇到前辈我真的很开心……前辈不要嫌我太笨哦……”"
+            elif talk == 2:
+                des"“前辈的工作看样子很多很难呢，我真的能胜任吗？”"
+            elif talk == 3:
+                des"“前辈好像都不太喜欢吃饭的样子，饿肚子可不行啊，我送给你的外卖要记得吃哦……”"
+            elif talk == 4:
+                des"“自助餐是很好吃啊，不过我觉得能跟你一起吃才最开心……”"
+            elif talk == 5:
+                des"“我们当然是最好的朋友啦。”"
+
+            jump destot_q
+
+        "结束通话":
+            $ss(clothes+'normal2_eyes smile_mouth')
+            s"“也没什么事，就是想看看你有没有好好工作！”"
+            $sh()
+            des"“当然有啦，你教我的每个知识点我都记得呢。”"
+            $ss(clothes+'smile_eyebrow sad_eyes smile_mouth')
+            s"“那我挂啦。”"
+            $sh()
+            des"“嗯。”"
+            play sound audio.interruption
+            "我挂断了电话。"
             jump end_call
 
 

@@ -7,7 +7,6 @@ init python early:
             self.safe = 0.0
             self.route = None
             self.p2 = None
-
             self.mental = 80.0
             self.severity = 1.0
 
@@ -22,6 +21,9 @@ init python early:
             self.goal = 7.5
             self.achievedGoal = 0.0
             self.popularity = 1000
+            self.maxpopularity = 40000
+
+            self.experience = None
 
             self.mon = 4
             self.day = 29
@@ -35,6 +37,8 @@ init python early:
             self.dep_p = 0
             self.aco_p = 0
             self.sol_p = 0
+            self.des_p = 0
+            
 
             self.s4 = False
             self.s5 = False
@@ -43,8 +47,12 @@ init python early:
             self.s8 = False
             self.s9 = False
 
+            self.acosexdream = False
+            self.halsexdream = False
+
             self.onVacation = True
             self.onOutside = True
+            self.onShip = False
 
             self.cured = -1
 
@@ -96,6 +104,19 @@ init python early:
 
             self.fooduse = 0
 
+            self.drinklvl = 0
+            self.drinkexp = 0
+            self.drinkhp = 3
+            self.drinkwater = 6
+            self.drinkedwine = {}
+
+            self.fishpower = 0
+            self.fishpoint = 0
+            self.fishmaxenergy = 3
+            self.fishenergy = 3
+            self.fishprice = 50
+            self.fishcrit = 5
+
             self.savetime = None
 
             self.effects = []
@@ -103,8 +124,7 @@ init python early:
             
             self.unlockedTasks = set()
             self.lockedTasks = set()
-            self.starItems = []
-            self.plan = [NoTask, NoTask, NoTask]
+            self.plan = [NoTask, NoTask, NoTask, NoTask]
             self.plancheck = [False, False, False]
             self.gymplan = [NoSport, NoSport, NoSport]
             
@@ -116,31 +136,58 @@ init python early:
 
             self.unacComm = []
 
+            self.recentCommWri = []
+            self.recentCommIns = []
+            self.writing_honor = 100
+            self.writing_popularity = -1
+
+            self.doneComm = 0
+            self.doneFree = 0
+            self.gainCommPrice = 0
+            self.gainPopuPrice = 0
+
             self.retval = None
             self.retval1 = None
 
             self.hadAskedForMoney = False
             self.hadAskedForLeave = False
+            self.hadAskedForSickLeave = False
             self.finalStageDays = -1
             self.color = 1.0
 
+
             self.aggra = 0
-            self.messages = {'Pathos':[], 'Halluke':[], 'Acolas':[], 'Depline':[]}
+            self.messages = {'Pathos':[], 'Halluke':[], 'Acolas':[], 'Depline':[], 'Destot':[]}
             self.LocalStatistics = {}
+            self.LocalStatisticso = {}
 
             self.visitedStore = set()
+            self.dated = []
             self.version = config.version
 
-            self.difficultylocked = False
-
-            self.nousemed = 0
             self.playtime = 0
             self.restart = 0
             self.note = None
             
             self.staylate = False
             self.cheat = False
-            self.hatcolor = 0
+            self.drugfake = False
+
+            self.hal_noreply = 0
+            self.hal_achievement451_able = True
+
+            self.des_score = 0
+            self.des_noodles = False
+            import time
+            self.timestamp = time.strftime(_('%Y.%m.%d %H:%M:%S'),time.localtime(time.time()))
+
+            self.phone_wallpaper = "wallpaper_1"
+            self.levi_hunger = 80
+            self.levi_joy = 80
+
+            self.buyrandom = False
+            self.hasSchedule = False
+            self.uihelp = False
 
         def __eq__(self, other):
             return id(other) == id(self)
@@ -151,6 +198,117 @@ init python early:
         def rtn1(self, retval):
             self.retval1 = retval
         
+        def writing_grade(self):
+            recentWri = self.wri()
+            if self.recentCommWri:
+                recentWri = sum(self.recentCommWri)*1.0/len(self.recentCommWri)
+            
+            return r2(recentWri)
+
+            
+            
+
+        def writing_valuebouns(self):
+            if not self.recentCommIns:
+                return 1.0
+
+            recentIns = sum(self.recentCommIns)*1.0/len(self.recentCommIns)
+
+            recentWri = self.writing_grade()
+
+            if recentIns < 10*recentWri:
+                insbonus = recentIns - 50*recentWri
+            else:
+                insbonus = recentIns - 10*recentWri
+            
+            grade = insbonus * 0.01 + self.popularity*1.0 / 100000
+            grade *= max(self.writing_honor,10)*0.01
+            
+            return max(r4(grade), 0)
+
+
+
+
+
+        def player_default(self):
+            
+            persistent.beforename = self.name
+            
+
+            Novice.add(self)
+            PhysProb.add(self)
+            WeatherSunny.add(self)
+
+
+            if persistent.lastend == 'ne':
+                Sticker59.add(self)
+            if persistent.lastend == 'te':
+                OldPic.add(self)
+            if persistent.lastend == 'ce':
+                ExaminationReport.add(self)
+            if persistent.lastend == 'fe':
+                TransparentBottle.add(self)
+            if persistent.lastend == 'se':
+                TrainTicket.add(self)
+            if persistent.lastend == 'we':
+                TheBook.add(self)
+
+            persistent.lastend = None
+
+            
+            Freshness.clearByType(self)
+            Saver.save(self)
+            Notice.clear()
+
+
+
+
+
+        def give_experience(self, experience, args=None):
+            self.experience = experience
+            if self.experience == 'wor':
+                self.workingGain += 0.01
+                DrugHypnotic.add(self, 5)
+                DrugColdrex.add(self, 5)
+                Cola.add(self, 3)
+                StreetFood10.add(self, 2)
+                BookWor.add(self)
+                AMaverickLion.add(self)
+                ProfessionalBookWorking.add(self, 3)
+                self.visitedStore = {8}
+                Notice.clear()
+            elif self.experience == 'wri':
+                self.writing += 0.3
+                self.severityRegarded += 0.3
+                self.sportConcentration -= 20
+                self.maxpopularity += 40000
+                MusicBox.add(self)
+                AppleJuice.add(self, 2)
+                Cola.add(self, 2)
+                StreetFood10.add(self, 5)
+                CoffeeMachine.add(self)
+                ChewingGum.add(self)
+                BookUndead.add(self)
+                BookWrite.add(self)
+                BookWri.add(self)
+                BookIns.add(self)
+                Coffee1.add(self, 5)
+                ProfessionalBookWriting.add(self, 2)
+                ProfessionalBookSeverity.add(self, 2)
+                WriterItem1.add(self)
+                RecordingPen.add(self)
+                FixedInspiration.add(self, 20)
+                WriterProof.add(self)
+                self.money = 1000.0
+                self.popularity = 10000
+                self.recentCommWri = [1.4, 1.4, 1.4]
+                self.recentCommIns = [20, 20, 20]
+                Notice.clear()
+            elif self.experience == 'cos':
+                self.working += args[0]
+                self.physical += args[1]
+                self.writing += args[2]
+
 
         def refreshUnacComm(self):
             self.unacComm = [Comm(self), Comm(self)]
@@ -158,31 +316,64 @@ init python early:
             for i in range(8):
                 if rra(self, perc):
                     self.unacComm.append(Comm(self))
+        
+        def updatePopularity(self):
+            if self.popularity > 1000 and rra(self, 50):
+                before = self.popularity
+                boon = 1.0
+                if self.cured != -1:
+                    boon *= 3
+                if self.experience == 'wri':
+                    boon *= 0.5
+                
+                lost = int(self.popularity * ra(self, 5*boon, 10*boon) * 0.001 * self.writing_popularity)
+                self.popularity = max(self.popularity + lost, 1000)
+                lost = before - self.popularity
+                if self.writing_popularity != -1:
+                    self.writing_popularity -= 0.25
+                if lost > 0:
+                    Notice.add("您流失了%s个粉丝。"%lost)
+                else:
+                    Notice.add("您获得了%s个新粉丝。"%(-lost))
+                    
 
         def receiveComm(self, comm):
             unc = UnfinishedCommission(p)
             unc.comm = comm
+            GuideI.unlock(UnfinishedCommission)
             self.items.append(unc)
             showNotice([_('已接取新委托：%s') % comm.name])
             self.unacComm.remove(comm)
 
 
         def findNoTask(self):
-            for i in range(3):
+            if len(self.plan) == 3:
+                self.plan.append(NoTask)
+            for i in range(4):
                 if self.plan[i] == NoTask:
                     return i
+            if Stayuplate.has(self):
+                return 3
             return 2
 
         def setTask(self, task):
             if self.findNoTask() != -1:
                 self.plan[self.findNoTask()] = task
+
+        def isScheduled(self):
+            if Stayuplate.has(self):
+                return NoTask in self.plan
+            return NoTask in self.plan[:3]
                     
         def removeTask(self, ind):
             self.plan[ind] = NoTask
 
         def morning_checkTask(self):
-            self.plancheck = [False, False, False]
+            self.plancheck = [False, False, False, False]
             self.checkTask()
+            for i in range(2):
+                if self.plan[i] == SkipTask:
+                    self.plan[i] = NoTask
             if AcolasItem4.has(self) and not config.developer and self.cured < 0:
                 self.plan = [AcolasTask1, AcolasTask1, AcolasTask1]
             if p.hal_p == 50 and p.today == 6 and self.cured < 0:
@@ -240,8 +431,8 @@ init python early:
                 return max(0.0001, r2(self.severity * self.severityRegarded))
             if self.severity < 0.65 + 0.05 * self.week:
                 self.severity = 0.65 + 0.05 * self.week
-            if self.severityRegarded <= 0.2:
-                return r2(self.severity * 0.2)
+            if self.severityRegarded <= 0.1 + 0.04 * self.week:
+                return r2(self.severity * 0.1 + 0.04 * self.week)
 
             return r2(self.severity * self.severityRegarded)
         
@@ -272,7 +463,6 @@ init python early:
             scale *= 1-(self.fooduse* 0.005)
             scale *= (self.basicRecovery + 1) / 2
             scale *= 0.001
-            scale = max(0.2, scale)
             return scale
 
         def useDrugScale(self):
@@ -282,13 +472,74 @@ init python early:
             return scale
         
         def aggravationConsumption(self):
-            consumption = 70
-            consumption *= self.deteriorateConsumption  # 受睡眠消耗数值影响
-            consumption *= max(self.sev(), 1.0) ** 1.5
+            
+            consumption = 70 + 2.5 * self.week
+            if p.week>0:
+                consumption *= max(0.1, self.deteriorateConsumption)  # 受睡眠消耗数值影响
+            consumption *= max(self.sev(), 0.65 + 0.05 * self.week) ** 1.5
             consumption *= self.phyCons()  # 受身体素质和严重度影响
             if consumption < self.mental * 0.5:
                 consumption = self.mental * 0.5
             return r2(consumption)
+
+        def gain_mental(self, rec, due='', extra=False):
+            rec = r2(rec)
+            self.mental += rec
+            info = ''
+            if due:
+                info += '由于' + due + '，'
+            if extra:
+                info += '额外'
+                
+            if rec > 0:
+                info += '{color=#7CFC00}恢复{/color}了%s点精神状态！' % rec
+                Stat.stato_record(self, 'rec', rec)
+            elif -0.01 < rec < 0.01:
+                info += '精神状态没有变化。'
+            else:
+                info += '{color=#FF4500}消耗{/color}了%s点精神状态！' % -rec
+                Stat.stato_record(self, 'con', -rec)
+
+            Notice.add(info)
+
+
+        def gain_abi(self, rec, kind, due='', extra=False):
+            abis = {
+                'wri' : ('writing', '写作技巧'),
+                'wor' : ('working', '工作能力'),
+                'phy' : ('physical', '写作技巧'),
+                'sev' : ('severity', '严重程度'),
+            }
+            revs = ('sev', )
+            rec = r2(rec)
+            attr, attrname = abis[kind]
+            setattr(self, attr, getattr(self, attr)+rec)
+            info = ''
+            if due:
+                info += '由于' + due + '，'
+            if extra:
+                info += '额外'
+            
+            if kind in revs:
+                if rec > 0:
+                    info += '{color=#FF4500}提升{/color}了%s点%s！' % (int(rec * 100), attrname)
+                    Stat.stato_record(self, kind+'up', rec)
+                elif -0.01 < rec < 0.01:
+                    info += '%s没有变化。' % attrname
+                else:
+                    info += '{color=#7CFC00}降低{/color}了%s点%s！' % (int(-rec * 100), attrname)
+                    Stat.stato_record(self, kind+'down', -rec)
+            else:
+                if rec > 0:
+                    info += '{color=#7CFC00}提升{/color}了%s点%s！' % (int(rec * 100), attrname)
+                    Stat.stato_record(self, kind+'up', rec)
+                elif -0.01 < rec < 0.01:
+                    info += '%s没有变化。' % attrname
+                else:
+                    info += '{color=#FF4500}降低{/color}了%s点%s！' % (int(-rec * 100), attrname)
+                    Stat.stato_record(self, kind+'down', -rec)
+
+            Notice.add(info)
 
         def aggravation(self):
             consumption = self.aggravationConsumption() * f()
@@ -304,19 +555,29 @@ init python early:
                     s = 0.02
                 else:
                     s = 0.03
-            elif self.week < 8:
-                s = 0.03
-            elif self.week >= 8:
+            elif self.week < 10:
+                if rra(self, 50):
+                    s = 0.03
+                else:
+                    s = 0.04
+            elif self.week >= 10:
                 s = 0.04
+
+            if GameDifficulty4.has(self) or GameDifficulty5.has(self):
+                s *= 1.5
 
 
             if self.cured > -1:
                 self.cured += 1
                 self.color -= 0.01
 
-            self.severity += r2(s)
+            if self.week < 1:
+                s = 0
+            
+            self.gain_abi(s, 'sev', due='自然增长')
+            
 
-            if consumption > 0:
+            if not DrugIbuprofenBEffect.has(self) and consumption > 0:
                 Notice.add(_('睡眠消耗了')+r2s(consumption)+_('点精神状态！'))
                 self.mental -= r2(consumption)
             else:
@@ -382,7 +643,8 @@ init python early:
                 '12' : [self.rh(18, 20), self.rm()],
                 '13' : ['21', self.rm(0)],
                 '14' : ['22', '00'],
-                '15' : ['24', '00'],
+                '15' : [self.rh(22, 23), self.rm(10, 49)],
+                '16' : ['23', self.rm(50, 59)],
                 '666' : ['???', '???']
             }
             r = specTimeDict[str(self.times)]
@@ -418,6 +680,30 @@ init python early:
                         meds += i.get(self).amounts
             return meds
 
+        def weatherforcast(self):
+            pp = dcp(self)
+            weathers = [['今日',type(self.effects[0])]]
+            weathers.append(['明日',pp.newMorningWeather(True)])
+            pp.newSeed()
+            pp.dateChange()
+            weathers.append([weekdayFormat(pp.today),pp.newMorningWeather(True)])
+            pp.newSeed()
+            pp.dateChange()
+            weathers.append([weekdayFormat(pp.today),pp.newMorningWeather(True)])
+            pp.newSeed()
+            pp.dateChange()
+            weathers.append([weekdayFormat(pp.today),pp.newMorningWeather(True)])
+            pp.newSeed()
+            pp.dateChange()
+            weathers.append([weekdayFormat(pp.today),pp.newMorningWeather(True)])
+            pp.newSeed()
+            pp.dateChange()
+            weathers.append([weekdayFormat(pp.today),pp.newMorningWeather(True)])
+            return weathers
+
+
+
+
         def newMorningWeather(self, b=False):
             if self.cured > -1:
                 return WeatherUnknown
@@ -432,13 +718,16 @@ init python early:
                 if WeatherTornado.get(self).duration != 0:
                     return WeatherTornado
                 
-            weathers = [WeatherSunny, WeatherRainy, WeatherCloudy]
+            weathers = [WeatherSunny, WeatherRainy, WeatherCloudy, WeatherWindy]
 
-            if 4 < self.week <= 10:
+            if 4 < self.week:
                 if self.today not in (3, 4, 5) and rra(self, 3):
                     return WeatherTornado
 
-                weathers += [WeatherWet, WeatherHot, WeatherThunder, WeatherWindy]
+                weathers += [WeatherHot, WeatherThunder]
+            
+                if GameDifficulty4.has(self) or GameDifficulty5.has(self):
+                    weathers += [WeatherSmog, WeatherWet]
         
             if b:
                 import random
@@ -456,7 +745,17 @@ init python early:
 
         def newMorningEffects(self):  # 每天早上调用以添加随机状态及反应
             if not list(filter(lambda x: x.kind=='天气', self.effects)):
-                self.newMorningWeather().add(self)
+                wea = self.newMorningWeather()
+                if SunnyDoll.has(self) and wea != WeatherSunny:
+                    if GameDifficulty1.has(self) or GameDifficulty2.has(self):
+                        if rra(self, 50):
+                            wea = WeatherSunny
+                    else:
+                        if rra(self, 15):
+                            wea = WeatherSunny
+                    if wea != WeatherSunny:
+                        self.gain_abi(-0.01, 'sev', due='晴天娃娃')
+                wea.add(self)
 
             if self.week == 0 or Despair.has(self) or self.cured > -1:
                 return
@@ -469,7 +768,7 @@ init python early:
                 Sadness: 5,
                 Agony: 5,
                 Dread: 5,
-                Relaxation: 5
+                Relaxation: 10
             }
 
 
@@ -488,9 +787,9 @@ init python early:
             if MentProb.has(self):
                 states2[Sadness] += 40
 
-            if self.severity > 1 + 0.075 * self.week:
-                states2[Agony] += 15
-                states2[Dread] += 15
+            if self.severity > 1 + 0.1 * self.week:
+                states2[Agony] += 20
+                states2[Dread] += 20
 
             if self.mental > 50:
                 states2[Dread] += 30
@@ -529,20 +828,34 @@ init python early:
                 else:
                     self.items[i].timeUpdate(self)
 
-            if persistent.AutoQuitBrokenItem and self.finalStageDays == -1:
-                for i in range(len(self.items) - 1, -1, -1):
-                    if self.items[i].broken: 
-                        del self.items[i]
-
+            if self.week>=1:
+                if (GameDifficulty4.has(self) or GameDifficulty5.has(self)) and rra(self, 75):
+                    Malnutrition_.add(self)
+                    
             for k in list(self.itemcd.keys()):
                 if self.itemcd[k] > 0:
                     self.itemcd[k] -= 1
                 if self.itemcd[k] == 0:
                     del self.itemcd[k]
-                    
+        
+        def getcd(self, item):
+            if item not in self.itemcd:
+                return 0
+
+            return self.itemcd[item]
+
+
+
+        def averDD(self):
+            if len(self.medinfo) == 0:
+                return -1
+            return sum([self.medinfo[x].giveDependenceChance(self) for x in self.medinfo]) / len(self.medinfo)
+
         def updateMedicine(self):
             for i in self.medinfo:
                 self.medinfo[i].afterSleepAction(self)
+            if self.cured == -1 and rra(self, self.averDD()):
+                DrugD.add(self)
             
         def updateAfterTask(self, task):
             for i in range(len(self.effects) - 1, -1, -1):
@@ -553,14 +866,14 @@ init python early:
         def calPlatformReward(self):
             money = 0
             reader = 0
+            rg = self.writing_grade()
             for i in range(int(self.popularity/1000)):
                 if rra(self, 20):
-                    money += ra(self, 20 * self.wri(), 100 * self.wri())
+                    money += ra(self, 5 * rg, 25 * rg)
                     reader += 1
             
             if money != 0:
-                if money > self.price*0.75:
-                    money = int(self.price *0.75* f())
+                self.gainPopuPrice += money
                 Notice.add(_('昨日收到由%s位读者打赏给您的共%s元。') % (reader, money))
                 self.money += money
 
@@ -617,7 +930,7 @@ init python early:
             self.achievedGoal = 0.0
             self.goal = (1.08 ** self.week) * 0.3 + self.working * 0.7
             self.goal = r2(self.goal * ra(self, 800, 1100) * 0.01 * f())
-            if GameModule1.has(self):
+            if GameDifficulty5.has(self):
                 self.goal = r2(self.goal * (1 + (0.05 * self.week)))
             self.money += paid
             if self.cured < 0 and not Despair.has(self):
@@ -625,6 +938,12 @@ init python early:
                 Notice.add(_('X付宝到账：%s元！') % r2(paid))
                 Notice.add(_('Boss：“本周的工作指标系数为%s。”') % self.goal)
 
+            if self.des_p in (3, 4):
+                prog = int(0.15*self.des_score + 10)
+                self.achievedGoal = r2(self.goal * prog * 0.01)
+                Message.new(p, 'Destot', 'Destot', '前辈，这周你那%s%s的工作就由我来做吧，我已经和Arnel说过了哦！' % (prog,'%'), chachong=False, pos='')
+
+        
         def plotUpdate(self):
             #if self.sol_p %2 == 0:
             #    self.sol_p += 1
@@ -649,19 +968,28 @@ init python early:
             persistent.runtime += t
             self.playtime += t
             renpy.clear_game_runtime()
+            if persistent.runtime >= 7200:
+                Achievement311.achieve()
+                Achievement.show()
 
 
             if not persistent.nomedicine:
                 self.aggravation()
+
+            if BookUndeadEffect.has(self):
+                self.mental = 10
+
+            self.buyrandom = False
+            self.hasSchedule = False
                 
             self.updateAfterSleep()
             self.updateMedicine()
+            self.updatePopularity()
             if self.cured < 0 and not Despair.has(self):
-                if not Achievement603.has():
-                    self.nousemed += 1
-                    if self.nousemed >= 7:
-                        Achievement603.achieve()
                 self.refreshUnacComm()
+            
+            
+
             self.newSeed()
             
             
@@ -671,12 +999,12 @@ init python early:
                 self.dateChange()
                 
             else:
-                Achievement305.achieve()
                 self.staylate = False
                 self.times = 0
                 self.stime()
             
             self.newMorningEffects()
+            
             if self.cured == -1 and not Despair.has(self):
                 if rra(self, 10):
                     PhysRezA.add(self)
@@ -685,16 +1013,38 @@ init python early:
             sortByID(self.items)
             if times > 1:
                 self.newDay(times-1)
+            
 
         def beforeSchedule(self):
+            self.morning_checkTask()
+            self.hasSchedule = True
+            if self.times == 5:
+                self.plancheck[0] = True
+                self.plan = [SkipTask, NoTask, NoTask, NoTask]
+            elif self.times == 10:
+                self.plancheck[0] = True
+                self.plancheck[1] = True
+                self.plan = [SkipTask, SkipTask, NoTask, NoTask]
             if self.cured < 0 and not Despair.has(self):
                 self.calPlatformReward()
-            self.morning_checkTask()
+                if self.experience == 'wri' and self.day == 15:
+                    lost = r2(self.price * 10)
+                    if lost > self.money:
+                        Notice.add(_('支付了房租共%s元，欠款%s元。') % (self.money, r2(lost-self.money)))
+                    else:
+                        Notice.add(_('支付了房租共%s元。') % r2(lost))
+                    self.money -= lost
+                
             if self.today == 5:
-                if not Despair.has(self):
+                if self.experience != 'wri':
                     self.getWorkPaid()
+                self.fishprice = ra(self, 10, 200)
+
+                        
                 self.plotUpdate()
                 self.hadAskedForLeave = False
+                self.hadAskedForSickLeave = False
+
                 if self.sol_p == 1:
                     self.sol_p = 2
                 if self.sol_p == 3:
@@ -704,9 +1054,7 @@ init python early:
 
                 
                 if self.money <= self.price * 10:
-                    self.priceIncrease = ra(self, 10, 25)
-                    if GameModule1.has(self):
-                        self.priceIncrease *= 1.5
+                    self.priceIncrease = ra(self, 10, 20)
                 
                 else:
                     self.priceIncrease = (self.money * 0.1 / self.price) - 1
@@ -719,7 +1067,6 @@ init python early:
                 Message.new(self, 'Halluke', 'Halluke', _('那个，我想说一些事，如果我说错了的话，请不要生气。\n第一次上课的时候老师有清点人数，我对来上课的人也大概有了一点印象，但是你是后来才出现的，最初我把你当成第一节课就没来的学生，但是老师当时点名也没人缺席的样子。后来发现老师点名的时候也没看到你过产生回应。我也调查了一段时间，在年级大群，甚至校园墙上都没有查到和你有关的信息。\n你并不是我们学校的人，对吧？\n不过我主要是想提醒你，下周的周六就是考试了，虽然你并不需要考试，如果你想的话，可以来帮我发球。'), '6', '42')
                 self.hal_p = 11
     
-            Notice.show()
             Achievement.show()
 
         def cheat_times(self):
@@ -753,4 +1100,3 @@ init python early:
             for i, done in enumerate(p.plancheck):
                 if not done:
                     return i
-            

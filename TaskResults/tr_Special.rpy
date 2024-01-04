@@ -1,18 +1,41 @@
 label GoOutside_beginning:
-    scene livingroom with fade
     play music audio.sliceoflife fadein 5
-    "去哪玩呢？"
+    if HotelBuff.has(p):
+        scene location_hotel with fade
+        "虽然我还是很想在这里一直躺着，但还是出去一下好了……"
+    elif CafeBuff.has(p):
+        scene location_cafe with fade
+        "该离开这里了。"
+        $CafeBuff.clearByType(p)
+    elif BookstoreBuff.has(p):
+        scene location_bookstore with fade 
+        "该离开这里了。"
+        $BookstoreBuff.clearByType(p)
+    else:
+        scene livingroom with fade
+    
+    "去哪里呢？"
     $ p.onOutside = True
     $p.times+=1
-    call screen screen_explore_map(p)
+    call screen screen_map(p, True)
 
 label GoOutside_result:
+    if not Tired.has(p) and (GameDifficulty4.has(p) or GameDifficulty5.has(p)):
+        
+        menu:
+            "是否继续前往另一个地点？"
+            "是":
+                $Tired.add(p)
+                call screen screen_map(p, True)
+            "放弃":
+                pass
+            
     $p.updateAfterTask(GoOutside)
     if rra(p, 50):
         $Novelty.add(p)
     if rra(p, 25):
         $PhysRezB.add(p)
-    if rra(p, 25):
+    if rra(p, 33):
         $Relaxation.add(p)
     stop music fadeout 5
     
@@ -25,9 +48,22 @@ label GoOutside_result:
     "回去的路上……"
     $p.times+=1
     $ p.onOutside = False
+    if WeatherSmog.has(p):
+        $WeatherSmog.get(p).check(p)
     $Notice.show()
     jump after_executing_task_label
     #jump GoOutside_beginning
+
+
+
+
+
+
+
+
+
+
+
 
 label TestTask_beginning:
     $p.times += 2
@@ -41,7 +77,8 @@ label HallukeTask1_beginning:
     "我把随身携带的东西放到窗台边。"
     "Halluke已经提前占据了一个球网的位置，此时他正像往常那样拎着球拍盯着我。"
     "准备一下就开始练习吧。"
-    call Task_processing from _call_Task_processing_26
+    call Task_processing from _call_Task_processing_22
+    
     $p.times+=1
     stop music fadeout 3
     $HallukeTask1.executeTask(p)
@@ -76,7 +113,8 @@ label AcolasTask1_beginning:
             "我一定不能再让他失望了，我要尽全力才行。"
     elif AcolasItem4.has(p):
         "我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望我不能让他失望"
-    call Task_processing from _call_Task_processing_33
+    call Task_processing from _call_Task_processing_23
+    
     $p.times+=1
     stop music fadeout 3
     $AcolasTask1.executeTask(p)
@@ -84,9 +122,6 @@ label AcolasTask1_beginning:
 label AcolasTask1_loop:
     scene workarea at setcolor with fade
     $Notice.show()
-    if AcolasItem3.has(p):
-        if AcolasItem3.get(p).progress >= 100:
-            jump AcolasTask1_end
     menu:
         "继续做吗？"
         "继续":
@@ -105,7 +140,8 @@ label AcolasTask1_loop:
         "灵感……灵感……快想啊……"
     else:
         "我一定不能再让他失望了，我要尽全力才行。"
-    call Task_processing from _call_Task_processing_35
+    call Task_processing from _call_Task_processing_24
+    
     $p.stime(int(p.st()[0])+1, rd(1, 60))
     if int(p.st()[0])+1 > 23:
         $p.dateChange()
@@ -119,9 +155,6 @@ label AcolasTask1_loop:
 label AcolasTask2_loop:
     scene workarea at setcolor with fade
     $Notice.show()
-    if AcolasItem4.has(p):
-        if AcolasItem4.get(p).progress >= 100:
-            jump Acolas_hidden_plot2
     menu:
         "继续做吗？"
         "继续":
@@ -135,7 +168,8 @@ label AcolasTask2_loop:
                     pass
 
     "我不能让他失望。"
-    call Task_processing from _call_Task_processing_36
+    call Task_processing from _call_Task_processing_25
+    
     $p.stime(int(p.st()[0])+1, rd(1, 60))
     if int(p.st()[0])+1 > 23:
         $p.dateChange()
@@ -170,3 +204,25 @@ label AcolasTask2_beginning:
 label AcolasTask2_result:
     $Notice.show()
     jump acolas_route_8
+
+label DestotTask1_beginning:
+    $p.times+=1
+    $DestotTask1.executeTask(p)
+
+label DestotTask1_result:
+    $Notice.show()
+    jump destot_route_2
+
+label DestotTask2_beginning:
+    $p.times+=1
+    $DestotTask2.executeTask(p)
+
+label DestotTask2_result:
+    $Notice.show()
+    jump destot_route_4
+
+label DeplineTask1_beginning:
+    $p.times+=1
+    $DeplineTask1.executeTask(p)
+    $p.onOutside = True
+    jump depline_route_2

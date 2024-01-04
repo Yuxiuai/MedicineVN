@@ -45,13 +45,7 @@ init python early:
             reco = r2(-0.25 * player.mental + 35)
             
             
-            if reco >0:
-                Notice.add(_('恢复了%s点精神状态。') % reco)
-                player.mental += reco
-            else:
-                Notice.add(_('并没有恢复精神状态。'))
-            
-
+            player.gain_mental(reco)
             player.updateAfterTask(cls)
             if player.p2:
                 player.p2.updateAfterTask(cls)

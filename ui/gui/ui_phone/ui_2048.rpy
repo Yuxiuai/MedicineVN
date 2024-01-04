@@ -1,8 +1,11 @@
 init python:
     score = 0
+    game2048_log = None
 
     def game2048_scoredefault():
         global score
+        if score > persistent.highestscore2048:
+            persistent.highestscore2048 = score 
         score = 0
 
     def game2048_geticon(num):
@@ -12,8 +15,6 @@ init python:
 
     def game2048_newgame(blocks):
         global score
-        if score > persistent.highestscore2048:
-            persistent.highestscore2048 = score 
         for i in blocks:
             blocks[i] = 0
         game2048_scoredefault()
@@ -24,10 +25,11 @@ init python:
         emptyblocks = list(filter(lambda x: blocks[x]==0, blocks))
         if emptyblocks != []:
             blocks[rcd(emptyblocks)] = rcd((2,2,2,2,4))
-            #blocks[rcd(emptyblocks)] = 1024
+            #blocks[rcd(emptyblocks)] = 32
         else:
             if score > persistent.highestscore2048:
                 persistent.highestscore2048 = score 
+                
 
     game2048_d = {
         'up':(-1,0),
@@ -80,54 +82,48 @@ init python:
 
         game2048_newblock(blocks)
 
-screen screen_phone_bg_y():
-    modal True
+
+screen screen_phone_2048_block(b):
+    imagebutton idle game2048_geticon(b):
+        action NullAction()
+ 
+screen screen_phone_2048(player):
+    
+    predict False
     style_prefix "gameUI"
     zorder 600
     
     frame:
-        background None
-        xcenter 0.5
-        ycenter 0.5
-        ysize 750
-        xsize 400
         
-        add "gui/phone/2048/phone_yellow.png":
-            xcenter 0.51
-            ycenter 0.46
+        if phone_page == 1:
+            at app_inner_show(-220, -65)
+        else:
+            at app_inner_hide(-220, -65)
 
-screen screen_phone_2048(player):
-    #tag gamegui
-    modal True
-    style_prefix "gameUI"
-    zorder 600
-    #use screen_phone_bg_y 
-    frame:
-        at trans_app(-150, 50)
+        
         background None
         xcenter 0.5
         ycenter 0.5
-        ysize 750
-        xsize 400
+        yoffset -10
         
-        add "gui/phone/2048/phone_yellow.png":
-            xcenter 0.51
-            ycenter 0.46
+        use barrier('', 0)
+
+        add "gui/phone/wallpaper/2048.webp":
+            xcenter 0.5
+
+        
 
         frame:
             
             background None
             xalign 0.5
             yalign 0.55
-            ysize 750
-            xsize 400
+            ysize 1300
+            xsize 582
 
             #add "gui/phone/2048/phone_yellow.png":
             #    xcenter 0.5
             #    ycenter 0.45
-            add "gui/phone/2048/gameback.png":
-                xcenter 0.5
-                ycenter 0.45
 
             default blocks = {
                 '11':0,
@@ -157,107 +153,102 @@ screen screen_phone_2048(player):
 
 
             frame:
-                ypos 165
-                xpos 5
+                ypos 306
+                xpos 3
                 background None
                 vbox:
                     spacing 2
                     hbox:
                         spacing 2
                         for i in ('11', '12', '13', '14'):
-                            $icon = game2048_geticon(blocks[i])
-                            imagebutton idle icon:
-                                action NullAction()
+                            use screen_phone_2048_block(blocks[i])
+                                
 
                     hbox:
                         spacing 2
                         for i in ('21', '22', '23', '24'):
-                            $icon = game2048_geticon(blocks[i])
-                            imagebutton idle icon:
-                                action NullAction()
+                            use screen_phone_2048_block(blocks[i])
+                                
 
                     hbox:
                         spacing 2
                         for i in ('31', '32', '33', '34'):
-                            $icon = game2048_geticon(blocks[i])
-                            imagebutton idle icon:
-                                action NullAction()
+                            use screen_phone_2048_block(blocks[i])
+                                
 
                     hbox:
                         spacing 2
                         for i in ('41', '42', '43', '44'):
-                            $icon = game2048_geticon(blocks[i])
-                            imagebutton idle icon:
-                                action NullAction()
+                            use screen_phone_2048_block(blocks[i])
+                                
 
             frame:
                 background None
-                xalign 0.835
-                yalign 0.12
-                xsize 105
-                $info = _('曾获得的最高分：') + str(persistent.highestscore2048)
-                $ad = _('真的有人会玩游戏里的游戏吗？')
-                textbutton str(score):#str(blocks['score']):
-                    xalign 0.5
-                    action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), i=info, a=ad)]
-                    hovered Show(screen="info", i=info, a=ad)
-                    unhovered Hide("info")
-                    style "white"
+                xpos 0.805
+                xanchor 0.5
+                ypos 0.09
+                xsize 200
+                text str(max(persistent.highestscore2048, score)) xalign 0.5 style "white"
+                
 
             frame:
                 background None
-                ypos 0.73
-                textbutton "{color=000000}{size=-10}{font=SourceHanSansLite.ttf}R键开始游戏，方向键操作。":
-                    action NullAction()
+                xpos 0.805
+                xanchor 0.5
+                ypos 0.174
+                xsize 200
+                text str(score) xalign 0.5 style "white"
+                
 
 
             frame:
                 background None
-                xpos 0.8
-                ypos 0.83
+                xpos 0.03
+                ypos 0.06
                 imagebutton auto "gui/phone/back_%s.png":
-                    action [Function(game2048_scoredefault), Hide("screen_phone_2048"),Hide("info"),Show(screen="screen_phone", player=player)]
+                    action Function(game2048_scoredefault), SetVariable("phone_page", 0)
                     hover_sound audio.cursor
 
-    if not renpy.variant("pc"):
-        frame:
-            background None
-            xcenter 0.75
-            ycenter 0.6
-            vbox:
-                spacing 40
-                hbox:
-                    xalign 0.5
-                    imagebutton auto "gui/phone/2048/w_%s.png":
-                        action Function(game2048_move, blocks, 'up')
-                        activate_sound audio.sfx2048
-    
-                hbox:
-                    spacing 40
-                    imagebutton auto "gui/phone/2048/a_%s.png":
-                        action Function(game2048_move, blocks, 'left')
-                        activate_sound audio.sfx2048
+            if not renpy.variant("pc"):
+                frame:
+                    background None
+                    xpos 1.5
+                    ypos 0.45
+                    xanchor 0.5
+                    vbox:
+                        spacing 40
+                        hbox:
+                            xalign 0.5
+                            imagebutton auto "gui/phone/2048/w_%s.png":
+                                action Function(game2048_move, blocks, 'up')
+                                activate_sound audio.sfx2048
+            
+                        hbox:
+                            spacing 40
+                            imagebutton auto "gui/phone/2048/a_%s.png":
+                                action Function(game2048_move, blocks, 'left')
+                                activate_sound audio.sfx2048
 
-                    imagebutton auto "gui/phone/2048/s_%s.png":
-                        action Function(game2048_move, blocks, 'down')
+                            imagebutton auto "gui/phone/2048/s_%s.png":
+                                action Function(game2048_move, blocks, 'down')
+                                activate_sound audio.sfx2048
+
+                            imagebutton auto "gui/phone/2048/d_%s.png":
+                                action Function(game2048_move, blocks, 'right')
+                                activate_sound audio.sfx2048
+                frame:
+                    background None
+                    xpos 1.5
+                    ypos 0.1
+                    xanchor 0.5
+
+                    imagebutton auto "gui/phone/2048/r_%s.png":
+                        action Function(game2048_newgame, blocks)
                         activate_sound audio.sfx2048
-
-                    imagebutton auto "gui/phone/2048/d_%s.png":
-                        action Function(game2048_move, blocks, 'right')
-                        activate_sound audio.sfx2048
-        frame:
-            background None
-            xcenter 0.75
-            ycenter 0.3
-
-            imagebutton auto "gui/phone/2048/r_%s.png":
-                action Function(game2048_newgame, blocks)
-                activate_sound audio.sfx2048
-
 
     key "K_UP" action [Function(game2048_move, blocks, 'up'), Function(play_audio, audio.sfx2048)]
     key "K_DOWN" action [Function(game2048_move, blocks, 'down'), Function(play_audio, audio.sfx2048)]
     key "K_RIGHT" action [Function(game2048_move, blocks, 'right'), Function(play_audio, audio.sfx2048)]
     key "K_LEFT" action [Function(game2048_move, blocks, 'left'), Function(play_audio, audio.sfx2048)]
     key 'r' action [Function(game2048_newgame, blocks), Function(play_audio, audio.sfx2048)]
-    key 'K_ESCAPE' action [Function(game2048_scoredefault), Hide("screen_phone_2048"),Hide("info"),Show(screen="screen_phone", player=player)]
+    key 'K_ESCAPE' action Function(game2048_scoredefault),SetVariable("phone_page", 0)

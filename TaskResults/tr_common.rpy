@@ -2,10 +2,9 @@ screen Task_processing_screen(player): #show screen freeze(5)
     modal True
     zorder 50
     python:
-        time = r2(2/player.wor())
-        if persistent.nowaiting == True:
+        if persistent.nowaiting:
             time = 0.1
-        if time > 2:
+        else:
             time = 2
     timer time:
         action Hide(screen="Task_processing_screen")
@@ -16,8 +15,13 @@ screen Task_processing_screen(player): #show screen freeze(5)
         action NullAction()
 
 label Task_processing:
+    $_game_menu_screen = None
     show screen Task_processing_screen(p)
-    "{cps=3}。。。。。。"
+    if persistent.nowaiting:
+        "。。。。。。{fast}{nw}"
+    else:
+        "{cps=4}。。。。。。{nw}"
+    $_game_menu_screen = 'preferences'
     return
 
 

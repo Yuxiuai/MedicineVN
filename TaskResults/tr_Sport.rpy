@@ -14,7 +14,8 @@ label DefaultSport_beginning:
         "即便是随便散散步也比躺着强，大概吧……"
     "我深呼吸，准备在公寓门口的步行路散散步。"
 
-    call Task_processing from _call_Task_processing
+    call Task_processing from _call_Task_processing_34
+    
     $p.times+=1
     $DefaultSport.executeTask(p)
 
@@ -88,7 +89,8 @@ label JoggingSport_beginning:
     else:
         scene nightrun with fade
     "也许只是单纯散步还不够……至少需要一点小小的锻炼，我可不想变成什么熊什么猪啊。"
-    call Task_processing from _call_Task_processing_1
+    call Task_processing from _call_Task_processing_35
+    
     $p.times+=1
     $JoggingSport.executeTask(p)
 
@@ -164,7 +166,8 @@ label FastrunSport_beginning:
         scene nightrun with fade
     "慢跑还是太无聊了，得稍微出点汗才行啊。"
     "还是快点跑好了。"
-    call Task_processing from _call_Task_processing_2
+    call Task_processing from _call_Task_processing_36
+    
     $p.times+=1
     $FastrunSport.executeTask(p)
 
@@ -227,7 +230,7 @@ label FastrunSport_result_bad:
 
 label BadmintonClass_beginning:
     $ p.onOutside = True
-    if p.hal_p == 50:
+    if p.hal_p == 11:
         scene court with fade
         jump Halluke_hidden_plot2
     if p.hal_p == 51:
@@ -244,7 +247,8 @@ label BadmintonClass_beginning:
     scene court with dissolve
     "站队，点名，和记忆中的体育课完全一样，唯独不同的是我不会被点到名字。"
     "那么就好好观察老师的动作，认真听听都讲了些什么吧。"
-    call Task_processing from _call_Task_processing_4
+    call Task_processing from _call_Task_processing_37
+    
     $p.times+=1
     $BadmintonClass.executeTask(p)
 
@@ -285,8 +289,7 @@ label StretchingSport_beginning:
     scene livingroom with fade
     "身上好酸……运动后还是要按正常运动流程做一下拉伸运动的。"
     "总之……开始吧。"
-    "我把瑜伽垫从柜子深处拽出来，铺在客厅中间。"
-    call Task_processing from _call_Task_processing_5
+    call Task_processing from _call_Task_processing_38
     $p.times+=1
     $StretchingSport.executeTask(p)
 

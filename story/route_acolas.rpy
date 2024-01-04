@@ -14,9 +14,6 @@ label acolas_plot_judge:  # 羽毛球课程
         $renpy.jump(jumplabel)
     else:
 
-        if p.aco_p == 8 and AcolasTask2 not in p.unlockedTasks:
-            $AcolasTask2.unlock(p)
-            $Message.new(p, 'Acolas', 'Acolas', '好消息！\n医生说我可能今天就可以出院了，你似乎还没来过我家吧？来玩一玩吧？周六的下午我有空哦。\n我家就在亚斯塔禄大街的恩多尔芬小区，54栋3112，到了楼下直接说我的名字就可以，服务生会带你上来的。\n除此之外我还想问你一些其他的东西，等你来了再和你说。', pos='a')
         $p.times+=1
         jump after_executing_task_label
 
@@ -95,8 +92,10 @@ label acolas_route_1:
     $start_plot()
     stop music fadeout 5
     scene meeting with fade
+    show arnel with dissolve
     ar"“总之，在会议的最后，让我们来介绍一下新上任的技术总监Acolas。”"
     "目光正聚焦于桌下的手机上的小游戏界面的我在听到这个名字后抬起头来。"
+    hide arnel with dissolve
     play music audio.acolas
     show acolas normal2_eyes
     with dissolve
@@ -164,6 +163,7 @@ label acolas_route_1:
     "这，不会是要，被那个了吧。"
     "不，不行，现在还不能…"
     $Erection.add(p)
+    $Notice.show()
     "也许他比我还早知道我自己已经勃起了的这个事实，因为当他的爪子已经隔着裤子开始触摸我的裆部时。"
     "大脑一片空白的我才意识到自己早就在被他爪子抚摸身体的某个瞬间勃起了。"
     $ss('no_hat white glasses normal2_eyes scared_mouth scared_eyebrow blush sweat')
@@ -716,7 +716,13 @@ label acolas_route_4:
     $ss('no_hat white glasses normal_eyebrow normal2_eyes normal_mouth ques')
     s"“是啊，怎么了…”"
     $sh()
-    "真正尝试去做一款这样数据量十分大的养成游戏确实很花精力…也许对于我来说两周也根本不够用，即便在工作量减轻的基础上。"
+    "真正尝试去做一款这样数据量十分庞大的养成游戏确实很花精力…"
+    if AcolasItem5.has(p):
+        "不过其实稍微努力一下，也不是不能做完的嘛。"
+        "等会就给他一个惊喜吧。"
+    else:
+        "也许对于我来说两周也根本不够用，可能还需要再来一周时间，即便在工作量减轻的基础上……"
+        "我要不要和他商量一下，把时间往后推一推呢？"
     show acolas surprised_eyebrow smile_eyes smile_mouth sweat with dissolve
     a"“不知道你有没有检查我们的网上代码仓库呢？”"
     $ss('no_hat white glasses scared_eyebrow normal2_eyes normal_mouth ques')
@@ -916,7 +922,7 @@ label acolas_route_6:
     "待会给他发某信问问他怎么回事吧…"
     $end_plot()
     if p.aco_p == 6:
-        $Message.new(p, 'Acolas', 'Acolas', '在吗……\n我忘记和你说了，我因为最近着凉了，现在在医院输液，如果你想来的话，这周末可以来市立医院看望我一下……\n我就在住院部的324号房间。')
+        $Message.new(p, 'Acolas', 'Acolas', '在吗……\n我忘记和你说了，我因为最近着凉了，现在在医院输液，如果你想来的话，这周末可以来市立医院看望我一下……\n我就在住院部的324号房间。', h=16, m=rd(0, 59), pos='')
         $p.aco_p = 7
     if replaying:
         jump afterreplay
@@ -999,7 +1005,7 @@ label acolas_route_7:
     "我用纸擦干了手心，穿好了裤子，慌张地，仿佛有谁追赶着我一般地，逃离了这个地方。"
     $end_plot()
     if p.aco_p == 7:
-        $Message.new(p, 'Acolas', 'Acolas', '我刚睡醒就看到你正好从我的病房里跑出去，我叫你你没听见……\n总之谢谢你来看我，我差不多下周就能出院了。', pos='b')
+        $Message.new(p, 'Acolas', 'Acolas', '我刚睡醒就看到你正好从我的病房里跑出去，我叫你你没听见……\n总之谢谢你来看我，我差不多下周就能出院了。', h = p.st()[0], m=rd(0, int(p.st()[1])), pos='b')
         $p.aco_p = 8
     if replaying:
         jump afterreplay
@@ -1073,6 +1079,7 @@ label acolas_route_8:
     "他看向我，牵着我的手。"
     "他的掌心很热，可能是因为他已经发烧了的原因。"
     $Erection.add(p)
+    $Notice.show()
     "我感觉自己硬了，不仅仅是因为他牵着我的手，更因为是要和他这样走进他的卧室。"
     "他能在公司对我做出那些事，要是和他在他的卧室独处…"
     "……"
@@ -1118,9 +1125,8 @@ label acolas_route_8:
     s"“但是…那个…你最喜欢的动漫是什么…有机会的话我会去看看的！”"
     $sh()
     stop music
-    if AcolasItem3.has(p) and not replaying:
-        if AcolasItem3.get(p).progress >= 100:
-            jump Acolas_hidden_plot1
+    if AcolasItem6.has(p) and not replaying:
+        jump Acolas_hidden_plot1
     show acolas vest2 angry_eyebrow normal_eyes normal_mouth with dissolve
     a"“其实，除此之外更重要的是，我更关心你的文案写的如何了。”"
     $Erection.clearByType(p)
@@ -1187,14 +1193,14 @@ label acolas_route_8:
     "是我的错…吗？"
 
     $end_plot()
+    if replaying:
+        jump afterreplay
     if p.aco_p == 8:
         $AcolasTask2.lock(p)
         $AcolasTask1.lock(p)
         if AcolasItem3.has(p):
             $AcolasItem3.get(p).remove(p)
         $p.aco_p = 9
-    if replaying:
-        jump afterreplay
     $p.times+=1
     jump after_executing_task_label
 
@@ -1422,7 +1428,7 @@ label acolas_route_10:
     jump after_executing_task_label
 
 
-
+    
 label acolas_route_11:
     $start_plot()
     stop music fadeout 5
@@ -1546,7 +1552,7 @@ label acolas_route_11:
     $ss('white no_hat angry_eyebrow angry_eyes smile_mouth')
     s"“那这个周末，你可不要偷偷工作哦？”"
     $sh()
-    show acolas frown_eyebrow normal_eyes normal3_mouth sweat with dissolve
+    show acolas frown_eyebrow normal3_eyes normal_mouth sweat with dissolve
     a"“那游戏的事…”"
     $ss('white no_hat smile_eyebrow smile_eyes smile_mouth')
     s"“去他妈的bug，我们想什么时候修就什么时候修，我们想什么时候写就什么时候写。”"
@@ -1577,6 +1583,7 @@ label acolas_route_11:
     jump after_executing_task_label
 
 
+
 label acolas_route_11_1:
     $start_plot()
     "算了，还是等下次再找他吧。"
@@ -1587,7 +1594,7 @@ label acolas_route_11_1:
     $end_plot()
     if p.aco_p == 11:
         $p.aco_p = 98
-        $Achievement107.achieve()
+        $Achievement151.achieve()
         if p.hal_p == 99:
             $Achievement301.achieve()
         $Notice.show()
@@ -1601,14 +1608,14 @@ label acolas_route_11_1:
 label acolas_route_12:
     $start_plot()
     $p.onOutside = True
+    $p.onShip = True
     scene black with fade
     stop music fadeout 5
     $p.stime(8,33)
     "“知名轮船酒店德里莫号将停泊于A市，于本周末，登船享受一日住店，绕海域一圈，甲板开放，房间整洁，享受美妙海上风光。”"
     "这段广告我已经可以倒背如流了，A市的汽车广播，地铁广告，甚至刷短视频的时候跳出来的广告都是这个。"
-    "这样的酒店的价格也必然十分恐怖，我是做梦都没想到，自己能从那家伙手里得到船票。"
-    "虽然他总是抓我摸鱼，不过还是挺看中我的嘛。"
-    "说真的，要不是Acolas对这种邮轮没什么兴趣，可能他自己也会来这里的。"
+    "这样的酒店的价格也必然十分恐怖，但对于Acolas这种有钱人来说，可能还不如他每个月工资的十分之一吧。"
+    "虽然有点羡慕，但我有那么多钱有什么用呢……"
     play music audio.thedeldrimor fadein 5
     scene deldrimor1 with dissolve
     $p.stime(35)
@@ -1845,7 +1852,7 @@ label acolas_route_12:
         $p.aco_p = 13
     $ p.newDay()
     $ p.stime()
-    $ Save.save(p)
+    $ Saver.save(p)
     $ Notice.add('存档已保存！')
     $ Notice.show()
     call loading from _call_loading_9
@@ -1853,11 +1860,14 @@ label acolas_route_12:
 
 
 label acolas_route_13:
+    stop music fadeout 5
     $start_plot()
     if p.mental < 5:
         $p.mental = 30.0
-    show screen screen_dashboard(p)
+    if not replaying and not persistent.clearscreenwhenplot:
+        show screen screen_dashboard(p)
     $p.onOutside = True
+    $p.onShip = True
     scene deldrimor4 with fade
     "汽笛声和穿过玻璃的阳光将我唤醒。"
     "在醒来的刹那我突然意识到，这次的起床并没有闹钟参与，也没有头疼的折磨。"
@@ -1918,12 +1928,94 @@ label acolas_route_13:
     $p.stime(48)
     show acolas vest necklace frown_eyebrow smile_eyes smile_mouth with dissolve
     "Acolas转身看向我，以极快的速度吻了一下我的脸颊。"
+    show acolas vest necklace angry_eyebrow sad_eyes normal_mouth with dissolve
+    a"“有些事情我一直没和你说，但我觉得现在应该可以和你说了。”"
+    "Acolas低头，用他的爪子挠了挠头顶。"
+    show acolas vest necklace angry_eyebrow sad_eyes normal_mouth blush with dissolve
+    a"“说心里话让我有点害羞……”"
+    "这只比我高了不少的灰狼突然脸红起来，倒是很可爱。"
+    "他清了清嗓子，又开始深呼吸，就像是马上要准备演讲一样。"
+    "……"
+    show acolas vest necklace smile_eyebrow sad_eyes normal_mouth no_blush with dissolve
+    a"“生病的时候，我在床上想了很久，关于为什么会抢着做完所有工作……的原因。”"
+    show acolas vest necklace smile_eyebrow normal2_eyes normal_mouth with dissolve
+    a"“大学的我也很喜欢开发游戏，但我实在不擅长绘画之类的部分，而当时的男朋友就很喜欢画画。”"
+    a"“我并不擅长写一个新的故事，但是应该可以根据一个其他人建立的世界观写一些新的故事。”"
+    show acolas vest necklace smile_eyebrow normal3_eyes normal_mouth with dissolve
+    a"“我和他达成了一个协定，游戏背景根据他所设计的世界观作为雏形，我来细化和写故事，他来画画。”"
+    a"“团队里还有他的朋友，帮我写文案，设计背景之类的。”"
+    a"“当时的我做事情还没有那么拼命，不过我还是为开发游戏感到兴奋，尽力做力所能及的事。”"
+    show acolas vest necklace smile_eyebrow normal2_eyes smile_mouth with dissolve
+    a"“我们讨论剧情，从中午一直到晚上，我一边吃饭一边对着手机写剧情，甚至我们社团叫什么名字都想好了。”"
+    a"“在床上的我像是突然开窍了一般，想到了一个二周目的故事，兴奋地在第一个夜晚就写好了大纲。”"
+    show acolas vest necklace smile_eyebrow normal_eyes smile2_mouth with dissolve
+    a"“之后我就开始写故事，而他也给出了两张主角的立绘，虽然有点粗糙，不过还算能看。”"
+    a"“在写故事的同时，我从头开始学习游戏引擎，搜索免费的音乐和背景，然后再把它们放进游戏里。”"
+    a"“我所写的故事，图片，还有各种资源有机结合，成为了一个整体，我想，这就是我学习计算机最开心的时刻。”"
+    show acolas vest necklace normal_eyebrow normal2_eyes normal_mouth with dissolve
+    a"“不过好景不长，在我的剧情写了一个星期后，队内的其中一个成员开始反驳我的剧情叙事晦涩难懂。”"
+    show acolas vest necklace normal_eyebrow normal2_eyes angry_mouth with dissolve
+    a"“谁说故事就一定要平铺直叙？谁说故事一定要从时间线最开头的地方开始？”"
+    show acolas vest necklace normal_eyebrow normal2_eyes normal_mouth with dissolve
+    a"“仅仅只是因为这次吵架，团队不欢而散，他们做了什么我不得而知，当时的恋人也只是提供了草稿一般的立绘。”"
+    show acolas vest necklace normal_eyebrow sad_eyes normal_mouth with dissolve
+    a"“只有我，写了几千字的大纲和上万的剧情，而故事的起源却不来自于我。”"
+    a"“我以为当时的爱人会站在我这一边，但他只是一直保持着中立。”"
+    a"“…后来我得知，那个团队又重新建立了，他们用了我想的名字，但是队内成员除了我，全部都在。”"
+    show acolas vest necklace angry_eyebrow closed_eyes normal_mouth with dissolve
+    a"“反驳的人成为了新的主创，我现在居然要和他们谈条件，请求留下我自己的故事。”"
+    show acolas vest necklace angry_eyebrow sad_eyes normal_mouth with dissolve
+    a"“最后的结果是，我可以保留我自己写的故事，但是具体细节和人物都应该更换掉，我的恋人也能为我画新的立绘。”"
+    a"“我不知道他们做的事情是否正确，只是觉得，至少我还能做点什么，我可以留下我自己的心血。”"
+    a"“我原谅我的恋人的背叛行为，和他讨论着我的新角色应该是什么样的。”"
+    a"“而他也说准备为我的游戏画些什么。”"
+    show acolas vest necklace normal_eyebrow normal2_eyes normal_mouth with dissolve
+    a"“我以为事情会好起来，但是…”"
+    a"“可能不是为了自己的想法就难以动笔吧，当我将故事写完，发布游戏的最初版的时候，他连一笔都没有为我动过。”"
+    show acolas vest necklace surprised_eyebrow normal3_eyes normal_mouth with dissolve
+    a"“后来我才得知，他们的团队早就解散了，因为那个反驳我的人只是为了讨我的恋人欢心才做这些事。”"
+    a"“当他知道其实我和他已经在一起之后，就解散掉了团队。”"
+    show acolas vest necklace angry_eyebrow sad_eyes normal_mouth with dissolve
+    a"“而当他的另一个朋友说也想开发新游戏的时候，他却完全投入身心为他画立绘和角色。”"
+    a"“那人的游戏在他的帮助下仅仅用了几天就完成了。”"
+    show acolas vest necklace angry_eyebrow sad_eyes angry_mouth with dissolve
+    a"“而我不甘心地问他为什么的时候，他却说：‘他很早就是我的朋友了，你认识我才多久呢？’…”"
+    show acolas vest necklace normal_eyebrow normal2_eyes normal_mouth with dissolve
+    a"“在这之后，我们因为一些事情分开了。”"
+    a"“我才明白，其他人永远都难以信任，只有自己才是最可靠最值得信任的。”"
+    show acolas vest necklace normal_eyebrow normal_eyes normal_mouth with dissolve
+    a"“…我很抱歉，一开始欺骗了你的感情。”"
+    show acolas vest necklace normal_eyebrow sad_eyes normal_mouth with dissolve
+    a"“当时的我并没有那么喜欢你，但还是骗了你，和你表白。”"
+    a"“只是觉得，至少作为恋人，也许你可以像当时的我一样尽心尽力。”"
+    a"“等待你的反馈一分一秒都是煎熬，我害怕你和他们一样，什么也不写，所以才那么着急问你进度。”"
+    a"“越是害怕完不成越是难过，就越是折磨自己努力完成一切。”"
+    show acolas vest necklace angry_eyebrow closed_eyes angry_mouth with dissolve
+    a"“也许…不…当时的我所想的一定是错误的，我已经完全被曾经的经历冲昏头脑了…”"
+    show acolas vest necklace normal_eyebrow normal_eyes normal_mouth with dissolve
+    a"“抱歉，因为我太久都没遇到真心想要帮助我的人了…”"
+    a"“…我不够相信你，我应该相信你的。”"
+    show acolas vest necklace normal_eyebrow sad_eyes smile_mouth with dissolve
+    a"“现在游戏那边已经变成烂摊子了，我也没什么兴趣再写游戏了。”"
+    show acolas vest necklace surprised_eyebrow normal_eyes laugh_mouth with dissolve
+    a"“如果我能像第一次做游戏的时候那样和你一起共事，是不是就能圆了我当时的梦想呢？”"
+    "他似乎结束了，再一次深呼吸。终于把自己想说的话说出来的感觉不错吧？仿佛连他的灰毛都开始闪亮起来了。"
+    show acolas vest necklace normal_eyebrow normal_eyes smile_mouth with dissolve
+    a"“抱歉，自顾自地说了很多，那些话不放在心上也可以，我只是想把这些话说出来而已。”"
+    "他所说的话，我也许在听，也许没有，无论如何，他能开心就最好了。"
+    show acolas vest necklace surprised_eyebrow normal_eyes smile2_mouth with dissolve
+    a"“差不多该到下船的时间了，我们回房间整理一下吧。”"
+    $ss("ship cap normal2_eyebrow normal2_eyes smile_mouth")
+    s"“好。”"
+    $sh()
+    "我点点头，跟上他的步伐。"
+
     stop music fadeout 5
     "…"
     $p.stime(10, 30)
     scene subway with fade
     "地铁内人很多，大多也都是和我们一起离船的游客。"
-    "我和他在这样的公共场合旁若无人地牵手。"
+    "我和他在这样的公共场合旁若无人地牵着手。"
     "虽然我没法忽视其他人异样的眼光，但我更不想中断和他掌心相拥的温热。"
     "或许曾经的我并没有走进他的心，我和他的所作所为仅仅是为了消遣——体验爱与被爱的感觉。"
     "而现在，我确信，随着我与他的互相了解，这份感情一定会越来越深。"
@@ -1943,22 +2035,23 @@ label acolas_route_13:
     show acolas vest necklace smile_eyebrow smile_eyes smile2_mouth with dissolve
     a"“我想通了，也许职场压力确实大了点，或者仅仅是因为我自己无意识地放纵自己的报复性工作欲，给自己的压力太多了…”"
     show acolas vest necklace awkward_eyebrow smile_eyes surprised_mouth with dissolve
-    a"“当总监这段时间我攒了很多钱，就算不够…不是还有你嘛——”"
-    $ss("ship cap sad_eyebrow awkward_eyes smile_mouth")
-    s"“哎呀…那你在家里呆爽了，偶尔帮我分摊下工作也挺好的…”"
+    a"“当总监这段时间我攒了很多钱，这段时间就放心休息好了。”"
+    $ss("ship cap sad_eyebrow awkward_eyes normal_mouth")
+    s"“你终于想开了…？”"
     $sh()
     $p.stime(32)
-    show acolas vest necklace sad_eyebrow normal_eyes sad_mouth blush with dissolve
-    a"“是你让我学会放松的，怎么又突然反悔～”"
-    $ss("ship cap angry_eyebrow normal2_eyes angry_mouth")
-    s"“你这家伙！”"
-    $sh()
-    show acolas vest necklace smile_eyebrow smile_eyes laugh_mouth blush with dissolve
-    "我不再理他，拿出来手机准备刷一会莓博。"
-    "等这周结束，他辞职了，我的病应该也好了。"
+    show acolas vest necklace sad_eyebrow normal3_eyes normal_mouth with dissolve
+    a"“是啊……大概吧。”"
+    "也许这应该是个美好的结局吧，我终于获得了他的认可，他的爱。"
+    "可我为什么没有那种心动的感觉呢，还是说我对他的爱，耐心和信任已经濒临枯竭了呢？"
     $p.stime(33)
-    "即便这段时间出现了很多的不愉快，或许我已经对他不再像往日那样热情？"
-    "……之后的人生，会变成什么样呢？"
+    "一个会因为工作过劳多次生病，甚至差点猝死的家伙，这样轻飘飘地辞了职。"
+    "这样就能让他放下他一直以来的处事方法和思维方式吗？"
+    "就像一个抽烟把肺抽到全黑还每天几盒的烟鬼，突然就说把烟丢掉，从此戒烟？"
+    "我不知道，也许他会以其他方式上实现他的强盛的自我价值，说不定某天我回到家，发现他因为通宵打游戏而猝死的尸体呢？"
+    "他那样随心所欲地分配给我几乎无法完成的任务，自己又一句话不说就抢着做完，最后反倒拿我完全没有用心尽力的说法贬低我。"
+    "也许他最近总是对着我微笑，但我每次看向他的脸，都会想起那日，没有完成他的任务时，他看我的眼神。"
+    "未来的我会因为一件小事，一件无所谓的事，再次看到那样冷漠摒弃的眼神吗？"
     $end_plot()
     if p.aco_p == 13:
         $p.aco_p = 14
@@ -1966,6 +2059,7 @@ label acolas_route_13:
         jump afterreplay
     $p.times+=1
     $p.onOutside = False
+    $p.onShip = False
     jump dayEnd
 
 label acolas_route_98:
@@ -2012,7 +2106,7 @@ label Acolas_hidden_plot1:
     "啊啊……如果这能让他爱上我的话……"
     show acolas vest2 normal_eyebrow normal2_eyes smile2_mouth with dissolve
     a"“我打算再过一段时间就发布，这段时间里不知道你愿不愿意为整个游戏再润色一下呢？”"
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     show acolas vest2 normal_eyebrow normal_eyes smile2_mouth with dissolve
     a"“你下周的这个时候把润色完的文稿发给我就好。”"
     show acolas vest2 awkward_eyebrow normal_eyes laugh_mouth with dissolve
@@ -2027,8 +2121,6 @@ label Acolas_hidden_plot1:
     stop music fadeout 3
     if p.aco_p == 8:
         $AcolasTask2.lock(p)
-        if AcolasItem3.has(p):
-            $AcolasItem3.get(p).remove(p)
         $AcolasItem4.add(p)
         $Notice.show()
         $p.aco_p = 50
@@ -2036,6 +2128,7 @@ label Acolas_hidden_plot1:
     jump after_executing_task_label
 
 label Acolas_hidden_plot2:
+    $Notice.show()
     $blackmask(p)
     "结束了。"
     $p.color -= 0.05
@@ -2119,7 +2212,7 @@ label Acolas_hidden_plot2:
     call screen cfreeze(1)
     "休息一会……"
     play sound audio.drop
-    call hide_all_screens from _call_hide_all_screens_4
+    $clearscreens()
     scene black
     show screen freeze(3)
     pause

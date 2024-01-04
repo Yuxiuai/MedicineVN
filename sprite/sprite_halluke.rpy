@@ -208,6 +208,17 @@ image halluke_eyes_cry:
     pause 0.05
     repeat
 
+
+image halluke_eyes_glitch:
+    "images/sprite/Halluke/eyes/Halluke_eyes_glitch_eyes_1.png"
+    pause 0.05 
+    "images/sprite/Halluke/eyes/Halluke_eyes_glitch_eyes_2.png"
+    pause 0.05 
+    "images/sprite/Halluke/eyes/Halluke_eyes_glitch_eyes_3.png"
+    pause 0.05  
+    repeat
+
+
 layeredimage halluke:
 
     zoom 0.45
@@ -229,6 +240,7 @@ layeredimage halluke:
         attribute angry_eyebrow
         attribute awkward_eyebrow
         attribute cry_eyebrow
+        attribute none_eyebrow null
 
     group eyes:
         attribute normal_eyes default:
@@ -246,6 +258,9 @@ layeredimage halluke:
         attribute cry_eyes:
             "halluke_eyes_cry"
         attribute closed_eyes
+        attribute glitch_eyes:
+            "halluke_eyes_glitch"
+        attribute none_eyes null
 
     group mouth:
         attribute normal_mouth default
@@ -254,6 +269,7 @@ layeredimage halluke:
         attribute cry_mouth
         attribute opened_mouth
         attribute opened2_mouth
+        attribute none_mouth null
 
     group sweat:
         attribute no_sweat null default

@@ -43,10 +43,7 @@ init python:
     style.grey.color = "#8d8d8d"
     style.grey.hover_color = "#8d8d8d"
 
-    style.food = Style(style.white)
-    style.food.color = "#F2C34E"
-    style.food.hover_color = "#F2C34E"
-    style.food.outlines=[(0,"ffffff",0,0)]
+    
    
 
     style.gameL = Style(style.button_text)
@@ -63,18 +60,13 @@ init python:
     style.gameUIR = Style(style.gameUI)
     style.gameUIR.text_align=1.0
     
-    style.handwrite = Style(style.button_text)
+    style.handwrite = Style(style.white)
     style.handwrite.color = "#000"
-    style.handwrite.hover_color = "#9370db"
-    style.handwrite.selected_color = "#FFFFFF"
-    style.handwrite.font="handwriting.ttf"
-    style.handwrite.size=41
+    style.handwrite.hover_color = "#000"
+    style.handwrite.selected_color = "#000"
+    style.handwrite.font="H.ttf"
+    style.handwrite.outlines=[(0,"bcbcbc",0,0)]
 
-    style.handwriteL = Style(style.gameL)
-    style.handwriteL.font="handwriting.ttf"
-
-    style.handwriteM = Style(style.handwrite)
-    style.handwriteM.text_align=0.5
 
     style.effectLayer = Style(style.button_text)
     style.effectLayer.color = "#FFFFFF"
@@ -83,6 +75,44 @@ init python:
     style.effectLayer.size=20
     style.effectLayer.font="C.ttf"
     style.effectLayer.text_align=0.5
+
+    style.phone = Style(style.white)
+    style.phone.font = "Y.ttf"
+    style.phone.outlines=[(1,"000000",0,0)]
+
+    style.foodname = Style(style.phone)
+    style.foodname.color = "#000000"
+    style.foodname.hover_color = "#000000"
+    style.foodname.outlines=[(0,"000000",0,0)]
+
+    style.foodprice = Style(style.phone)
+    style.foodprice.color = "#ff1b1b"
+    style.foodprice.hover_color = "#ff1b1b"
+    style.foodprice.outlines=[(0,"#ff1b1b",0,0)]
+
+    style.phonew = Style(style.phone)
+    style.phonew.color = "#ffffff"
+    style.phonew.hover_color = "#ffffff"
+    style.phonew.outlines=[(0,"#ffffff",0,0)]
+
+    style.phone_message = Style(style.white)
+    style.phone_message.color = "#b2b2b2"
+    style.phone_message.hover_color = "#b2b2b2"
+    style.phone_message.outlines=[(0,"#b2b2b2",0,0)]
+
+    style.main_menu_uifont_aco = Style(style.phone)
+    style.main_menu_uifont_aco.color = "#636363"
+    style.main_menu_uifont_aco.hover_color = "#636363"
+    style.main_menu_uifont_aco.outlines=[(1,"ffffff",0,0)]
+
+    style.damage_num = Style(style.gameUI)
+    style.damage_num.color = "#FFFFFF"
+    style.damage_num.size=40
+    style.damage_num.outlines=[(1,"#09a3fc",0,0)]
+
+    style.crit_damage_num = Style(style.damage_num)
+    style.crit_damage_num.size=100
+    style.crit_damage_num.font="critdamage.ttf"
 
 style transparent_frame is gui_frame
 style translucent_frame is gui_frame
@@ -96,17 +126,17 @@ style info_prompt_text:
     layout "subtitle"
 
 style transparent_frame:
-    background Frame("gui/style/transparent.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+    background Frame("gui/style/transparent.png", tile=gui.frame_tile)
 
 style translucent_frame:
-    background Frame("gui/style/translucent.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+    background Frame("gui/style/translucent.png", tile=gui.frame_tile)
 
 style noback_frame:
-    background Frame("gui/style/clear.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+    background Frame("gui/style/clear.png", tile=gui.frame_tile)
 
 style info_frame:
-    background Frame("gui/style/info.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+    background Frame("gui/style/info.png", tile=gui.frame_tile)
 
 style grey_frame:
-    background Frame("gui/style/grey_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
+    background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
 

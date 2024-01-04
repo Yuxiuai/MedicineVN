@@ -253,6 +253,7 @@ layeredimage solitus:
         attribute white
         attribute dirty
         attribute ship
+        attribute patient
 
     
 
@@ -266,6 +267,7 @@ layeredimage solitus:
         attribute scared_eyebrow
         attribute surprised_eyebrow
         attribute smile_eyebrow
+        attribute none_eyebrow null
 
     group hat:
         attribute hat default
@@ -295,6 +297,7 @@ layeredimage solitus:
             "solitus_eyes_chaos"
 
         attribute closed_eyes
+        attribute none_eyes null
 
     group mouth:
         attribute normal_mouth default
@@ -306,6 +309,7 @@ layeredimage solitus:
         attribute scared_mouth
         attribute surprised_mouth
         attribute smile_mouth
+        attribute none_mouth null
 
     group blush:
         attribute no_blush null default
@@ -353,10 +357,10 @@ init python:
         [
             '外观', False, [
                 ['黑短袖', 'normal'],
-                ['黑短袖4', 'normal_4'],
                 ['白衬衫','white'],
                 ['脏的白衬衫','dirty'],
                 ['白外套','ship'],
+                ['病号服','patient'],
                 ['裸体','naked']
             ]
         ],

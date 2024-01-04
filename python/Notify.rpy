@@ -1,12 +1,20 @@
 init python early:
 
+    _history_notice_list = []
+    _history_notice_list_maxsize = 100
+
+
     def insertToHis(message):
         global _history_list
+        global _history_notice_list
         h=renpy.character.HistoryEntry()
         h.kind = 'adv'
         h.who = None
         h.what = message
         _history_list.append(h)
+        _history_notice_list.append(h)
+        if len(_history_notice_list) > _history_notice_list_maxsize:
+            _history_notice_list.pop(0)
 
     def showNotice(messages):
         for i in messages:
@@ -19,6 +27,7 @@ init python early:
     
     class Notice:
         messages = []
+        longmessages = []
 
         @classmethod
         def empty(cls):
@@ -27,6 +36,10 @@ init python early:
         @classmethod
         def add(cls, message):
             cls.messages.append(message)
+
+        @classmethod
+        def ladd(cls, message):
+            cls.longmessages.append(message)
 
         @classmethod
         def show(cls):
@@ -42,7 +55,7 @@ init python early:
 
 screen screen_notify(messages):
 
-    zorder 3000
+    zorder 12000
     style_prefix "info"
 
     vbox:
@@ -56,4 +69,34 @@ screen screen_notify(messages):
 
     timer (0.2 * len(messages) + persistent.notifyDuration) action Hide('screen_notify')
 
-            
+
+
+transform screen_long_notify_trans:
+    yoffset 600
+    easein 0.5 yoffset 0
+
+transform screen_long_notify_hide: 
+    easeout 0.5 yoffset -600
+
+
+screen screen_long_notify(mes):
+
+    use barrier('screen_long_notify')
+    style_prefix "info"
+    zorder 12000
+    
+    add "gui/longnotice.png" at screen_long_notify_trans
+
+    frame at screen_long_notify_trans:
+        padding (10, 5)
+        background None
+        text mes text_align 0.5
+        xcenter 0.5
+        ycenter 0.47
+
+label longtest:
+    'start'
+    $insertToHis('12345')
+    call screen screen_long_notify('12345')
+    'end'
+    jump longtest

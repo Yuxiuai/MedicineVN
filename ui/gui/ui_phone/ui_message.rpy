@@ -1,264 +1,304 @@
+transform screen_phone_message_friendbox_transform():
+    
+    on idle:
+        easein 0.2 matrixcolor IdentityMatrix()
+    on hover:
+        easein 0.2 matrixcolor BrightnessMatrix(-0.1)
 
-screen screen_phone_message_address(player):
-    #tag gamegui
-    modal True
+default screen_phone_message_page = 0
+define screen_phone_message_i = {
+    "Pathos": "总喜欢摆着臭脸的主治医师",
+    "Acolas": "负责很多项目的技术总监",
+    "Halluke": "就读于A市大学的白熊大学生",
+    "Depline": "莓博上的大学生画师",
+    "Destot": "我的实习生",
+}
+
+
+screen screen_phone_message(player):
+
+
+    predict False
     style_prefix "gameUI"
     zorder 600
     
-
-    frame:
-        at trans_app(-40, 280)
-        background None
-        xalign 0.5
-        yalign 0.5
-        ysize 750
-        xsize 400
-
-        add "gui/phone/address/address.png":
-            xcenter 0.51
-            ycenter 0.46
-
-        frame:
-            ypos 90
-            background None
-            vbox:
-                spacing 2
-
-                if player.sol_p>=0:
-                    frame:
-                        ysize 75
-                        xfill True
-                        background None
-                        imagebutton idle "gui/phone/address/Pathos.png":
-                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who='Pathos', player=player), Function(Message.see, player, 'Pathos', 'Pathos')]
-                            hovered Show(screen="info", i=_('Pathos\n总喜欢摆着臭脸但却偶尔让人觉得可爱的主治医师。'), a=_('臭猪b，不想听到他声音。'))
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "Pathos":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
-                        if Message.hasNew(player, 'Pathos'):
-                            $icon = "gui/phone/message/new_%s.png"
-                        else:
-                            $icon = "gui/phone/message/talk_%s.png"
-                        imagebutton auto icon:
-                            xpos 0.82
-                            hover_sound audio.cursor
-                            yalign 0.7
-                null height 2
-
-                if player.aco_p>2:
-                    frame:
-                        ysize 75
-                        xfill True
-                        background None
-                        imagebutton idle "gui/phone/address/Acolas.png":
-                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who="Acolas", player=player), Function(Message.see, player, "Acolas", "Acolas")]
-                            hovered Show(screen="info", i=_('Acolas\n负责很多项目的技术总监，私底下和工作中完全不同的帅气黑狼。'), a=_('老公'))
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "Acolas":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
-                        if Message.hasNew(player, 'Acolas'):
-                            $icon = "gui/phone/message/new_%s.png"
-                        else:
-                            $icon = "gui/phone/message/talk_%s.png"
-                        imagebutton auto icon:
-                            xpos 0.82
-                            hover_sound audio.cursor
-                            yalign 0.7
-                null height 2
-
-                if player.hal_p>6 and player.hal_p != 51:
-                    frame:
-                        ysize 75
-                        xfill True
-                        background None
-                        imagebutton idle "gui/phone/address/Halluke.png":
-                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who='Halluke', player=player), Function(Message.see, player, 'Halluke', 'Halluke')]
-                            hovered Show(screen="info", i=_('Halluke\n就读于A市大学，不擅长表达的白熊大学生。'), a=_('老婆'))
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "Halluke":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
-                        if Message.hasNew(player, 'Halluke'):
-                            $icon = "gui/phone/message/new_%s.png"
-                        else:
-                            $icon = "gui/phone/message/talk_%s.png"
-                        imagebutton auto icon:
-                            xpos 0.82
-                            hover_sound audio.cursor
-                            yalign 0.7
-                null height 2
-
-                if player.dep_p>10:
-                    frame:
-                        ysize 75
-                        xfill True
-                        background None
-                        imagebutton idle "gui/phone/address/Depline.png":
-                            action [Hide("info"),Hide("screen_phone_message_address"),Show(screen="screen_phone_message_weixin",who=_('Depline'), player=player), Function(Message.see, player, _('Depline'), _('Depline'))]
-                            hovered Show(screen="info", i=_('Depline\n莓博上的赤松Akamatsu，喜欢画画、远足的赤狐自由画师。'), a=_('神'))
-                            unhovered Hide("info")  
-                            background Frame("gui/style/white_[prefix_]background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                            activate_sound audio.cursor
-                            xfill True
-                            yalign 0.5
-                        textbutton "Depline":
-                            xpos 0.25
-                            hover_sound audio.cursor
-                            text_style "white"
-                            yalign 0.5
-                        if Message.hasNew(player, _('Depline')):
-                            $icon = "gui/phone/message/new_%s.png"
-                        else:
-                            $icon = "gui/phone/message/talk_%s.png"
-                        imagebutton auto icon:
-                            xpos 0.82
-                            hover_sound audio.cursor
-                            yalign 0.7
-
-
-        frame:
-            background None
-            xpos 0.8
-            ypos 0.83
-            imagebutton auto "gui/phone/back_%s.png":
-                action [Hide("screen_phone_message_address"),Hide("info"),Show(screen="screen_phone", player=player)]
-                hover_sound audio.cursor
-
-    key 'K_ESCAPE' action [Hide("screen_phone_message_address"),Hide("info"),Show(screen="screen_phone", player=player)]
-
-
-
-
-
-screen screen_phone_message_weixin(who, player, trans=trans_Down()):
-    #tag gamegui
-    modal True
-    style_prefix "gameUI"
-    zorder 600
-
-    default send = ''
+    $ allnotseen = 0
+    
 
 
     frame:
-        at trans
-        background None
-        xalign 0.5
-        yalign 0.5
-        ysize 750
-        xsize 400
-
-        add "gui/phone/message/weixin.png":
-            xcenter 0.5
-            ycenter 0.45
         
-        frame:
-            ypos 0.06
-            xfill True
-            ysize 40
-            background None
+        if phone_page == 12:
+            at app_inner_show(-110, 230)
+        else:
+            at app_inner_hide(-110, 230)
 
-            textbutton _('{size=-10}{color=#000000}') + who + _('{/size}{/color}'):
-                xalign 0.5
+        
+        background None
+        xcenter 0.5
+        ycenter 0.5
+        yoffset -10
+        
+        use barrier('', 0)
+
+        add "gui/phone/wallpaper/message.webp":
+            xcenter 0.5
+
+        
+
         frame:
-            ypos 0.14
-            xfill True
-            ysize 450
+            
             background None
-            viewport:
-                xoffset 15
+            xalign 0.5
+            yalign 0.55
+            ysize 1300
+            xsize 582
+            
+
+
+
+            frame:
+                ypos 150
+                background None
+                if screen_phone_message_page == 0:
+                    vbox:
+                        if player.sol_p>=0:
+                            $notseen = len([mes for mes in p.messages['Pathos'] if not mes.seen and mes.fro != player.name])
+                            $allnotseen += notseen
+                            use screen_phone_message_friendbox(player, 'Pathos', notseen)
+                        if player.aco_p>2:
+                            $notseen = len([mes for mes in p.messages['Acolas'] if not mes.seen and mes.fro != player.name])
+                            $allnotseen += notseen
+                            use screen_phone_message_friendbox(player, 'Acolas', notseen)
+                        if player.hal_p>6 and player.hal_p != 51:
+                            $notseen = len([mes for mes in p.messages['Halluke'] if not mes.seen and mes.fro != player.name])
+                            $allnotseen += notseen
+                            if p.hal_p == 99:
+                                use screen_phone_message_friendbox(player, 'Halluke', notseen, 'Halluke_')
+                            else:
+                                use screen_phone_message_friendbox(player, 'Halluke', notseen)
+                        if player.dep_p>0:
+                            use screen_phone_message_friendbox(player, 'Depline', notseen)
+                        if player.des_p>=2:    
+                            $notseen = len([mes for mes in p.messages['Destot'] if not mes.seen and mes.fro != player.name])
+                            $allnotseen += notseen
+                            use screen_phone_message_friendbox(player, 'Destot', notseen)
+                else:
+                    if screen_phone_message_page == 'Halluke' and p.hal_p == 99:
+                        use screen_phone_message_inner(player, screen_phone_message_page, 'Halluke_')
+                    else:
+                        use screen_phone_message_inner(player, screen_phone_message_page)
+
+
+                    
+
+
+
+
+                                
+
+
+
+            frame:
+                background None
+                xpos 0.03
+                ypos 0.06
+                imagebutton auto "gui/phone/back_%s.png":
+                    if screen_phone_message_page == 0:
+                        action SetVariable("phone_page", 0), Hide("info")
+                    else:
+                        action SetVariable("screen_phone_message_page", 0),SetVariable("screen_phone_message_send",''), Hide("info")
+                    hover_sound audio.cursor
+                    
+        if screen_phone_message_page == 0:
+            $nametext = "某信"
+            if allnotseen:
+                $nametext = "某信([allnotseen])"
+        else:
+            $nametext = screen_phone_message_page
+        
+        
+        text nametext xpos 0.98 xanchor 1.0 ypos 0.085 size 30 style "foodname"
+
+    if screen_phone_message_page == 0:
+        key 'K_ESCAPE' action SetVariable("phone_page", 0), Hide("info")
+    else:
+        key 'K_ESCAPE' action SetVariable("screen_phone_message_page", 0),SetVariable("screen_phone_message_send",''), Hide("info")
+
+
+
+screen screen_phone_message_friendbox(player, name, notseen, headname=None):
+    if not headname:
+        $headname = name
+    frame:
+        ysize 110
+        xsize 550
+        background None
+        imagebutton idle "gui/phone/message/"+ headname +".png":
+            action SetVariable("screen_phone_message_page", name), Hide("info"), Function(Message.see, player, name, name), Function(Message.messort, player, name)
+            hovered Show(screen="info", i=screen_phone_message_i[name])
+            unhovered Hide("info")  
+            xfill True
+            activate_sound audio.cursor
+            background Frame("#f8f8f8")
+            yalign 0.5
+            xpos 5
+            at screen_phone_message_friendbox_transform
+        if notseen:
+            text "[name]([notseen])":
+                xpos 0.22
+                style "foodname"
+                yalign 0.0
+                size 35
+        else:
+            text "[name]":
+                xpos 0.22
+                style "foodname"
+                yalign 0.0
+                size 35
+        if Message.hasNew(player, name):
+            add "gui/phone/message/point.png" xpos 95 yoffset -10
+        if player.messages[name]:
+            $lastmes = player.messages[name][-1].what
+            $lastmes = lastmes.replace("\n", "")
+            if player.messages[name][-1].fro == player.name:
+                $lastmes = '我:' + lastmes
+            if len(lastmes) >= 16:
+                $lastmes = lastmes[:16] + "……"
+        else:
+            $lastmes = "你们已经是好友了，一起来聊天吧！"
+        text lastmes:
+            xpos 0.22
+            style "phone_message"
+            yalign 1.0
+            size 23
+
+transform screen_phone_message_icon():
+    zoom 0.5
+
+
+transform screen_phone_message_send_hide():
+    xzoom 1.0
+    xanchor 1.0
+    easein 0.5 xzoom 0.0
+
+default screen_phone_message_send = ''
+
+screen screen_phone_message_inner(player, name, headname=None):
+    if not headname:
+        $headname = name
+    $allmes = player.messages[name]
+    $ya = ui.adjustment()
+
+    viewport id "vp":
+        xfill True
+        ysize 700
+        mousewheel True
+        draggable True
+        yinitial 1.0
+        yadjustment ya
+        vbox:
+            frame:
+                background None
                 xfill True
-                mousewheel True
-                draggable True
-                scrollbars "vertical"
-                yinitial 1.0
-                vbox:
-                    for i in player.messages[who]:
-                        if i.fro == p.name: 
-                            $ali = 1.0
-                        else:
-                            $ali = 0.0
-                        frame:
-                            background None
-                            xfill True
-                            xpos 7
-                            frame:
+                xpos 7
+                frame:
+                    xalign 0.5
+                    background Frame("gui/style/white_hover_background.png", tile=gui.frame_tile)
+                    vbox:
+                        text _('{color=#000000}{size=-19}你们已经是好友了，一起来聊天吧！{/color}{/size}'):
+                            xalign 0.5
+            for i in allmes:
+                $ali = 0.0
+                $head = "gui/phone/message/"+ headname +".png"
+                if i.fro == player.name:
+                    $ali = 1.0
+                    $head = "gui/phone/message/Solitus.png"
+
+                frame:
+                    background None
+                    xfill True
+                    frame:
+                        xalign ali
+                        background None
+                        hbox:
+                            box_reverse (True if i.fro == p.name else False)
+                            
+                            add head:
+                                at screen_phone_message_icon
                                 xalign ali
-                                background Frame("gui/style/white_hover_background.png", Borders(0, 0, 0, 0), tile=gui.frame_tile)
-                                vbox:
-                                    text _('{color=#000000}{size=-17}{font=C.ttf}')+i.fro+_('{/font}{/color}{/size}'):
-                                        xalign ali
-                                    null height 1
-                                    text _('{color=#000000}{size=-16}')+i.what+_('{/color}{/size}'):
-                                        xalign ali
-                                    null height 5
-                                    text _('{color=#000000}{size=-17}')+i.info()+_('{/color}{/size}'):
-                                        xalign ali
+                            null width 10
+                            vbox:
+                                
+                                null height 1
+                                textbutton _('{color=#000000}{size=-8}[i.what]{/color}{/size}'):
+                                    ypadding 10
+                                    xpadding 10
+                                    background Frame("gui/phone/message/green.png" if i.fro == p.name else "gui/phone/message/white.png")
+                                    xalign ali
+                                    xmaximum 470
+                                null height 5
+                                text _('{color=#000000}{size=-17}[i.info]{/color}{/size}'):
+                                    xalign ali
 
-
+                if i.seen == None:
+                    frame:
+                        background None
+                        xfill True
+                        xpos 7
+                        frame:
+                            xalign 0.5
+                            background Frame("gui/style/white_hover_background.png", tile=gui.frame_tile)
+                            vbox:
+                                text _('{color=#000000}{size=-19}发送失败，对方已经不是您的好友。{/color}{/size}'):
+                                    xalign 0.5
+    hbox:
+        ypos 0.58
+        spacing 10
 
         frame:
-            background None
-            ysize 78
-            xsize 650
-            xpos 15
-            ypos 0.77
-            yoffset -3
+            ysize 45
+            xsize 400
+            yalign 0.5
+            
+            background Frame("gui/phone/message/white.png")
             viewport:
-                xsize 290
                 mousewheel True
                 draggable True
                 yinitial 1.0
             
                 input:
-                    value ScreenVariableInputValue("send")
-                    #style "white"
-                    xsize 290
-                    xalign 0.0
-                    yalign 0.0
+                    value VariableInputValue("screen_phone_message_send")
                     length 45
                     exclude "\"\'[]{}%$@?!#^&*\(\)"
                     color '#000000'
-                    size 19
+                    size 30
+                    copypaste True
                     
-
-        frame:
-            background None
-            xpos 0.79
-            ypos 0.77
-            imagebutton auto "gui/phone/message/send_%s.png":
-                action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None)]
-                #alternate Function(Message.allret, player)
-                hover_sound audio.cursor
+                    
+        imagebutton idle "gui/phone/message/send.png":
+            if screen_phone_message_send:
+                action Function(Message.new, player, player.name, name, screen_phone_message_send, chachong=False, pos=''),SetVariable("screen_phone_message_send",'')
                 activate_sound audio.message
+            else:
+                action NullAction()
+                activate_sound audio.error
 
-        frame:
-            background None
-            xpos 0.01
-            ypos 0.05
-            imagebutton auto "gui/phone/back_%s.png":
-                action [Hide("screen_phone_message_weixin"),Hide("info"),Show(screen="screen_phone_message_address", player=player), Function(Message.see, player, who, who)]
-                hover_sound audio.cursor
+            yalign 0.5
+            
+            at app_transform
 
-    key 'K_RETURN' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None), Play("audio", audio.message)]
-    key 'K_KP_ENTER' action [Function(Message.new, player, player.name, who, send, chachong=False, pos=''), Hide("screen_phone_message_weixin"), Show(screen = "screen_phone_message_weixin", who=who, player=player, trans=None), Play("audio", audio.message)]
-    key 'K_ESCAPE' action [Hide("screen_phone_message_weixin"),Hide("info"),Show(screen="screen_phone_message_address", player=player), Function(Message.see, player, who, who)]
+
+        
+        imagebutton idle "gui/phone/message/random.png":
+            if name in ret_mes_randomkeyword:
+                action SetVariable('screen_phone_message_send', rcd(ret_mes_randomkeyword[name]))
+                activate_sound audio.dice
+            else:
+                action NullAction()
+                activate_sound audio.error
+            yalign 0.5
+        
+    if screen_phone_message_send:
+        key 'K_RETURN' action [Function(Message.new, player, player.name, name, screen_phone_message_send, chachong=False, pos=''),SetVariable("screen_phone_message_send",''), Play("audio", audio.message)]
+        key 'K_KP_ENTER' action [Function(Message.new, player, player.name, name, screen_phone_message_send, chachong=False, pos=''),SetVariable("screen_phone_message_send",''), Play("audio", audio.message)]

@@ -10,7 +10,7 @@ label solitus_route_3:
     "疲倦，困倦，眩晕，沉重如铁的大脑，以及毫无频率的头疼。"
     "像定了五六个相差五分钟的闹钟，像尖锐刺耳的消防演习警报。"
     "让我想起浓烟还有塑胶融化的二氧化硫气味儿。"
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     "我讨厌焦虑。"
     "我也讨厌自己。"
     "早起就像是个敏感而脆弱的天平，当一颗灰尘降落在一侧，这座天平便立刻倾倒了。"
@@ -57,7 +57,7 @@ label solitus_route_3:
     stop music fadeout 5
     "…"
     if not replaying:
-        $rec = r2(15 * Task.getRecoScale(p) * p.sleepRecovery)
+        $rec = r2(40 * Task.getRecoScale(p) * p.sleepRecovery)
         $Notice.add('恢复了%s点精神状态。' % rec)
         $p.mental += rec
         $Notice.show()
@@ -78,13 +78,12 @@ label solitus_route_3:
 label solitus_route_4:
     #第二周以后的周末，使用梅子酒，同时拥有焦虑
     hide screen screen_phone_food
-    hide screen screen_phone_bg
     $start_plot()
-    scene workarea with fade
+    $routine_bg(p)
     stop music fadeout 5
     "酒精，吸烟，或者是用极端的方法都是为了一个目的。"
     "让自己变成孩子。"
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     "孩子不会想太多乱七八糟的事，孩子做事不会在意后果，孩子的世界只有快乐。"
     "过得太久，想得也就太多，压力也越大就是了。"
     "我其实对酒并没有什么想法。"
@@ -108,6 +107,7 @@ label solitus_route_4:
     "在一点点舔食中，我再一次体验到了那种熟悉的灼热感。"
     if not replaying:
         $Notice.add('获得了2层精神的释放。')
+        $Inspiration.add(p, 10)
         $MentRezA.add(p, 2)
         $Notice.show()
     "……"
@@ -128,7 +128,7 @@ label solitus_route_4:
 label solitus_route_5:
     #week>=2, writing>1.3, task=='读传统文学', 下一个task=='随笔写作'
     $start_plot()
-    scene workarea with fade
+    $routine_bg(p)
     stop music fadeout 5
     "是的，那本小说。"
     "我已经看完全部了，从第一页到第六百零二页。"
@@ -139,10 +139,9 @@ label solitus_route_5:
     "作者把他的细腻心思灌输进这些纸张之中，以白纸与油墨作为载体，组合成为一本美丽的书，来到我的眼前。"
     "我再通过阅读，将作者想要表达出来的苦痛吸收，感受。"
     if not replaying:
-        $Notice.add('降低了3点严重程度。')
-        $p.severity -= 0.03
+        $p.gain_abi(-0.06, 'sev')
         $Notice.show()
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     "很多人总是希望看到美好的结局，可是创作本身就是一种情绪的喷发，快乐仅仅是其中的一种，同时也并不激烈。"
     "而激烈的快乐便是幸福，可幸福又来源于苦难。"
     "没有强烈的情绪是没法写出小说的，仅仅是一瞬间的念头，也需要聚集起来，成为一大块情绪聚合物之后。"
@@ -170,8 +169,9 @@ label solitus_route_5:
     $end_plot()
     if replaying:
         jump afterreplay
-    call screen screen_tr_commission_inputs(p)
-    call Task_processing from _call_Task_processing_34
+    call screen screen_phone_freewheeling(p)
+    call Task_processing from _call_Task_processing_33
+    
     $p.times+=1
     $FreewheelingWriting.executeTask(p)
     return
@@ -192,7 +192,7 @@ label solitus_route_6:
     "…"
     "我醒了。"
     "黑色方格被子，深蓝色的天花板还有遮光性很差的窗帘。"
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     "这种从让人的意识完全沉浸的梦中醒来给予我的昏沉感，让我对这些本应该十分熟悉的物件感到莫名的陌生感。"
     "甚至让如此简单的记忆调用行为都花费数秒。"
     "噢…"
@@ -205,8 +205,8 @@ label solitus_route_6:
     "在意识到现在仍然是合法的休息日后松了口气。"
     "…"
     if not replaying:
-        $Notice.add('降低了3%的严重程度倍率。')
-        $p.severityRegarded -= 0.03
+        $Notice.add('降低了5%的严重程度倍率。')
+        $p.severityRegarded -= 0.05
         $Notice.show()
     "随着陌生感一同褪去的是梦境中的记忆。"
     "我努力回忆梦境的具体内容，却只记得一些零散的画面碎片。"
@@ -240,12 +240,12 @@ label solitus_route_7:
     #week>=2, 在家工作，带有过劳，时间为晚上
     $Notice.show()
     $start_plot()
-    scene workarea with fade
+    $routine_bg(p)
     stop music fadeout 5
     "我将笔记本电脑合上。"
     "现在已经这么晚了吗…"
     "不管工作完成的如何，我已经把大部分要做的事都简单地处理一遍了，明天上班的时候应该会更轻松点。"
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     "早知道就不堆那么多工作了，就算自己头疼，谋生的事该做还是要做啊…"
     "在这片钢铁丛林里，一个像我这样的普通人的可代替性实在是太强了。"
     "不加倍努力，就会被人从树枝顶端丢下去吧。"
@@ -262,8 +262,8 @@ label solitus_route_7:
     "看看现在的我，连建一个独属于自己的新项目的力气都没有了。"
     "每次意识到自己已经不是小孩子的时候，都有种让人想哭的感觉。"
     if not replaying:
-        $Notice.add('睡眠消耗的精神状态降低了5%。')
-        $p.deteriorateConsumption -= 0.05
+        $Notice.add('睡眠消耗的精神状态降低了10%。')
+        $p.deteriorateConsumption -= 0.1
         $Notice.show()
     "…"
     "大人的生活…真无趣啊。"
@@ -285,21 +285,21 @@ label solitus_route_8:
     $start_plot()
     scene bedroom with fade
 
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     "饥饿。"
     "如果饥饿是一种带有类型的伤害，那应该不是物理，也不是魔法，而是一种“无”属性伤害。"
     "和用来测试游戏而写就的造成瞬间伤害的代码造成的伤害应该是同一个属性的。"
     "为什么我突然想这种事，大概是因为今天一直都没什么胃口，所以基本上也没吃什么东西，最后躺在床上，肚子才想起来饿。"
     "它就在我的腹部用咕咕声提前警告，随后像拧干抹布的水一样扭着胃袋，偶尔还让一些掺了水的胃酸回流到嗓子眼。"
     "胃疼并不比头疼差多少，但幸好我的胃还没有差到那个地步——我应该庆幸才对。"
-    "毕竟从小我便不怎么乖乖吃饭，长大了之后，也总是忙着手上的，或者是其他的原因，甚至单纯是因为烂而不去吃饭。"
+    "毕竟从小我便不怎么乖乖吃饭，长大了之后，也总是忙着手上的，或者是其他的原因，甚至单纯是因为懒得动而不去吃饭。"
     "到了现在，虽然肠子有些这样那样的问题，但吃一段时间药也会恢复。"
     "饥饿更可怕的是头疼，没有了燃料，这个耗电量最大的装置便以为你施加无法忍受的头疼提醒你吃饭。"
     "但我现在就算饿了也不会因为头疼而困扰，毕竟我已经习惯头疼了，这到底是好事还是坏事呢。"
     "…现在点外卖的话，应该还能送过来吧…"
     if not replaying:
-        $Notice.add('精神状态恢复率提升了5%。')
-        $p.basicRecovery += 0.05
+        $Notice.add('精神状态恢复率提升了10%。')
+        $p.basicRecovery += 0.1
         $Notice.show()
     "算了，省一顿是一顿，睡睡觉就不饿了。"
 
@@ -311,6 +311,8 @@ label solitus_route_8:
     $p.s8=True
     $Achievement205.achieve()
     $Achievement.show()
+    if GameDifficulty4.has(p) or GameDifficulty5.has(p):
+        jump before_sleep_task
     jump dayEnd
 
 
@@ -377,8 +379,8 @@ label solitus_route_9:
     "这样很棒，但如果停下，就又会回到空虚了。"
     stop music
     if not replaying:
-        $Notice.add('提升了10%的精神状态恢复效果。')
-        $p.basicRecovery += 0.1
+        $Notice.add('提升了15%的精神状态恢复效果。')
+        $p.basicRecovery += 0.15
         $Notice.show()
     "我努力控制着不让精液射出来，但它还是从那个地方大量溢出来了。"    
     "因为时间足够长，大量前列腺液让射精像排尿一样顺畅，又持久，至少比快速来一发的射精时长持久一些。"

@@ -15,6 +15,7 @@ label explore_hospital:
     scene elevator with fade
     "医院的电梯。"
     "每次来到这里我都会被一种恐惧感包围。"
+            
     jump explore_elevator
 
 label explore_elevator:
@@ -125,7 +126,8 @@ label explore_hospital_internalmedicine:
     doctor "“总之大概需要[temp]元。”"
     menu:
         "付钱（[temp]元）" if p.money >= temp:
-            call Task_processing from _call_Task_processing_24
+            call Task_processing from _call_Task_processing_5
+            
             scene consulting_room with fade
             $p.money -= temp
             $PhysPun.clearByType(p)
@@ -191,7 +193,8 @@ label explore_hospital_surgery:
     doctor "“总之大概需要[temp]元。”"
     menu:
         "付钱（[temp]元）" if p.money >= temp:
-            call Task_processing from _call_Task_processing_25
+            call Task_processing from _call_Task_processing_6
+            
             scene consulting_room with fade
             $p.money -= temp
             $Injured.clearByType(p)
@@ -229,6 +232,8 @@ label explore_hospital_brain:
             jump pathos_route_0
         elif p.sol_p == 2 and p.week >=8:
             jump pathos_route_1
+        elif p.sol_p == 4 and p.week >=12:
+            jump pathos_route_2
         else:
             scene consulting_room with fade
             show pathos at trans_toRight()
@@ -245,10 +250,13 @@ label explore_hospital_brain:
 
 label explore_hospital_end:
     "终于结束了……我要快点离开这个地方。"
+
     if p.sol_p == 1:
         $p.sol_p = 2
     if p.sol_p == 3:
         $p.sol_p = 4
+    if p.sol_p == 5:
+        $p.sol_p = 6
     play music beforemusic fadein 5
     jump GoOutside_result
 
@@ -384,11 +392,11 @@ screen screen_buyMed(player):
 
     python:
         
-        commonmeds = (DrugHypnotic, DrugColdrex, DrugIbuprofen, DrugAntibiotic, DrugAntidepressant)
+        commonmeds = (DrugHypnotic, DrugColdrex, DrugIbuprofen, DrugIbuprofenB, DrugAntibiotic, DrugAntidepressant, DrugFake)
         
-        if GameDifficulty1.has(player):
-            prescription = (DrugVitamin, DrugStomach, DrugAmphetamine, DrugEtizolam, DrugUnknown)
-        elif GameDifficulty5.has(player):
+        if GameDifficulty1.has(player) or GameDifficulty2.has(player):
+            prescription = (DrugVitamin, DrugStomach, DrugAmphetamine, DrugEtizolam)
+        elif GameDifficulty4.has(player) or GameDifficulty5.has(player):
             prescription = (DrugAspirin, Drugdextropropoxyphene, DrugMethylphenidate)
         else:
             prescription = []
@@ -432,8 +440,7 @@ screen screen_buyMed(player):
                         viewport:
                             mousewheel True
                             draggable True
-                            if len(med) + len(commonmeds) +len(prescription)>9:
-                                scrollbars "vertical"
+                            scrollbars "vertical"
                             
                             vbox:
                                 if player.today == 5:
@@ -448,6 +455,11 @@ screen screen_buyMed(player):
                                 null height 10
 
                                 use screen_buylist(player, prescription, p=-1, d=25, ds=False, n='处方药')
+                                
+                                if GameDifficulty4.has(player) or GameDifficulty5.has(player):
+                                    null height 10
+                                    use screen_buylist(player, [Mask], p=0.15, d=25, ds=False, n='医用品')
+                                    
                                 null height 30
                                 textbutton ''
                     

@@ -1,7 +1,9 @@
 label afterreplay:
+    window hide
+    $sh()
     $p.times = replaying_times
     $p.stime()
-    $replaying = False
+    $p.onShip = False
     show screen screen_dashboard(p)
     $routine_bg(p)
     $routine_music(p)

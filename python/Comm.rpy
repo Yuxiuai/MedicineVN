@@ -6,34 +6,37 @@ init python early:
                         _("恐惧"), _("余烬"), _("败者"), _("诋毁与拯救"), _("嘈杂"), _("吊兰调研笔记"),
                         _("外星生命调研笔记"), _("被捕食者调研笔记"), _("触摸"), _("与触手"), _("共浴"),
                         _("逝者"), _("水妖"), _("服务"), _("待命"), _("他和为他工作之人"), _("深入"), _("极寒"),
-                        _("刻印"), _("鱼水"), _("报酬"), _("远行"), _("洗濯"), _("擢升"), _("奖励"), _("讨伐"),
-                        _("晋升胸针"), _("断骨"), _("讴歌终焉之诗"), _("阿斯卡隆漫游指南"), _("活着"), _("未知之物")]
+                        _("刻印"), _("鱼水"), _("报酬"), _("远行"), _("奖励"), _("讨伐"),
+                        _("晋升胸针"), _("断骨"), _("阿斯卡隆漫游指南"), _("活着"), _("未知之物")]
 
 
     class Comm:
         def __init__(self, player):
             def wri(p):
-                return r2(ra(p, 85, 105) * 0.01 * player.wri())
+                wg = player.writing_grade()
+                if rra(player, min(5 * player.week, 50)) or wg<0.5:
+                    return r2(ra(p, 50, 300) * 0.01)
+                return r2(ra(p, 85, 115) * 0.01 * wg)
 
             def genePrice(player):
-                if not WriterProof.has(player):
+                if WriterProof.has(player):
                     pr = 0.8
-                    pr += (player.wri() - 1) / 4
-                    f = ((player.wri() - 1) / 4) + 1
-                    while rra(player, 60):
-                        pr += ra(player, 10 * f, 30 * f) * 0.01
-                    if pr > 2.5:
-                        pr = 2.5
+                    pr += (player.wri() - 1) / 3.5
+                    f = ((player.wri() - 1) / 3.5) + 1
+                    while rra(player, 70 - 2.5 * player.week):
+                        pr += ra(player, 10 * f, 25 * f) * 0.01
+                    if pr > 3.5:
+                        pr = 3.5
                 else:
                     pr = 0.75
                     pr += (player.wri() - 1) / 4
                     f = ((player.wri() - 1) / 4) + 1
-                    r = 0
-                    while rra(player, 60):
-                        pr += ra(player, 5 * f, 25 * f) * 0.01
-                    if pr > 3.5:
-                        pr = 3.5
+                    while rra(player, 70 - 2.5 * player.week):
+                        pr += ra(player, 5 * f, 20 * f) * 0.01
+                    if pr > 2.5:
+                        pr = 2.5
                 
+                pr *= 1 + player.writing_valuebouns()
                 return r2(pr)
 
             self.name = rca(player, comm_names)
@@ -43,11 +46,11 @@ init python early:
             self.needInspiration = -1
             self.du = -1
             if rra(player, 40) or self.priceFluctuation > 1.5:
-                self.needWord = int(self.require**2 * 1000 * f())
+                self.needWord = int(self.require**2 * 10 * ra(player, 75, 225)*0.01) * 100
             if rra(player, 40) or self.priceFluctuation > 1.5:
-                self.needInspiration = ra(player, 20, 35)
+                self.needInspiration = int(player.writing_grade() * ra(player, 5, 20))
             if rra(player, 40) or self.priceFluctuation > 1.5:
-                self.du = ra(player, 7, 21)
+                self.du = ra(player, 2, 7)
             self.writeCounts = 0
             self.content = []
             self.info = ""
@@ -59,119 +62,66 @@ init python early:
         def __eq__(self, other):
             return id(other) == id(self)
 
-        def show(self):
-            print(_('委托名:%s, 写作技巧需求:%s\n价格修正:%s倍') % (self.name, self.require, self.priceFluctuation))
-            if self.needWord != -1:
-                print(_('字数需求:%s ') % self.needWord, end='')
-            else:
-                print(_('无字数需求 '), end='')
-            if self.needInspiration != -1:
-                print(_('灵感需求:%s ') % self.needInspiration, end='')
-            else:
-                print(_('无灵感需求 '), end='')
-            if self.du != -1:
-                print(_('委托到期时间:%s') % self.du)
-            else:
-                print(_('无时间要求'))
-
         def commInfo(self):
-            info1 = _('{size=+2}委托内容：') + self.name + _('{/size}\n写作技巧需求：') + str(self.require) + _('\n价格修正：') + str(
-                int(self.priceFluctuation * 100)) + '%'
+            if self.freewheeling:
+                return '{size=+2}委托内容：' + self.name + '{/size}'
+            info1 = _('{size=+2}委托内容：') + self.name + _('{/size}\n水平需求：') + str(self.require) + _('\n提出价格：') + str(self.require*100*self.priceFluctuation) + "/千字"
 
-            if self.needWord != -1:
-                info2 = _('\n字数需求：') + str(self.needWord)
+            info2 = "\n需求："
+            if self.needWord == -1 and self.needInspiration == -1 and self.du == -1:
+                info2 += "\n · 无需求"
             else:
-                info2 = _('\n无字数需求 ')
-
-            if self.needInspiration != -1:
-                info2 += _('\n灵感需求：') + str(self.needInspiration)
-            else:
-                info2 += _('\n无灵感需求 ')
-                
-            if self.broken:
-                info2 += _('\n{color=#ff0000}委托已超时{/color}')
-            elif self.du != -1:
-                info2 += _('\n委托到期时间：') + str(self.du)
-            else:
-                info2 += _('\n无时间要求')
+                if self.needWord != -1 :
+                    info2 += "\n · 字数需求：" + str(self.needWord)
+                if self.needInspiration != -1 :
+                    info2 += "\n · 灵感需求：" + str(self.needInspiration)
+                if self.broken:
+                    info2 += "\n · 委托已超时："
+                elif self.du != -1 :
+                    info2 += "\n · 时间需求：" + str(self.du)
             
-            if config.developer:
-                info2 += '\n\n{color=#fde827}预计收益：\n灵感为1：%s\n灵感为50：%s\n灵感为100：%s\n灵感为200：%s{/color}' % tuple(self.predictvalue(p))
-
             return info1 + info2
 
         def contentInfo(self):
             word = 0
             rewara = 0
             ins = 0
+            wri = 0
             for i in self.content:
                 word += i[0]
                 rewara += i[1]
                 ins += i[2]
-
+                wri += i[3]
+            if self.content:
+                wri = r2(wri/len(self.content))
             if rewara <= 0:
                 rewara = 0.0
 
-            return [int(word), r2(rewara), ins]
+            return [int(word), r2(rewara), ins, wri]
 
-        def predictvalue(self, player, ins=None):
-            playerwri = min(5, player.wri())
-
-            price = -0.04 * playerwri ** 2 + 0.3 * playerwri + 0.7
-            price *= 150
-            if EffectGameModule2_2.has(player):
-                price *= 1.3
-
-            
-            
+        def predictvalue(self, player, ins=None,exact=False):
+            playerwri = player.wri()
             word = int(playerwri**2 * 1000 * f())
-            if self.needWord != -1:
-                valueword = self.needWord / self.require
-            else:
-                valueword = word / playerwri
-            
-
-            if not ins:
-                ins = 100
-                value = ins * 0.075 * price * self.priceFluctuation * player.writeValuable
-
-                if self.needInspiration != -1:
-                    value *= 1.05
-
-                if self.du != -1:
-                    value *= 1.05
-
-                if self.needWord != -1:
-                    value *= 1.05
-                    if word > self.needWord:
-                        reward = value * valueword
-                    else:
-                        reward = value * valueword
-                else:
-                    reward = value * valueword
-
-                reward *= 0.001
-
-                return [r2(reward*0.01), r2(reward*0.5), r2(reward), r2(reward*2)]
-
-            value = ins * 0.075 * price * self.priceFluctuation * player.writeValuable
-
-            if self.needInspiration != -1:
-                value *= 1.05
-
-            if self.du != -1:
-                value *= 1.05
-
-            if self.needWord != -1:
-                value *= 1.05
+            if exact and self.needWord != -1:
                 if word > self.needWord:
-                    reward = value * valueword
-                else:
-                    reward = value * valueword
-            else:
-                reward = value * valueword
+                    word = self.needWord
+                
+                elif word < self.needWord and word*1.5 >= self.needWord:
+                    word = self.needWord
+                    sev = max(int((self.needWord - word) * 10 / (word * 0.5)),2)*ra(player, 8, 12)*f()
+                    player.gain_mental(-sev, due='精准写作')
 
-            reward *= 0.001
+            if Stayuplate.has(player):
+                word = int(word * 0.5)
+                
+            
+            value = self.require*0.1*self.priceFluctuation
+
+
+            if self.needWord != -1:
+                reward = value * self.needWord
+            else:
+                reward = value * word
 
             return r2(reward), word
 
@@ -179,30 +129,60 @@ init python early:
             di = ins
             np = player.popularity/1000
             r = 0.5 * (di - 7)
-            up = int(r * (np-np*np/100) * 120)
+            up = int(r * (np-np*np/100) * 60)
+            up *= 1.0 - player.week * 0.025
 
-            return up
-
-
-
+            return int(up)
 
 
-        def write(self, player):
+
+
+
+        def write(self, player, exact=False):
             if player.retval1 is not None:
                 self.inputs = player.retval1
                 player.retval1 = None
 
-            EffectGameModule2_2.clearByType(player)
-
             ins = 1
-            if Inspiration.has(player):
-                ins += Inspiration.getstack(player)
-                Inspiration.clearByType(player)
-            if FixedInspiration.has(player):
-                ins += FixedInspiration.getstack(player)
-                FixedInspiration.clearByType(player)
+            if exact and self.needInspiration != -1:
+                
+                needins = self.needInspiration
+                if Inspiration.has(player):
+                    igs = Inspiration.getstack(player)
+                    if needins <= igs:
+                        
+                        Inspiration.subByType(player, needins)
+                        ins = self.needInspiration
+                        needins = 0
 
-            reward, word = self.predictvalue(player, ins)
+                    else:
+                        needins -= igs
+                        Inspiration.clearByType(player)
+                        ins += igs
+
+                if FixedInspiration.has(player) and needins > 0:
+                    igs = FixedInspiration.getstack(player)
+                    if needins <= igs:
+                        
+                        FixedInspiration.subByType(player, needins)
+                        ins = self.needInspiration
+                        needins = 0
+                        
+                    else:
+                        needins -= igs
+                        FixedInspiration.clearByType(player)
+                        ins += igs
+
+            else:
+                
+                if Inspiration.has(player):
+                    ins += Inspiration.getstack(player)
+                    Inspiration.clearByType(player)
+                if FixedInspiration.has(player):
+                    ins += FixedInspiration.getstack(player)
+                    FixedInspiration.clearByType(player)
+
+            reward, word = self.predictvalue(player, ins, exact)
 
 
             MentRezA.add(player, int(ins * 0.15))
@@ -213,26 +193,36 @@ init python early:
 
             g = int(ins / 5 + player.writingGain)
 
-            if g >= 1:
-                player.writing += g * 0.01
-                Notice.add(_('额外获得%s点写作技巧。') % g)
+            if g >= 1: 
+                player.gain_abi(g * 0.01, 'wri', extra=True)
+
+
+            pwri = player.wri()
+            if SpecialInspiration.has(player):
+                gs = SpecialInspiration.getstack(player)
+                pwri *= (1 + gs * 0.05)
+                self.remarks.append(gs)
+                SpecialInspiration.clearByType(player)
 
             if len(self.content) == 0:
-                self.content.append([int(word), r2(reward), ins])
+                self.content.append([int(word), r2(reward), ins, pwri])
             else:
-                self.content.append([int(word), 0, ins])
+                self.content.append([int(word), 0, ins, pwri])
 
             self.writeCounts += 1
 
             word = 0
             rewara = 0
             ins = 0
+            wri = 0
             for i in self.content:
                 word += i[0]
                 ins += i[2]
                 rewara += i[1]
-                    
+                wri += i[3]
 
+            if self.content:
+                wri = r2(wri/len(self.content))
             finished = 0
 
             if self.needWord != -1:
@@ -252,6 +242,7 @@ init python early:
             if finished == 2:
                 CommissionReward.add(player)
                 cms = FinishedCommission(player)
+                GuideI.unlock(FinishedCommission)
                 cms.comm = self
                 return cms
 
@@ -264,16 +255,6 @@ init python early:
         def checkWritable(self, player):
             if self.broken:
                 return _('委托已经超出期限！')
-            if player.wri() < self.require:
-                return _('写作技巧未达要求！')
-            if self.needInspiration != -1:
-                ins = 0
-                if Inspiration.has(player):
-                    ins += Inspiration.getstack(player)
-                if FixedInspiration.has(player):
-                    ins += FixedInspiration.getstack(player)
-                if ins < self.needInspiration - self.contentInfo()[-1]:
-                    return _('灵感层数未达要求！')
             return True
 
         def timeUpdate(self, player):

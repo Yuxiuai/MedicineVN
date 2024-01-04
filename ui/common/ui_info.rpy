@@ -1,7 +1,7 @@
 screen info(t=None, i=None, a=None, width=400, pp=renpy.get_mouse_pos()):
-
+    
     style_prefix "info"
-    zorder 1000
+    zorder 99999
     python:
         (xc,trans) = (0.0,trans_toLeft) if pp[0] < 1500 else (1.0,trans_toRight)
         yc = 0.0 if pp[1] < 540 else 1.0
@@ -34,6 +34,7 @@ screen info(t=None, i=None, a=None, width=400, pp=renpy.get_mouse_pos()):
                 label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
+    key 'mousedown_3' action Hide("info")
 
 
 screen info3(t=None, i1=None, a1=None, i2=None, a2=None, width=400, pp=renpy.get_mouse_pos()):
@@ -79,6 +80,7 @@ screen info3(t=None, i1=None, a1=None, i2=None, a2=None, width=400, pp=renpy.get
                 label '{i}[a2!t]{/i}':
                     text_style "admonition_text"
                     xsize width
+    key 'mousedown_3' action Hide("info3")
 
 
 screen info_use(t=None,i=None, a=None, width=400, pp=renpy.get_mouse_pos()):
@@ -119,7 +121,7 @@ screen info_use(t=None,i=None, a=None, width=400, pp=renpy.get_mouse_pos()):
                     action Hide("info_use",transition=dissolve)
                     activate_sound audio.cursor
 
-    key 'K_ESCAPE' action Hide("info_use",transition=dissolve)
+    key 'K_ESCAPE' action Hide("info_use",transition=dissolve),Hide("info")
 
 
 screen info_confirm(act, t=None, i=None, a=None, width=400, pp=renpy.get_mouse_pos(),text=_('确定'),r=False):
@@ -168,7 +170,7 @@ screen info_confirm(act, t=None, i=None, a=None, width=400, pp=renpy.get_mouse_p
                     action Hide("info_confirm",transition=dissolve)
                     activate_sound audio.cursor
 
-    key 'K_ESCAPE' action Hide("info_confirm",transition=dissolve)
+    key 'K_ESCAPE' action Hide("info_confirm",transition=dissolve),Hide("info")
 
 
 
@@ -224,7 +226,7 @@ screen info3_use(t=None, i1=None, a1=None, i2=None, a2=None, width=400, pp=renpy
                     action Hide("info3_use",transition=dissolve)
                     activate_sound audio.cursor
 
-    key 'K_ESCAPE' action Hide("info3_use",transition=dissolve)
+    key 'K_ESCAPE' action Hide("info3_use",transition=dissolve),Hide("info")
 
 
 
@@ -279,3 +281,5 @@ screen info_e(eff, width=400, pp=renpy.get_mouse_pos()):
                 label '{i}[a!t]{/i}':
                     text_style "admonition_text"
                     xsize width
+    key 'K_ESCAPE' action Hide("info_e")
+    key 'mousedown_3' action Hide("info_e")

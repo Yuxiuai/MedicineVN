@@ -208,6 +208,28 @@ image acolas_eyes_smile:
     pause 0.05  
     repeat
 
+
+image acolas_eyes_glitch:
+    "images/sprite/Acolas/eyes/Acolas_eyes_glitch_eyes_1.png"
+    pause 0.05 
+    "images/sprite/Acolas/eyes/Acolas_eyes_glitch_eyes_2.png"
+    pause 0.05 
+    "images/sprite/Acolas/eyes/Acolas_eyes_glitch_eyes_3.png"
+    pause 0.05  
+    repeat
+
+
+
+
+
+
+
+
+
+
+
+
+
 layeredimage acolas:
 
     zoom 0.45
@@ -239,6 +261,7 @@ layeredimage acolas:
         attribute surprised_eyebrow
         attribute frown_eyebrow
         attribute sad_eyebrow
+        attribute none_eyebrow null
 
     group eyes:
         attribute normal_eyes default:
@@ -256,6 +279,9 @@ layeredimage acolas:
             "acolas_eyes_smile"
         attribute sad_eyes
         attribute closed_eyes
+        attribute none_eyes null
+        attribute glitch_eyes:
+            "acolas_eyes_glitch"
 
     group mouth:
         attribute normal_mouth default
@@ -266,6 +292,7 @@ layeredimage acolas:
         attribute smile2_mouth
         attribute laugh_mouth
         attribute sad_mouth
+        attribute none_mouth null
 
     group blush:
         attribute no_blush null default

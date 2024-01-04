@@ -4,7 +4,7 @@ init python:
             if player.effects[i].duration != -1:
                 player.effects[i].clear(player)
         for i in range(len(player.items) - 1, -1, -1):
-            if type(player.items[i]) not in (Sticker59,):
+            if type(player.items[i]) not in (Sticker59, DrugFake):
                 if player.items[i].kind == '实验药物' and not player.items[i].broken:
                     continue
                 player.items[i].remove(player)
@@ -21,10 +21,8 @@ init python:
             player.p2.name = 'Acolas'
         player.p2.drugRecovery = 1.5
         player.p2.deteriorateConsumption = 0.3
-        MedicineA.add(player.p2, 99)
-        MedicineB.add(player.p2, 99)
-        MedicineC.add(player.p2, 99)
-        Despair.add(player.p2, 4)
+        player.p2.drugfake = False
+        player.p2.effects.append(Despair())
 
         player.finalStageDays = 0
         player.plan = [NoTask, NoTask, NoTask]
@@ -38,6 +36,82 @@ init python:
             Despair.clearByType(player)
         Despair.add(player)
 
+
+label writer_before_earthquake:
+    $ renpy.block_rollback()
+    stop music
+    if p.mental < 5:
+        $p.mental = 60.0
+    scene black
+    "……"
+    scene bedroom with fade
+    "我睁眼。"
+    "吸进鼻腔的凌晨的空气有种孤独的潮湿感。"
+    "天似乎刚刚亮，但我却十分清醒。"
+    "意外地，头没有那么疼。"
+    "……"
+    "几个月过去了。"
+    "我变了很多，非常多。"
+    "我开始频繁读曾经不屑于读的书，写很多的委托。"
+    "现在拥有了很多很多粉丝。"
+    "我开始吃药，大量的药，各种不同的药，也从来没像以前那样忘记吃药，或是忘了买药。"
+    "我试着探索这个城市，直到把每个地方能做什么，有什么东西卖都记得滚瓜烂熟。"
+    "我甚至有了一比不小的积蓄。"
+    "这是，怎么回事呢。"
+    "在活着的这二十几年里，我有过如此自律努力的时候吗？"
+    "甚至在面对人生最重要的考试的前几天，还在床上玩手机，和别人在网上用文字演绎交配的动作。"
+    "为什么到了现在，就变了呢？"
+    "是因为我不这样做就会“死”吗？"
+    "我被什么超脱于我的存在控制了吗？受一位“木偶师”的操纵去做那些我从来都没动力去做的事吗？"
+    "甚至我心里所想，口中所言都能被他听见吗？"
+    "是这样吗？"
+    "他现在正在看着我吗？"
+    "我经常会这么想，想象自己就像是某个养成游戏的主角，被玩家操控着去做一些提升自己某些数值的事。"
+    "想这些没什么意义，不过很有趣。"
+    "那么，在经历了这一切后，我感到开心吗？"
+    "我和我也许喜欢的人度过了一个“美妙”的周末，但我却完全感觉不出来有多开心。"
+    "我想起小时候，有一个宣传得很美好的展会。"
+    "一般来说，这样的展会都是开在大城市的，B市所在的省的省会还没有这么“现代”，展会能开在B市的省会城市是很罕见的事。"
+    "即便价格也不高，但还是抵得上我好几天的餐费。"
+    "当时的我为了这个展会攒了很多钱，但还是差一些入场费。"
+    "我厚脸皮和家长要了入场费的钱，在展会开放的一大清早，孤身一人上了火车。"
+    "展会去的人很少，展会场地也很小，大概一个高中教室的大小。"
+    "也没什么活动，荧幕仿佛是一个仅用来做光源的摆设。"
+    "晚上我便回去了。"
+    "后悔吗？也许我应该后悔的，但是已经花掉的钱，后悔也不会再回来。"
+    "思维回到现在。"
+    "即便我没有为船票花钱，上船，和那位我并不爱的先生做爱，都没有让我觉得多值。"
+    "…也许只是我把他当成了这艘轮渡酒店之旅的全部，至少我还看到了海。"
+    "但我…绝对不会在和别人聊起这段时光的时候，把这场免费获得的奢华旅程标上美好回忆的标签。"
+    "…"
+    "我需要吃药吗？"
+    "……"
+    "我已经厌倦吃药了。"
+    "也许是因为我马上就要从这种生活中解脱了吧。"
+    "周末，只要到了周末就好了。"
+    "一切都会好起来的，一切都会结束的。"
+    "……"
+    "但，他。"
+    "我就不应该接触所谓的爱情的，我真正想要的到底是什么呢。"
+    "为什么我得到了生命中的某个重要的存在，却开心不起来呢。"
+    "我没想过这被世人歌颂的爱情乱七八糟像团乱麻，缠在我身上。"
+    "痛苦永远都在继续。"
+    "痛苦永远不会远离。"
+    "我感到难以呼吸。"
+    "……"
+    "痛苦是艺术的食粮。"
+    scene workarea with fade
+    "……"
+    "我拿出了那本小说原稿。"
+    "将轮渡上的谈话，我的痛苦，我的疑问，我的孤独，还有现在的思考如若倾盆般倒入其中。"
+    "我的笔飞速刻画下仅我自己能够理解的笔画，墨水如喷泉般溅出。"
+    "……"
+    "这就是，最后一章了。"
+    $WriterItem5.add(p)
+    $Notice.show()
+    "我合上书，然后将笔丢进垃圾桶里。"
+    "该启程了。"
+    jump we
 
 
 label before_earthquake:
@@ -198,7 +272,7 @@ label before_earthquake:
     "清醒一点。"
     "该计划一下今天要做的事了。"
     "…"
-    play music audio.debilitatinganxiety
+    play music audio.anxietyspreading
     "等等，计划什么呢。"
     "我能做什么？"
     "无非是点外卖吃饭，吃药，工作而已。"
@@ -225,7 +299,7 @@ label before_earthquake:
 label earthquake:
     scene black
     stop music
-    hide screen screen_dashboard
+    $clearscreens()
     play sound audio.earthquake
     call screen cfreeze(12)
     $ to_the_final_stage(p)
@@ -401,15 +475,23 @@ label earthquake:
     "脸上的眼泪，是什么时候流出来的？"
     "…"
 
-    if Achievement401.has():
+    if Achievement400.has() or Achievement403.has():
         menu:
             "是否直接抵达已经完成过的内容？"
-            "废墟线坏结局":
+            "废墟线坏结局" if Achievement104.has():
                 jump despairBE
-            "废墟线普通结局":
+            "废墟线普通结局" if Achievement400.has():
                 jump ne
-            "废墟线真实结局":
+            "废墟线真实结局" if Achievement401.has():
                 jump te
+            "废墟线虚伪结局" if Achievement403.has():
+                if p.route == 'h':
+                    jump fe_h
+                elif p.route == 'a':
+                    jump fe_a
+                else:
+                    "出现错误。"
+                    return
             "不需要":
                 pass
             
@@ -473,17 +555,20 @@ label despair_execution:
         stop music fadeout 4
         if p.mental <= 0:
             
-            hide screen screen_dashboard
+            $clearscreens()
             jump despairBE
         jump despair_dayend
 
 label despair_dayend:
     $ p.newDay()
     $ p.finalStageDays += 1
-    $ Save.save(p)
-    $ Notice.add('存档已保存！')
-    $ Notice.show()
+    if not p.p2.drugfake:
+        $ Saver.save(p)
+        $ Notice.add('存档已保存！')
+        $ Notice.show()
     call loading from _call_loading_8
+    if p.p2.drugfake:
+        jump despair_end
     jump despair_wakeup
 
 label despair_wakeup:
@@ -529,6 +614,7 @@ label despair_wakeup:
         "但这一切都不是梦，也永远不会发生。"
         "死亡每天都在逼近，饥饿令头疼更加狂躁。"
     "我将抽屉里的面包扯下一小块塞进嘴里。"
+
     if p.p2.mental <= 0:
         if p.route == 'h':
             "当我将面包塞进白熊的口中时，触碰到他的手时，却只感觉一阵冰冷。"
@@ -536,7 +622,7 @@ label despair_wakeup:
         if p.route == 'a':
             "当我将面包塞进狼的口中时，触碰到他的手时，却只感觉一阵冰冷。"
             "……"
-        hide screen screen_dashboard
+        $clearscreens()
         jump despairBE
 
     "然后再将面包撕下来给他一点。"
@@ -628,7 +714,8 @@ label DespairWaiting_beginning:
             "我只是有点难过，但我说不出来为什么难过。"
             "是想到他的死，还是我的死？"
         
-    call Task_processing from _call_Task_processing_3
+    call Task_processing from _call_Task_processing_15
+    
     $p.times+=1
     $DespairWaiting.executeTask(p)
 
@@ -645,7 +732,8 @@ label DespairObserve_beginning:
     scene ruins with fade
     "我该检查一下他的状态。"
     "也许我曾经希望永远都不再见到他，但至少现在，我想让他活下去。"
-    call Task_processing from _call_Task_processing_27
+    call Task_processing from _call_Task_processing_16
+    
     $p.times+=1
     $DespairObserve.executeTask(p)
 
@@ -692,7 +780,8 @@ label DespairDistribute_beginning:
             $MedicineA.get(p).sub(p)
             $MedicineA.add(p.p2)
             $MedicineA.get(p.p2).use(p.p2)
-            call Task_processing from _call_Task_processing_28
+            call Task_processing from _call_Task_processing_17
+            
             $p.times+=1
             scene ruins with fade
             $Notice.show()
@@ -707,7 +796,8 @@ label DespairDistribute_beginning:
             $MedicineB.get(p).sub(p)
             $MedicineB.add(p.p2)
             $MedicineB.get(p.p2).use(p.p2)
-            call Task_processing from _call_Task_processing_29
+            call Task_processing from _call_Task_processing_18
+            
             $p.times+=1
             scene ruins with fade
             $Notice.show()
@@ -721,7 +811,8 @@ label DespairDistribute_beginning:
             $MedicineC.get(p).sub(p)
             $MedicineC.add(p.p2)
             $MedicineC.get(p.p2).use(p.p2)
-            call Task_processing from _call_Task_processing_30
+            call Task_processing from _call_Task_processing_19
+            
             $p.times+=1
             scene ruins with fade
             $Notice.show()
@@ -731,6 +822,8 @@ label DespairDistribute_beginning:
             if p.route == 'a':
                 a"“……呃嗯……”"
             "虽然他看上去还是没什么精神，但应该有效吧……"
+        "安慰剂" if DrugFake.has(p):
+            jump after_drugfake
         "算了。" if any((MedicineA.has(p), MedicineB.has(p), MedicineC.has(p))):
             "不……还是下次吧……他……肯定能坚持下来。"
             $p.times+=1
@@ -755,26 +848,114 @@ label despairusemed:
     menu:
         "[MedicineA.name]" if MedicineA.has(p):
             $MedicineA.get(p).use(p)
-            
             "……很快就会好起来的。"
+
         "[MedicineB.name]" if MedicineB.has(p):
             $MedicineB.get(p).use(p)
-            
             "……很快就会好起来的。"
+
         "[MedicineC.name]" if MedicineC.has(p):
             $MedicineC.get(p).use(p)
-            
             "……很快就会好起来的。"
+
         "还可以忍一忍。" if any((MedicineA.has(p), MedicineB.has(p), MedicineC.has(p))):
             "……我……还能撑一会……"
+
         "我已经没有药了。" if not any((MedicineA.has(p), MedicineB.has(p), MedicineC.has(p))):
             "……"
+
     jump despair_execution
 
 
 
-
-
+label after_drugfake:
+    play music audio.thelastmedicine fadein 5
+    $p.p2.drugfake = True
+    "……"
+    "这只是合理的药物调节程序。"
+    "我提醒着自己。"
+    "你并没有做错什么，那些医生也是这样欺骗他们的病人的。"
+    "痛苦…痛苦也只是幻觉而已。"
+    "他会活着的。"
+    "他会活着的，对吗？"
+    "保存体力，保存体力。"
+    "思考和呼吸都会加速生命的燃烧。"
+    "怀疑，思考，惦念，怜悯都是不必要的，没有任何东西比生命重要。"
+    "但我却不能停止这些字句从大脑布满褶皱的缝隙中流出，不能关闭回忆的画面在意识中的形成，如同挽留河水般无力。"
+    "第一堂课便是生命的教育。"
+    "生命是珍贵的，生命是无法再获得的，生命是只有一次的。"
+    if p.route == 'h':
+        s"“Halluke……你睡着了吗？”"
+    elif p.route == 'a':
+        s"“Acolas……你睡着了吗？”"
+    "我低声。"
+    if p.route == 'h':
+        h"“…还没。”"
+    elif p.route == 'a':
+        a"“…还没。”"
+    
+    "我的生命是宝贵的，我的存在是宝贵的，我…"
+    "为了我…"
+    "但我赌上了他的性命。"
+    "…"
+    "饥饿感让精神变得飘渺，我能听到死神的脚步声，似乎就在几米外。"
+    "我发誓，我发誓，我再也不会欺骗他了，只有这一次，我祈求上天，让他活过今晚…"
+    if p.route == 'h':
+        s"“Halluke……你还醒着吗？”"
+    elif p.route == 'a':
+        s"“Acolas……你还醒着吗？”"
+    "我低声。"
+    if p.route == 'h':
+        h"“…嗯。”"
+    elif p.route == 'a':
+        a"“…嗯。”"
+    "我的呼吸紊乱了，也许一直都是紊乱的。"
+    if p.route == 'h':
+        s"“Halluke，求你，答应我。”"
+    elif p.route == 'a':
+        s"“Acolas，求你，答应我。”"
+    s"“活过今晚就好……真的，明早就会有人救我们了。”"
+    if p.route == 'h':
+        h"“…”"
+        h"“我答应你……”"
+    elif p.route == 'a':
+        a"“…”"
+        a"“……会的。”"
+    
+    "他的声音如此轻微。"
+    "也许我不该继续打扰他了。"
+    "不会这么巧的，不会这么巧。"
+    "他已经坚持了很久了，不是吗。"
+    "现在我能把剩下的药给他吃吗？"
+    "不…我不能…药太少了…如果……"
+    "如果我再努力一点，如果我买多一点药，如果…"
+    "那他就不会…我们就不会是这样的场面…"
+    "为什么…为什么事情会变成这样…"
+    "我想哭，但我不能流泪。"
+    "水，能量。"
+    "我们就像芦苇。"
+    if p.route == 'h':
+        h"“[p.name]？”"
+    elif p.route == 'a':
+        a"“[p.name]？”"
+    
+    s"“我……我还醒着……怎么了……”"
+    "黑暗，潮湿，寂静。"
+    "我分辨不出现在到底是什么时候。"
+    "但我很困，我不确定，我到底是困了，还是大限将至。"
+    "我能睡吗？"
+    if p.route == 'h':
+        s"“Halluke？”"
+        h"“……”"
+        s"“Halluke！”"
+    elif p.route == 'a':
+        s"“Acolas？”"
+        a"“……”"
+        s"“Acolas！”"
+    "…"
+    "没有回应。"
+    "…"
+    jump despair_dayend
 
 screen lastmedchoice():
     default t2 = glitchtext(rd(20, 40))
@@ -782,7 +963,6 @@ screen lastmedchoice():
     style_prefix "choice"
 
     vbox:
-
         button:
             action Jump('lastMed_to')
             text t2 xalign 0.5
@@ -847,7 +1027,6 @@ label lastMed:
                 jump lastMed_me
             "留给对方。":
                 jump lastMed_to
-
 
 label lastMed_to:
     "……"
@@ -984,7 +1163,7 @@ label lastMed_me:
 
 label despair_end:
     stop music fadeout 5
-    hide screen screen_dashboard
+    $clearscreens()
     scene black
     call screen cfreeze(5)
     pause
@@ -992,7 +1171,7 @@ label despair_end:
     if p.finalStageDays >= 20:
         $Achievement602.achieve()
         $Achievement.show()
-    if p.finalStageDays >= 7:
+    if p.finalStageDays >= 7 or p.p2.drugfake:
         "……"
         "是震动。"
         scene white with dissolve
@@ -1018,6 +1197,21 @@ label despair_end:
         "我做不到。"
         "我睁眼。"
         "灰暗的色彩流入我的虹膜。"
+        if p.p2.drugfake:
+            "我获救了。"
+            "但我……我很累……"
+            "好想休息……"
+            "好想……永远地……沉睡下去……"
+            "……"
+            scene black with dissolve
+            call screen cfreeze(5)
+            if p.route == 'h':
+                jump fe_h
+            elif p.route == 'a':
+                jump fe_a
+            else:
+                "出现错误。"
+                return
         "我用手指向刚刚的位置。"
         "我看到了。"
         "他们也看到了。"
@@ -1040,3 +1234,4 @@ label despair_end:
         else:
             jump ne
     jump despairBE
+

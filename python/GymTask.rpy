@@ -63,8 +63,6 @@ init python early:
                 Injured.add(player)
                 Notice.add(_('你在运动中受伤了。'))
 
-
-
         @classmethod
         def checkAvailable(cls, player, day, time):
             return cls.isUnlocked(player)
@@ -75,29 +73,88 @@ init python early:
                 player.money -= r2(0.4*player.price)
                 GymTicket.add(player)
                 Notice.show()
-            for i in range(len(player.gymplan)):
-                if player.gymplan[i] == NoSport:
-                    continue
-                Stat.record(p,player.gymplan[i])
-                renpy.say(None, _("准备进行%s……")%player.gymplan[i].name)
-                renpy.show_screen(_screen_name="Task_processing_screen",player=p)
-                renpy.say(None, _("{cps=3}。。。。。。"))
-                player.gymplan[i].executeTask(player)
-                if Injured.has(player):
-                    player.updateAfterTask(cls)
-                    Notice.show()
-                    renpy.jump("gym_injured")
-                else:
-                    Notice.show()
-                    temp = rd(1,4)
-                    if temp == 1:
-                        renpy.say(None, _("呼，算是比较成功地做完了……"))
-                    elif temp == 2:
-                        renpy.say(None, _("幸好没受伤……看来我得稍微小心点。"))
-                    elif temp == 3:
-                        renpy.say(None, _("刚才坐在旁边的狼兽人穿着白袜哦，不会是男同吧……"))
-                    else:
-                        renpy.say(None, _("好累啊……好想休息……"))
-            GymSport.executeTask(player)
-            Notice.show()
-            renpy.jump("gym_result")
+            renpy.jump("GymTask_execute1")
+
+
+
+
+label GymTask_execute1:
+    $temp = p.gymplan[0]
+    if not temp == NoSport:
+        $Stat.record(p, temp)
+        "准备进行[temp.name]……"
+        call Task_processing from _call_Task_processing_39
+        $temp.executeTask(p)
+        if Injured.has(p):
+            $p.updateAfterTask(temp)
+            $Notice.show()
+            jump gym_injured
+        else:
+            $Notice.show()
+            $temp = rd(1,5)
+            if temp == 1:
+                "呼，算是比较成功地做完了……"
+            elif temp == 2:
+                "幸好没受伤……看来我得稍微小心点。"
+            elif temp == 3:
+                "刚才坐在旁边的狼兽人穿着白袜哦，不会是男同吧……"
+            elif temp == 4:
+                "好想喝可乐啊……会不会一口下去，今天的锻炼成果就直接白费了……"
+            else:
+                "好累啊……好想休息……"
+
+    jump GymTask_execute2
+
+label GymTask_execute2:
+    $temp = p.gymplan[1]
+    if not temp == NoSport:
+        $Stat.record(p, temp)
+        "准备进行[temp.name]……"
+        call Task_processing from _call_Task_processing_40
+        $temp.executeTask(p)
+        if Injured.has(p):
+            $p.updateAfterTask(temp)
+            $Notice.show()
+            jump gym_injured
+        else:
+            $Notice.show()
+            $temp = rd(1,5)
+            if temp == 1:
+                "呼，算是比较成功地做完了……"
+            elif temp == 2:
+                "幸好没受伤……看来我得稍微小心点。"
+            elif temp == 3:
+                "刚才坐在旁边的狼兽人穿着白袜哦，不会是男同吧……"
+            elif temp == 4:
+                "好想喝可乐啊……会不会一口下去，今天的锻炼成果就直接白费了……"
+            else:
+                "好累啊……好想休息……"
+
+    jump GymTask_execute3
+
+label GymTask_execute3:
+    $temp = p.gymplan[2]
+    if not temp == NoSport:
+        $Stat.record(p, temp)
+        "准备进行[temp.name]……"
+        call Task_processing from _call_Task_processing_41
+        $temp.executeTask(p)
+        if Injured.has(p):
+            $p.updateAfterTask(temp)
+            $Notice.show()
+            jump gym_injured
+        else:
+            $Notice.show()
+            $temp = rd(1,5)
+            if temp == 1:
+                "呼，算是比较成功地做完了……"
+            elif temp == 2:
+                "幸好没受伤……看来我得稍微小心点。"
+            elif temp == 3:
+                "刚才坐在旁边的狼兽人穿着白袜哦，不会是男同吧……"
+            elif temp == 4:
+                "好想喝可乐啊……会不会一口下去，今天的锻炼成果就直接白费了……"
+            else:
+                "好累啊……好想休息……"
+
+    jump gym_result
