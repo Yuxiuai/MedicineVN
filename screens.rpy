@@ -670,7 +670,9 @@ screen main_menu():
     vbox:
         xpos 1.01
         ypos 1.02
-
+        imagebutton idle "gui/new.png" at app_transform,trans_mainmenu(getstarttime(12)):
+            action ShowMenu("screen_gamemenu_new")
+            xalign 1.0
         textbutton "v[config.version]" at trans_mainmenu(getstarttime(7)):
             xalign 1.0
             text_size 28
@@ -689,7 +691,7 @@ screen main_menu():
         imagebutton idle "gui/qq.png" action OpenURL("http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=ILURTWhqOeD2aSBxb0L_fqccTYv_Wdap&authKey=oWhqP%2BPxzDDPRw5M0W%2FkWcJaQeWYx%2F177xhXyIgc3p80jB84H9kzlFWVOuYphTYE&noverify=0&group_code=797308562") at app_transform,trans_mainmenu(getstarttime(9))
         imagebutton idle "gui/pd.png" action OpenURL("https://pd.qq.com/s/heao2f9kp") at app_transform,trans_mainmenu(getstarttime(10))
         imagebutton idle "gui/afd.png" action OpenURL("https://afdian.net/a/yuxiu") at app_transform,trans_mainmenu(getstarttime(11))
-
+        
     
     use item_unlocked_screen()
 

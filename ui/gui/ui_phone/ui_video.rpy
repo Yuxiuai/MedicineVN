@@ -51,19 +51,23 @@ screen screen_phone_video(player):
                     ["solitus_route_8", _('饥饿感')] , 
                     ["solitus_route_9", _('关于自慰')] ,
                 ],
+                
             ],
 
             'pathos':[
-                [
+                '主要剧情',[
                     ["pathos_route_0", _('解锁第二种药物')] , 
                     ["pathos_route_1", _('解锁第三种药物')] , 
                     ["pathos_route_2", _('签订手术知情书')] ,
+                ],
+                '其他',[
+                    ["explore_center_3_hide", _('游泳馆的偶遇')], 
                 ],
 
             ],
 
             'halluke':[
-                [
+                '主要剧情',[
                     ["halluke_route_0", _('初次偷拍')] ,
                     ["halluke_route_1", _('Halluke的能力展示')] ,
                     ["halluke_route_2", _('厕所自慰')] ,
@@ -79,11 +83,16 @@ screen screen_phone_video(player):
                     ["halluke_route_13", _('与Halluke的轮渡酒店之一')] ,
                     ["halluke_route_14", _('与Halluke的轮渡酒店之二')] ,
                 ],
+                '隐藏剧情',[
+                    
+                    ["Halluke_hidden_plot1", _('这一切仿佛从未发生')], 
+                    
+                ],
 
             ],
 
             'acolas':[
-                '个人剧情',[
+                '主要剧情',[
                     ["acolas_route_0", _('电梯偶遇')] ,
                     ["acolas_route_1", _('性骚扰式自我介绍')] ,
                     ["acolas_route_2", _('道歉与游戏项目')] ,
@@ -99,6 +108,11 @@ screen screen_phone_video(player):
                     ["acolas_route_12", _('与Acolas的轮渡酒店之一')] ,
                     ["acolas_route_13", _('与Acolas的轮渡酒店之二')] ,
                 ],
+
+                '隐藏剧情',[
+                    ["Acolas_hidden_plot1", _('踏入乌托邦的大门')],
+                ],
+
                 '其他剧情',[
                     ["dream_acolas", _('入迷之梦')],
                 ]

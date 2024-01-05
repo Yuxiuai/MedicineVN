@@ -2082,6 +2082,10 @@ label acolas_route_98:
 
 
 label Acolas_hidden_plot1:
+    if replaying:
+        $start_plot()
+        stop music
+        scene acobed with dissolve
     show acolas vest2 smile_eyebrow normal_eyes normal_mouth with dissolve
     a"“关于你前天发给我的文稿，我已经都看完了。”"
     $Erection.clearByType(p)
@@ -2117,6 +2121,9 @@ label Acolas_hidden_plot1:
     "看着他的手机，看着他，看着我的双手。"
     "从自己口袋中传来的手机提示音如若丧钟之鸣。"
     "…"
+    if replaying:
+        scene workarea with fade
+        jump Acolas_hidden_plot2
     $end_plot()
     stop music fadeout 3
     if p.aco_p == 8:
@@ -2212,12 +2219,18 @@ label Acolas_hidden_plot2:
     call screen cfreeze(1)
     "休息一会……"
     play sound audio.drop
-    $clearscreens()
+    if not replaying:
+        $clearscreens()
     scene black
-    show screen freeze(3)
-    pause
-    $Achievement504.achieve()
-    $Achievement.show()
-    $Notice.show()
+    if not replaying:
+        show screen freeze(3)
+        pause
+        $Achievement504.achieve()
+        $Achievement.show()
+        $Notice.show()
     "{color=#FF0000}Bad Ending ？\n——踏入乌托邦的大门。{/color}"
+    if replaying:
+        $end_plot()
+        $p.color = 1.0
+        jump afterreplay
     return

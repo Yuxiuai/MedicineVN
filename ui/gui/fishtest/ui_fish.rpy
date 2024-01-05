@@ -95,7 +95,7 @@ init python:
             Damageshow.show(point, crit)
             self.point += point
             if not self.hasA1:
-                if rra(p, 1+self.time*0.25):
+                if rra(p, 0.5+self.time*0.1):
                     self.linebreak = True
             if self.point >= 99:
                 self.gamewin = True

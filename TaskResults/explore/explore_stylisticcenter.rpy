@@ -148,27 +148,7 @@ label explore_center_3:
                 "总之……偶尔来一次也不错啦。"
                 "……"
             elif temp==6:
-                scene swimshower with fade
-                $rec = r2(30 * Task.getRecoScale(p))
-                $p.gain_mental(rec)
-                $p.gain_abi(-0.04, 'sev')
-                $SwimEffect.add(p)
-                $Notice.show()
-                show pathos naked no_sco no_glasses with dissolve
-                pathos"“嗯？你那种眼神是什么意思，医生就不能来游泳了吗？”"
-                "在这种奇怪地方偶遇自己的主治医师真是太糟糕了……"
-                $ss('naked blush no_hat')
-                s"“呃……没……”"
-                $sh()
-                "幸好我已经游完泳了，出来稍微冲一下身体，而他是刚刚才过来。"
-                "不过这还是我第一次看见他的裸体……虽然我只是背对着他淋浴，还有时候还是忍不住偷看一眼。"
-                "不行，被他发现我在看他的话肯定糟了，我还是赶紧洗完出去吧……"
-                "……"
-                $Erection.add(p)
-                $Achievement315.achieve()
-                $Achievement.show()
-            
-            $Notice.show()
+                jump explore_center_3_hide
         "离开":
             if p.money > 60:
                 "不游了，万一在水里抽筋了就寄了……"
@@ -177,6 +157,37 @@ label explore_center_3:
                 "下次再说吧。"
     jump GoOutside_result
 
+
+label explore_center_3_hide:
+    $start_plot()
+    if replaying:
+        stop music
+    scene swimshower with fade
+    if not replaying:
+        $rec = r2(30 * Task.getRecoScale(p))
+        $p.gain_mental(rec)
+        $p.gain_abi(-0.04, 'sev')
+        $SwimEffect.add(p)
+        $Notice.show()
+    show pathos naked no_sco no_glasses with dissolve
+    pathos"“嗯？你那种眼神是什么意思，医生就不能来游泳了吗？”"
+    "在这种奇怪地方偶遇自己的主治医师真是太糟糕了……"
+    $ss('naked blush no_hat')
+    s"“呃……没……”"
+    $sh()
+    "幸好我已经游完泳了，出来稍微冲一下身体，而他是刚刚才过来。"
+    "不过这还是我第一次看见他的裸体……虽然我只是背对着他淋浴，还有时候还是忍不住偷看一眼。"
+    "不行，被他发现我在看他的话肯定糟了，我还是赶紧洗完出去吧……"
+    "……"
+    $end_plot()
+    if replaying:
+        jump afterreplay
+
+    $Erection.add(p)
+    $Achievement315.achieve()
+    $Achievement.show()
+    
+    jump GoOutside_result
 
 
 label explore_center_4:

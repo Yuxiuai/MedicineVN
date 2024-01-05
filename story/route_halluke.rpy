@@ -1686,8 +1686,6 @@ label halluke_route_11:
         "我们在一起，真的能够幸福吗？"
         "我走进自己居住的公寓小区。"
         "头开始痛起来了，以后再想吧。"
-        if p.experience == 'wri':
-            $WriterItem3.add(p, 5)
     if p.hal_p == 99:
         "一切都如同已死去那般安静。"
         "我只能听见我的脚步声。"
@@ -1699,8 +1697,7 @@ label halluke_route_11:
         "……"
         "不，这一切都和我没关系。"
         "和我没关系。"
-        if p.experience == 'wri':
-            $WriterItem3.add(p, 10)
+        
     "……"
     if not replaying:
         $p.stime()
@@ -1711,8 +1708,11 @@ label halluke_route_11:
         jump afterreplay
     
     $BadmintonClass.lock(p)
+    
 
     if p.hal_p == 12:
+        if p.experience == 'wri':
+            $WriterItem3.add(p, 5)
         $Message.new(p, 'Halluke', 'Halluke', '那么既然你已经来过我家了，之后你想来玩也可以啦。因为羽毛球课已经结课了，所以那个时候我没课，如果你想来找我玩，就周六下午来吧。\n除此之外，我想每天晚上都和你打羽毛球！想每天晚上都看见你！如果你不来的话我会难过哦！', h=20, m=51)
         $HallukeTask2.unlock(p)
 
@@ -2281,6 +2281,9 @@ label halluke_route_14:
 
 
 label Halluke_hidden_plot1:
+    $start_plot()
+    if replaying:
+        scene office with fade
     stop music fadeout 3
     "我真的有必要这样做吗？"
     "我的拇指悬停在手机荧幕之上，如果我按下去，讯息便会以我无法计量的速度传输到基站，随后我的上司的手机便会接收到转发而来的电波。"
@@ -2331,13 +2334,15 @@ label Halluke_hidden_plot1:
     "我突然有点感动，是因为我为了他，为了我所爱的人，做了一些我平时不敢去做的事吗？"
     "这种心中的澎湃感，是因为我正在做着正确的事吗？"
     scene workarea with fade  
-    $p.onVacation = True
-    $p.stime(55)
-    $p.morning_checkTask()
-    $routine_music(p)
+    if not replaying:
+        $p.onVacation = True
+        $p.stime(55)
+        $p.morning_checkTask()
+        $routine_music(p)
     "我离开公司，回到了家中。"
     "等吃过午饭之后就像之前那样去球场帮他吧。"
-    
+    if replaying:
+        jump Halluke_hidden_plot2
     jump end_call
 
 label Halluke_hidden_plot2:
@@ -2423,23 +2428,28 @@ label Halluke_hidden_plot2:
     "我居然还为了他来到这里。"
     "…"
     "唉。"
-    "Halluke他，考试失利成那样，一定很伤心吧。"
-    "生气归生气，但……"
+    "他最喜欢的运动，在最后考试的时候却一直在失误，一定很伤心吧。"
+    "他当时是那么喜欢打羽毛球，就像他生来就应该做这件事一样。"
+    "可最终结果却是这样的……"
     "…"
     "我转头，刚刚我们所在的球网边还在进行着别人的考试。"
     "那两个我不认识的人配合得十分出彩，几乎每一球都拿到了满分。"
     "我叹气，离开了羽毛球场。"
-    $p.hal_p = 51
-    $p.messages['Halluke']=[]
-    $p.times+=1
+    if not replaying:
+        $p.hal_p = 51
+        $p.messages['Halluke']=[]
+        $p.times+=1
+        $p.onOutside = True
     scene nightrun with fade
-    $p.onOutside = True
     "意料之中，我被他删除了好友。"
     "这样的话，无论是要我向他道歉，补偿他，或者做一切只求他原谅的事都没可能了。"
     "羽毛球课已经结束了，我不知道他在哪一班，也不知道他是哪一届的。"
     "也许因为这次考试，他可能再也不会打羽毛球了。"
     "都是因为我。"
     "因为我。"
+    $end_plot()
+    if replaying:
+        jump afterreplay
     $p.times+=1
     if p.experience == 'wri':
         $WriterItem3.add(p, 8)

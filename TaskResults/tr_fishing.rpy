@@ -436,6 +436,7 @@ label GoFishing_beginning:
     $allrods = (FishingRod1,FishingRod2,FishingRod3,FishingRod4,FishingRod99)
     $haverods = sum([int(x.has(p)) for x in allrods])
     if haverods == 0:
+        $userod = None
         "……我的鱼竿呢？"
         "不会是在哪里丢了吧……真糟糕……只能回家去了。"
         jump GoFishing_result
@@ -447,6 +448,7 @@ label GoFishing_beginning:
         $userod = p.retval
 
     if not userod or type(userod) not in allrods:
+        $userod = None
         "……我的鱼竿呢？"
         "不会是在哪里丢了吧……真糟糕……只能回家去了。"
         jump GoFishing_result
