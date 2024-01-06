@@ -82,9 +82,7 @@ screen screen_effects_inner_inner_effect(player, effect):
             return Composite((75, 75), (0, 0), effect.icon(), (0, 0), Fixed(Text(stack_layer, size=30,xcenter=0.9, ycenter=0.2)))
 
 
-    $effect_pre = effect.getPrefixInfo(player)
-    $effect_main = effect.getPrincipalInfo()
-    $effect_suf = effect.getSuffixInfo()
+    
     $showname = effect.name
     if len(showname) >= 9:
         $showname='{size=-5}'+showname+'{/size}'
@@ -94,8 +92,8 @@ screen screen_effects_inner_inner_effect(player, effect):
         xsize 295
         ysize 90
         textbutton showname text_style "white":
-            action [Hide("info"),Show(screen="info_use", pp=renpy.get_mouse_pos(), t=effect.name, i=effect_pre+effect_main + effect_suf, a=effect.ad)]
-            hovered Show(screen="info", t=effect.name, i=effect_pre+effect_main + effect_suf, a=effect.ad)
+            action [Hide("info"),Show(screen="screen_effects_use", pp=renpy.get_mouse_pos(), effect=effect, player=player)]
+            hovered Show(screen="info", t=effect.name, i=effect.getPrefixInfo(player)+effect.getPrincipalInfo() + effect.getSuffixInfo(), a=effect.ad)
             unhovered Hide("info")
             background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
             activate_sound audio.cursor
@@ -106,3 +104,55 @@ screen screen_effects_inner_inner_effect(player, effect):
             #xalign 0.5
             yalign 0.5
             xoffset 4
+
+
+
+screen screen_effects_use(player, effect, width=400, pp=renpy.get_mouse_pos()):
+    use barrier(screen="screen_effects_use")
+    style_prefix "info"
+    zorder 1000
+    python:
+        (xc,trans) = (0.0,trans_toLeft) if pp[0] < 1500 else (1.0,trans_toRight)
+        yc = 0.0 if pp[1] < 540 else 1.0
+
+        t=effect.name
+        i=effect.getPrefixInfo(player)+effect.getPrincipalInfo() + effect.getSuffixInfo()
+        a=effect.ad
+
+        if i:
+            if width == 400 and len(i) > 400:
+                width = 800
+    frame:
+        pos pp
+        padding (15, 15)
+        xanchor xc
+        yanchor yc
+        at trans()
+
+        vbox:
+            align pp
+            if t is not None:
+                label '[t!t]\n':
+                    text_style "info_text"
+                    xsize width
+            label '{size=-2}[i!t]{/size}':
+                text_style "info_text"
+                xsize width
+            if a is not None:
+                null height 16
+                label '{i}[a!t]{/i}':
+                    text_style "admonition_text"
+                    xsize width
+            null height 30
+            hbox:
+                xalign 0.5
+                spacing 50
+                if persistent.sponsor or config.developer:
+                    textbutton _("{size=-3}{color=#ff0000}移除{/color}{/size}"):
+                        action Function(effect.sub, player), Hide("screen_effects_use",transition=dissolve)
+                        activate_sound audio.cursor
+                textbutton _("{size=-3}确定{/size}"):
+                    action Hide("screen_effects_use",transition=dissolve)
+                    activate_sound audio.cursor
+
+    key 'K_ESCAPE' action Hide("screen_effects_use",transition=dissolve),Hide("info")

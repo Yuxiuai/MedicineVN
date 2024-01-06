@@ -146,7 +146,6 @@ init python early:
 
         @classmethod
         def codereply(cls, player, what):
-            player.cheat = True
             st = player.st()
             cls.new(player, 'Pathos', 'Pathos', what, h=st[0], m=st[1],seen=True, chachong=False)
 

@@ -2797,7 +2797,6 @@ init -11 python early:
             GameDifficulty3.clearByType(player)
             GameDifficulty4.clearByType(player)
             GameDifficulty5.clearByType(player)
-            player.cheat = True
 
 
 

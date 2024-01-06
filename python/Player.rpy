@@ -170,7 +170,6 @@ init python early:
             self.note = None
             
             self.staylate = False
-            self.cheat = False
             self.drugfake = False
 
             self.hal_noreply = 0
@@ -816,13 +815,14 @@ init python early:
 
 
         def updateAfterSleep(self):  # 夜晚进行的更新工作
-            for i in range(len(self.effects) - 1, -1, -1):
+            
+            for i in range(len(self.effects[:]) - 1, -1, -1):
                 self.effects[i].afterSleepAction(self)
-            for i in range(len(self.effects) - 1, -1, -1):
+            for i in range(len(self.effects[:]) - 1, -1, -1):
                 self.effects[i].timeUpdate(self)
-            for i in range(len(self.items) - 1, -1, -1):
+            for i in range(len(self.items[:]) - 1, -1, -1):
                 self.items[i].afterSleepAction(self)
-            for i in range(len(self.items) - 1, -1, -1):
+            for i in range(len(self.items[:]) - 1, -1, -1):
                 if self.items[i].kind == _('文稿'):
                     self.items[i].comm.timeUpdate(self)
                 else:
@@ -1090,8 +1090,6 @@ init python early:
         def cheat_route(self, value):
             self.route = value
 
-        def when_cheat(self):
-            self.cheat = True
 
         
         def get_task_time(self):

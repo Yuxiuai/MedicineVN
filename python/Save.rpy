@@ -63,6 +63,40 @@ init -10 python early:
             except Exception:
                 return None
 
+        @classmethod
+        def export(cls, slot):
+            code = cls.dumps(slot)
+            pygame_sdl2.scrap.put(pygame_sdl2.SCRAP_TEXT, code)
+            showNotice(['已导出存档至剪贴板！', '你可以粘贴该给其他人，点击右上角的加号可导入其他人的存档。'])
+
+        @classmethod
+        def inport(cls):
+            code = pygame_sdl2.scrap.get(pygame_sdl2.SCRAP_TEXT)
+            code = code.replace('\r','')
+            slot = None
+            if not code:
+                showNotice(['剪贴板为空或无法访问剪贴板！'])
+                return
+            if code[:9] != 'ccopy_reg':
+                showNotice(['格式错误！'])
+                return
+            slot = cls.loads(code)
+            if not slot:
+                showNotice(['读取失败，请检查是否复制完整！'])
+            else:
+                showNotice(['成功导入存档！！'])
+            cls.save(slot)
+
+
+        @classmethod
+        def dumps(cls, slot):
+            import pickle
+            return pickle.dumps(slot)
+        
+        @classmethod
+        def loads(cls, text):
+            import pickle
+            return pickle.loads(text)
 
         @classmethod
         def savecheck(cls, console=False):
@@ -153,5 +187,19 @@ init -10 python early:
                 cls.compatible(i)
             if len(slot.plan) == 3:
                 slot.plan.append(NoTask)
+
+init python:     
             
-            
+    import pickle
+
+    def cc(p):
+        serialized_p = pickle.dumps(p)
+        pygame_sdl2.scrap.put(pygame_sdl2.SCRAP_TEXT, serialized_p)
+
+    def pp():
+        serialized_p = pygame_sdl2.scrap.get(pygame_sdl2.SCRAP_TEXT)
+        if serialized_p:
+            p = pickle.loads(serialized_p)
+            return p
+        else:
+            return None

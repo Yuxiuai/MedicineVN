@@ -288,7 +288,7 @@ label prepare_for_surgery_1_1:
         $Achievement452.achieve()
     $Achievement.show()
     call screen screen_report(p)
-    if not GameDifficulty1.has(p) and not p.cheat:
+    if not GameDifficulty1.has(p):
         $score = int(Achievement.calScore(p))
         $score /= max(1, p.week)
         $score = int(score)
@@ -388,7 +388,7 @@ label prepare_for_surgery_2_1:
     if p.medinfo == {}:
         $Achievement603.achieve()
     call screen screen_report(p)
-    if not p.cheat and not GameDifficulty1.has(p):
+    if not GameDifficulty1.has(p):
         $score = int(Achievement.calScore(p))
         $score /= max(1, p.week)
         $score = int(score)

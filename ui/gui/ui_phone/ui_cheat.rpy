@@ -154,7 +154,6 @@ screen screen_phone_inner(player):
                         use screen_phone_cheat_slot(player, _('刷新道具cd'), [Function(cdclear, player), Function(player.cheat_times), Function(Notice.show)])
                         use screen_phone_cheat_slot(player, _('解锁全音乐'), Function(unlockallmusic))
                         use screen_phone_cheat_slot(player, _('解锁全商业街'), Function(unlockallshop, player))
-                        use screen_phone_cheat_slot(player, _('刷新当前委托'), Function(player.refreshUnacComm))
 
                     use screen_phone_cheat_title(_('获得'))
                     vbox:

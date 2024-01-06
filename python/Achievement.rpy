@@ -142,15 +142,6 @@ init python early:
             return int(score)
             
 
-            #score /= max(1, scoreP.week)
-            #score = int(score)
-
-            #if scoreP.cheat:
-            #    showNotice([_('因为这个存档使用过作弊功能，所以不计分数！')])
-            #else:
-            #    showNotice([_('获得分数：%s！') % score])
-            #    persistent.highestscore = max(score, persistent.highestscore)
-
 
 
     class Achievement100(Achievement):

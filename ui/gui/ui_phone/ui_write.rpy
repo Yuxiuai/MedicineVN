@@ -67,11 +67,12 @@ screen screen_phone_write(player):
                 if page == 0:
                     frame:
                         background None
+                        
                         vbox:
                             text "以下是今日向您推荐的委托：" style 'foodname' size 25 color "#383838"
                             frame:
                                 background None
-                                ypos 0.05
+                                ypos 0.015
                                 viewport:
                                     ysize 650
                                     xsize 550
@@ -143,8 +144,10 @@ screen screen_phone_write(player):
                                                         text_xalign 0.5
                                                         text_size 50
                                                         activate_sound audio.card2
-                                        null height 100                
+                                        null height 100       
 
+                        if persistent.sponsor or config.developer:
+                            imagebutton auto "images/gui/reset_b_%s.png" action Function(player.refreshUnacComm) xalign 0.975
                                                     
 
 

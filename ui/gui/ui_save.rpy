@@ -254,6 +254,10 @@ screen screen_gamemenu_save(player=p):
                                     activate_sound audio.card2
                                     xalign 0.0
 
+                                imagebutton auto "gui/save/download_%s.png":
+                                    action Function(Saver.export, choicesave.p)
+                                    xalign 0.45
+
                                 if not choicesave.exception:
                                     imagebutton auto "gui/save/load_%s.png":
                                         action Function(Saver.load, choicesave.p)
@@ -262,6 +266,10 @@ screen screen_gamemenu_save(player=p):
                             if choicesave.p.cured >= 21:
                                 timer 0.1 repeat True action SetLocalVariable("g", glitchtext(rd(1, 5)))
                         
+    imagebutton auto "gui/add_%s.png":
+        xalign 0.9
+        yalign 0.05
+        action Function(Saver.inport)
 
     imagebutton auto "gui/exit_%s.png":
         xalign 0.95
