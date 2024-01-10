@@ -89,10 +89,7 @@ init python early:
                 cls.defaultAddEffect(player)
 
         def clear(self, player):
-            for i in range(self.stacks):
-                self.subStackAction(player)
-            self.disableAction(player)
-            player.effects.remove(self)
+            self.sub(player, self.stacks)
 
         @classmethod
         def clearByType(cls, player):
@@ -107,7 +104,8 @@ init python early:
                 self.stacks -= 1
             if self.stacks <= 0:
                 self.disableAction(player)
-                player.effects.remove(self)
+                if self in player.effects:
+                    player.effects.remove(self)
 
         @classmethod
         def subByType(cls, player, times=1):  # 减少层数

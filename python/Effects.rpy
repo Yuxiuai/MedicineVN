@@ -553,19 +553,15 @@ init -11 python early:
             return feed + showinfo + _('\n\n当前治愈率：')+str(self.getCurePer(p))+'%'
 
         def getCurePer(self, player):
-            curePercent = 10.0
+            curePercent = 15.0
             if WeatherCloudy.has(player):
-                curePercent += 5
+                curePercent += 10
             if DrugColdrexEffect.has(player):
-                curePercent += 2 ** DrugColdrexEffect.getstack(player)
-            if PhysRezA.has(player):
-                curePercent += PhysRezA.getstack(player) * 2.5
-            if PhysRezB.has(player):
-                curePercent += PhysRezB.getstack(player) * 2.5
-            if Physique.has(player):
-                curePercent += Physique.getstack(player) * 1
-            if BookPhysPunEffect.has(player):
-                curePercent += 15
+                curePercent += 2.5 ** DrugColdrexEffect.getstack(player)
+            curePercent += PhysRezA.getstack(player) * 5
+            curePercent += PhysRezB.getstack(player) * 5
+            curePercent += Physique.getstack(player) * 2.5
+            curePercent += 20 * BookPhysPunEffect.getstack(player)
             return curePercent
 
         def enableAction(self, player):
@@ -599,6 +595,8 @@ init -11 python early:
                 player.gain_abi(-0.01 * bonus, 'sev')
 
                 self.clear(player)
+            elif BookPhysPunEffect.has(player):
+                BookPhysPunEffect.add(player)
 
 
 
@@ -704,19 +702,14 @@ init -11 python early:
             return feed + showinfo + _('\n\n当前治愈率：')+str(self.getCurePer(p))+'%'
 
         def getCurePer(self, player):
-            curePercent = 10.0
+            curePercent = 15.0
             if WeatherCloudy.has(player):
-                curePercent += 5
-            if PhysRezA.has(player):
-                curePercent += PhysRezA.getstack(player) * 2.5
-            if PhysRezB.has(player):
-                curePercent += PhysRezB.getstack(player) * 2.5
-            if Physique.has(player):
-                curePercent += Physique.getstack(player) * 1
-            if Pain.has(player):
-                curePercent -= Pain.getstack(player) * 50
-            if BookPhysPunEffect.has(player):
-                curePercent += 15
+                curePercent += 10
+            curePercent += PhysRezA.getstack(player) * 5
+            curePercent += PhysRezB.getstack(player) * 5
+            curePercent += Physique.getstack(player) * 2.5
+            curePercent -= Pain.getstack(player) * 50
+            curePercent += 20 * BookPhysPunEffect.getstack(player)
             return curePercent
 
 
@@ -735,6 +728,8 @@ init -11 python early:
                 player.gain_abi(-0.01 * bonus, 'sev')
 
                 self.clear(player)
+            elif BookPhysPunEffect.has(player):
+                BookPhysPunEffect.add(player)
 
         def afterSleepAction(self, player):
 
@@ -1063,7 +1058,7 @@ init -11 python early:
                     player.gain_mental(-rec, due=cls.name)
 
             if BookInsEffect.has(player):
-                Inspiration.get(player).stacks += 1
+                Inspiration.get(player).stacks += 2
 
         def afterTaskAction(self, player, task):  # 日程后
             if task.name == _('记录想法'):
@@ -1760,6 +1755,8 @@ init -11 python early:
 
         def timeUpAction(self, player):
             player.gain_abi(-0.02, 'sev', due='松弛')
+
+    
 
     class Freshness(Effect):
         id = 324
@@ -2542,8 +2539,8 @@ init -11 python early:
         name = _('学习成果：《呼吸训练》')
         kind = _('学识')
         maxDuration = 2
-        maxStacks = 1
-        info = _('{color=#7CFC00}提升{/color}15%生病和受伤的恢复率。\n如果成功治愈生病或受伤，则结束效果并{color=#7CFC00}降低{/color}2%的严重程度。')
+        maxStacks = 99
+        info = _('每层{color=#7CFC00}提升{/color}20%生病和受伤的恢复率。\n如果成功治愈生病或受伤，则结束效果并{color=#7CFC00}降低{/color}2%的严重程度。\n如果未能成功治愈，则额外获得1层该状态。')
 
     class BookQuickReadEffect(Effect):
         id = 503
@@ -2561,7 +2558,7 @@ init -11 python early:
         kind = _('学识')
         maxDuration = 3
         maxStacks = 1
-        info = _('{color=#7CFC00}提升{/color}20%的工作速度，{color=#7CFC00}降低{/color}20%工作类日程消耗的精神状态，进行工作类日程时，额外{color=#7CFC00}完成{/color}5%的当周工作量。')
+        info = _('{color=#7CFC00}提升{/color}20%的工作速度，{color=#7CFC00}降低{/color}20%工作类日程消耗的精神状态，进行工作类日程时，额外{color=#7CFC00}完成{/color}10%的当周工作量。')
 
         def enableAction(self, player):
             player.workSpeed += 0.2
@@ -2573,7 +2570,9 @@ init -11 python early:
 
         def afterTaskAction(self, player, task):  # 日程后
             if task.kind == _('工作类'):
-                player.achievedGoal += r2(player.goal * 0.05)
+                a = r2(player.goal * 0.1)
+                player.achievedGoal += a
+                Notice.add("由于学习成果：《保持清醒的秘诀》，额外提升了%s点工作进度。" % a)
 
 
     class BookInsEffect(Effect):
@@ -2639,21 +2638,21 @@ init -11 python early:
 
     class BookCMEffect(Effect):
         id = 509
-        name = _('学识：《快速入睡秘籍》')
+        name = _('感悟：《深沉之雨》')
         kind = _('学识')
         maxDuration = 14
         maxStacks = 1
-        info = _('{color=#7CFC00}降低{/color}20%过夜消耗的精神状态，并在起床时{color=#7CFC00}降低{/color}1点严重程度，同时有10%的概率结束该效果。')
+        info = _('{color=#7CFC00}降低{/color}15%过夜消耗的精神状态，并在起床时{color=#7CFC00}降低{/color}1点严重程度，同时有10%的概率结束该效果。')
         
         def enableAction(self, player):
-            player.deteriorateConsumption -= 0.2
+            player.deteriorateConsumption -= 0.15
 
         def disableAction(self, player):
-            player.deteriorateConsumption += 0.2
+            player.deteriorateConsumption += 0.15
 
         def afterSleepAction(self, player):
             player.gain_abi(-0.01, 'sev', due=self.name)
-            if rra(player, 10) and self.duration <=7:
+            if rra(player, 20) and self.duration <=7:
                 self.clear(player)
                 Notice.add(self.name + _('的效果结束了。'))
 
@@ -2662,36 +2661,21 @@ init -11 python early:
         id = 510
         name = _('学识：《实用百科全书》')
         kind = _('学识')
-        maxDuration = 4
+        maxDuration = 14
         maxStacks = 1
-        info = _('进行日程时{color=#7CFC00}提升{/color}随机属性，同时有10%的概率结束该效果。')
-
-        def __init__(self):
-            Effect.__init__(self)
-            self.times = 0
+        info = _('进行日程时{color=#7CFC00}提升{/color}1点随机属性，同时有5%的概率结束该效果。')
 
         def afterTaskAction(self, player, task):  # 日程后
-            used = False
-            phy = 0
-            wri = 0
-            wor = 0
-            while rra(player, 60) or not used:
-                if rra(player, 33):
-                    phy += 1
-                    used = True
-                if rra(player, 33):
-                    wri += 1
-                    used = True
-                if rra(player, 33):
-                    wor += 1
-                    used = True
-            if phy > 0:
+            temp = rra(1, 3)
+            if player.experience == 'wri':
+                temp = rra(1, 2)
+            if temp == 1:
                 player.gain_abi(phy * 0.01, 'phy', due='学识：《实用百科全书》', extra=True)
-            if wri > 0:
+            elif temp == 2:
                 player.gain_abi(wri * 0.01, 'wri', due='学识：《实用百科全书》', extra=True)
-            if wor > 0 and not player.experience == 'wri':
+            elif temp == 3:
                 player.gain_abi(wor * 0.01, 'wor', due='学识：《实用百科全书》', extra=True)
-            if rra(player, 20) and self.times>3:
+            if rra(player, 10) and self.duration <=7:
                 self.clear(player)
                 Notice.add(self.name + _('的效果结束了。'))
 
@@ -2733,6 +2717,44 @@ init -11 python early:
         maxStacks = 99
         info = _('在完成日程前会显示日程的完成结果，你可以消耗1层该效果以优势重新投掷完成结果。\n\n{color=#fde827}（优势：进行两次判定取最高值。）{/color}')
 
+
+    class BookSevDownEffect(Effect):
+        id = 514
+        name = _('感悟：《紫罗兰的洗礼》')
+        kind = _('学识')
+        maxDuration = 3
+        maxStacks = 99
+        info = _('每层使严重倍率降低2%。')
+
+        def getPrincipalInfo(self):
+            return '\n每层使严重倍率降低%s%s。' % (2 * (1 - BookSevDownEffect_.getstack(p) * 0.2), '%')
+            
+        def addStackAction(self, player):
+            player.severityRegarded -= 0.02 * (1 - BookSevDownEffect_.getstack(player) * 0.2)
+
+        def subStackAction(self, player):
+            player.severityRegarded += 0.02 * (1 - BookSevDownEffect_.getstack(player) * 0.2)
+
+        def disableAction(self, player):
+            BookSevDownEffect_.add(player)
+
+    class BookSevDownEffect_(Effect):
+        id = 515
+        name = _('紫罗兰的诅咒')
+        kind = _('伤痕')
+        maxDuration = -1
+        maxStacks = 5
+        info = _('使用记数。')
+        hide = True
+
+    class BookSevDownEffect_2(Effect):
+        id = 516
+        name = _('紫罗兰的封印')
+        kind = _('伤痕')
+        maxDuration = -1
+        maxStacks = 5
+        info = _('损坏的存档。')
+        hide = True
 
     class BookRandConcEffect_1(Effect):
         id = 9999
@@ -2963,12 +2985,12 @@ init -11 python early:
                 if t > player.money:
                     t = player.money
                 player.money -= t
-                Notice.add(_('不受控制地花掉了%s元！') % t)
+                Notice.add(_('由于病情急迫，不受控制地花掉了%s元！') % t)
             
             if rra(player, 33) and player.medinfo:
                 med = rca(player, player.medinfo.keys())
                 player.medinfo[med].res += 1
-                Notice.add(_('%s的药物抗性上升了1%s！') % (med.name, '%'))
+                Notice.add(_('由于病情急迫，%s的药物抗性上升了1%s！') % (med.name, '%'))
             
             if rra(player, 90) and player.cured < 0:
                 player.severityRegarded += 0.01
@@ -2976,10 +2998,11 @@ init -11 python early:
 
             if Inspiration.has(player):
                 Inspiration.subByType(player)
+                Notice.add('由于病情急迫，流失了1层灵感！')
 
-            if Physique.has(player):
+            if Physique.has(player) and rra(player, 33):
                 Physique.subByType(player)
-            
+                Notice.add('由于病情急迫，流失了1层体魄！')
             
 
     
@@ -3088,3 +3111,4 @@ init -11 python early:
         info = _('每层都会{color=#FF4500}提升{/color}镇痛药提升严重倍率的效果。')
         ad = _('如今我已尝过了忤逆的果实，这种饥饿便时常来烦扰我。闻见腐败的芳香我的嘴就流涎水，肚肠像狗一样嚎叫。')
         hide = True
+

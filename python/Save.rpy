@@ -66,12 +66,14 @@ init -10 python early:
         @classmethod
         def export(cls, slot):
             code = cls.dumps(slot)
+            code = code.replace('\n','\N')
             pygame_sdl2.scrap.put(pygame_sdl2.SCRAP_TEXT, code)
             showNotice(['已导出存档至剪贴板！', '你可以粘贴该给其他人，点击右上角的加号可导入其他人的存档。'])
 
         @classmethod
         def inport(cls):
             code = pygame_sdl2.scrap.get(pygame_sdl2.SCRAP_TEXT)
+            code = code.replace('\N','\n')
             code = code.replace('\r','')
             slot = None
             if not code:

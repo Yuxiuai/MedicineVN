@@ -112,7 +112,7 @@ screen screen_phone_cheat_slot(player, brief, act):
         frame:
             background None
             textbutton brief text_style "white":
-                action act, Function(player.when_cheat)
+                action act
                 background Frame("gui/style/grey_[prefix_]background.png", tile=gui.frame_tile)
                 xfill True
                 activate_sound audio.cursor

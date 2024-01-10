@@ -86,6 +86,8 @@ screen screen_gamemenu_save(player=p):
                                                 $sn = persistent.savefile[i][j].name + savename
                                                 if persistent.savefile[i][j].exception:
                                                     $sn = "{color=#ff0000}【已损坏】{/color}"+sn
+                                                elif BookSevDownEffect_2.has(persistent.savefile[i][j].p):
+                                                    $sn = "{color=#8433cc}【被诅咒】{/color}"+sn
                                                 textbutton sn text_style 'white':
                                                     action SetLocalVariable("savei", i), SetLocalVariable("savej", j)
                                                     #elif not slot and not persistent.savefile[0]:
@@ -169,6 +171,7 @@ screen screen_gamemenu_save(player=p):
                         
                         default naming = False
                         default g = glitchtext(rd(1, 5))
+                        $canload = True
 
 
                         frame:  #mainframe
@@ -182,7 +185,12 @@ screen screen_gamemenu_save(player=p):
                                 hbox:
                                     spacing 5
                                     if choicesave.exception:
+                                        $canload = False
                                         text "{color=#ff0000}【已损坏】{/color}"+choicesave.name style "white" size 40
+                                        
+                                    elif BookSevDownEffect_2.has(choicesave.p):
+                                        $canload = False
+                                        text "{color=#8433cc}【被诅咒】{/color}"+choicesave.name style "white" size 40
 
                                     elif not naming:
                                         text choicesave.name style "white" size 40
@@ -215,7 +223,7 @@ screen screen_gamemenu_save(player=p):
                                 xalign 1.0
                                 xoffset 30
                                 ypos 0.1
-                                if choicesave.p.cured >= 21:
+                                if choicesave.p.cured >= 21 or BookSevDownEffect_2.has(choicesave.p):
                                     add "save_ce" xcenter 0.42
                                 elif choicesave.p.experience == 'wri':
                                     add "gui/save/rest.jpg" xcenter 0.42
@@ -256,12 +264,16 @@ screen screen_gamemenu_save(player=p):
 
                                 imagebutton auto "gui/save/download_%s.png":
                                     action Function(Saver.export, choicesave.p)
+                                    activate_sound audio.click1
                                     xalign 0.45
 
-                                if not choicesave.exception:
-                                    imagebutton auto "gui/save/load_%s.png":
+                                imagebutton auto "gui/save/load_%s.png":
+                                    if canload:
                                         action Function(Saver.load, choicesave.p)
-                                        xalign 0.9
+                                    else:
+                                        action NullAction()
+                                        activate_sound audio.error
+                                    xalign 0.9
 
                             if choicesave.p.cured >= 21:
                                 timer 0.1 repeat True action SetLocalVariable("g", glitchtext(rd(1, 5)))
@@ -270,6 +282,7 @@ screen screen_gamemenu_save(player=p):
         xalign 0.9
         yalign 0.05
         action Function(Saver.inport)
+        activate_sound audio.getmedicine
 
     imagebutton auto "gui/exit_%s.png":
         xalign 0.95

@@ -528,7 +528,7 @@ init -10 python early:
         maxCd = 7
         maxDu = -1
         isUnique = True
-        info = _('阅读后提升15%生病和受伤的恢复率。\n如果在效果期间成功治愈生病或受伤，则结束效果并降低2%的严重程度。')
+        info = _('阅读后获得1层书籍效果，每层提升20%生病和受伤的恢复率。\n如果在效果期间成功治愈生病或受伤，则结束效果并降低2%的严重程度。\n如果未能成功治愈，则额外获得1层该状态。')
         ad = _('“我的精神需要我的身体，就像菌菇需要泥土。”')
         bookEffect_ = BookPhysPunEffect
 
@@ -557,7 +557,7 @@ init -10 python early:
         maxCd = 14
         maxDu = -1  # 数字
         isUnique = True
-        info = _('阅读本书籍将提升20%的工作速度，降低20%工作类日程消耗的精神状态，且每次进行工作类日程时，额外完成5%的当周工作量。')
+        info = _('阅读本书籍将提升20%的工作速度，降低20%工作类日程消耗的精神状态，且每次进行工作类日程时，额外完成10%的当周工作量。')
         ad = _('“我为一种躁动的向往所俘。我似乎产生了某种……企图。究竟是何企图？”')
         bookEffect_ = BookWorEffect
 
@@ -572,7 +572,7 @@ init -10 python early:
         maxCd = 14
         maxDu = -1  # 数字
         isUnique = True
-        info = _('阅读本书籍后效果持续时间内获得灵感时额外获得1层。')
+        info = _('阅读本书籍后效果持续时间内获得灵感时额外获得2层。')
         ad = _('“迟早要失去的东西并没有太多意义. 必失之物的荣光并非真正的荣光。”')
         bookEffect_ = BookInsEffect
 
@@ -627,25 +627,33 @@ init -10 python early:
             BookWriteEffect.add(player)
 
 
-    class BookCM(Item):
-        id = 9999
-        name = _('已移除的道具')
-        kind = _('收藏品')
-        maxCd = -1
+    class BookCM(BookBase):
+        id = 411
+        name = _('《深沉之雨》')
+        kind = _('书籍')
+        maxCd = 14
         maxDu = -1  # 数字
         isUnique = True
-        info = _('该道具已被移除。')
-        ad = _('该道具已被移除。')
+        info = _('阅读本书籍后，降低15%过夜消耗的精神状态，并在起床时降低1点严重程度，同时有10%的概率结束该效果。')
+        ad = _('“要下雨了，不过是恰到好处的那种雨。”')
+        bookEffect_ = BookCMEffect
 
-    class BookMED(Item):
-        id = 9999
-        name = _('已移除的道具')
-        kind = _('收藏品')
-        maxCd = -1
+        def useItemAction(self, player):
+            self.bookEffect_.add(player)
+
+    class BookMED(BookBase):
+        id = 412
+        name = _('《实用百科全书》')
+        kind = _('书籍')
+        maxCd = 14
         maxDu = -1  # 数字
         isUnique = True
-        info = _('该道具已被移除。')
-        ad = _('该道具已被移除。')
+        info = _('进行日程时提升1点随机属性，同时有10%的概率结束该效果。')
+        ad = _('也许你会需要里面的知识，但为什么不问问百度呢……')
+        bookEffect_ = BookMEDEffect
+
+        def useItemAction(self, player):
+            self.bookEffect_.add(player)
 
     class AMaverickLion(BookBase):
         id = 413
@@ -709,9 +717,43 @@ init -10 python early:
             self.bookEffect_.add(player)
 
             
+    class BookSevDown(BookBase):
+        id = 419
+        name = _('《紫罗兰的洗礼》')
+        kind = _('书籍')
+        maxCd = 14
+        maxDu = -1  # 数字
+        isUnique = True
+        info = _('阅读本书籍后获得等同于灵感层数的书籍效果，每层使严重倍率降低2%，但每次使用都会降低20%的效果。\n总计使用次数超过5次后，存档则会损坏。')
+        ad = _('“起来吧，我的仆从，欢唱着迎接我的到来。')
+        bookEffect_ = BookSevDownEffect
 
-    
-    
+        def getPrincipalInfo(self):
+            if p:
+                s = BookSevDownEffect_.getstack(p)
+                if s < 5:
+                    info = '\n\n{color=#8433cc}已接受布道：%s次{/color}' % s
+                    return self.info + info
+                else:
+                    return '\n\n{color=#fedb74}接受我吧。{/color}\n\n'
+            return self.info
+
+        @classmethod
+        def icon(cls):
+            if p:
+                return 'gui/items/419_%s.png' % BookSevDownEffect_.getstack(p)
+            return'gui/items/419.png'
+
+
+        def useItemAction(self, player):
+            if BookSevDownEffect_.getstack(player) == 5:
+                import time
+                BookSevDownEffect_2.add(player)
+                Saver.save(player)
+                time.sleep(2)
+                renpy.quit()
+            else:
+                self.bookEffect_.add(player, Inspiration.getstack(player))
     
     class BookUndead(BookBase):
         id = 420
@@ -834,7 +876,7 @@ init -10 python early:
         def useItemAction(self, player):
             g = rca(player, (1,2,2, 3, 3,4))
             player.gain_abi(g * 0.01, 'wri')
-            Inspiration.add(player, 3)
+            Inspiration.add(player, 4)
             player.workConcentration += 2
 
     class ProfessionalBookSeverity(BookBase):
@@ -1298,9 +1340,9 @@ init -10 python early:
             if player.experience == 'wri':
                 temp = ra(player, 2,3)
             if temp == 1:
-                player.gain_abi(0.01, 'wor')
+                player.gain_abi(0.02, 'wor')
             elif temp == 2:
-                player.gain_abi(0.01, 'phy')
+                player.gain_abi(0.02, 'phy')
             else:
                 player.gain_abi(0.02, 'wri')
 
@@ -1669,7 +1711,7 @@ init -10 python early:
             if Satiety.has(player):
                 return
             t = r2(max(self.qty - 1.5, 0) * 0.01)
-            player.gain_abi(t, 'sev')
+            player.gain_abi(-t, 'sev')
             fe = int(0.5 * self.qty)
             player.fishenergy += fe
             Notice.add(_('恢复了%s点钓鱼精力！' % fe))
@@ -1765,8 +1807,8 @@ init -10 python early:
             player.gain_mental(rec)
             if Satiety.has(player):
                 return
-            t = int(self.qty)
-            player.seveity -= 0.01 * t
+            t = r2(max(self.qty - 1.5, 0) * 0.01)
+            player.gain_abi(-t, 'sev')
             Malnutrition.clearByType(player)
             Malnutrition_.clearByType(player)
             abilitylist = [
@@ -2474,11 +2516,12 @@ init -10 python early:
         isUnique = True
         canQuit = False
         reuse = False
-        info = _('使用后消耗该道具，降低严重程度至当前周的严重程度下限。')
+        info = _('使用后消耗该道具，降低严重程度至当前周的严重程度下限，当严重程度高于1.0时，使严重倍率强制变为1.0。')
         ad = _('一本不知道来由的书，你总觉得这文字十分熟悉，故事中主角的遭遇与你相似又不尽相同。')
 
         def useItemAction(self, player):
             player.severity = 0.1
+            player.severityRegarded = min(1.0, player.severityRegarded)
 
 
     class BadmintonRacket(Item):

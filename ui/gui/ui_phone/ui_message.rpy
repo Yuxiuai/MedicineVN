@@ -77,7 +77,7 @@ screen screen_phone_message(player):
                                 use screen_phone_message_friendbox(player, 'Halluke', notseen, 'Halluke_')
                             else:
                                 use screen_phone_message_friendbox(player, 'Halluke', notseen)
-                        if player.dep_p>0:
+                        if player.dep_p>2:
                             use screen_phone_message_friendbox(player, 'Depline', notseen)
                         if player.des_p>=2:    
                             $notseen = len([mes for mes in p.messages['Destot'] if not mes.seen and mes.fro != player.name])

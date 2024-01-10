@@ -29,14 +29,14 @@ label depline_route_0:
 label depline_route_1:
     $start_plot()
     stop music fadeout 5
-    if p.today in (6, 7):
+    if p.today in (6, 7) or p.experience == 'wri':
         scene workarea with fade
     else:
         scene office with fade
     
     "脑子完全是一滩浆糊的状态。"
     "痛恨自己没法快速入睡，痛恨自己被头疼折磨的现实。"
-    if p.today in (6, 7):
+    if p.today in (6, 7) or p.experience == 'wri':
         "我打了个哈欠，如果我这周末完全没事做的话肯定就去睡回笼觉了。"
     else:
         "起床，洗漱，坐地铁，走进公司的电梯，我都是半眯着眼睛，完全凭借着肌肉记忆。"
@@ -73,7 +73,7 @@ screen depline_route_2_phone:
     modal True
     style_prefix "gameUI"
     zorder 600
-    
+    default showed = False
     frame at pickup_phone_transform:
         
         background None
@@ -97,13 +97,18 @@ screen depline_route_2_phone:
     button:
         xfill True
         yfill True
-        action Return()
+        if showed:
+            action Return()
+    
+    timer 1.5 action SetLocalVariable("showed", True)
+    
 
 screen depline_route_2_phone_inner:
     
     predict False
     style_prefix "gameUI"
     zorder 600
+    
     
     frame:
                
@@ -212,7 +217,7 @@ screen depline_route_2_phone_inner:
               
         text 'Akamatsu' xpos 0.98 xanchor 1.0 ypos 0.085 size 30 style "foodname"
 
-    
+        
 
 label depline_route_2:
     $start_plot()
@@ -370,7 +375,7 @@ label depline_route_2:
     $DeplineTask1.lock(p)
     if p.dep_p == 2:
         $p.dep_p = 3
-        $Message.new(p, 'Depline', 'Depline', '抱歉，今天有点冷落你了，我下周日还会来这边玩，集合地点就定在商店街的宾馆门口吧？')
+        $Message.new(p, 'Depline', 'Depline', '抱歉，今天有点冷落你了，我下周日同一时间还会来这边玩，集合地点就定在商店街的宾馆门口吧？')
     $end_plot()
     if replaying:
         jump afterreplay
@@ -957,11 +962,14 @@ label depline_route_5:
     "那种荷尔蒙的气息，只来自于他的，独特的气息。"
     "浮漂落入水中的声音十分突兀，沉浸在恍惚之中的我立刻清醒。"
     s"“鱼！…是鱼！…”"
-    $clearscreens()
-    $fishgame = FishGame(p)
-    $fishgame.hard = 1.0
-    $fishgame.hasA1 = True
-    call screen screen_fishing(p, fishgame, 'lake')
+    if not replaying:
+        $clearscreens()
+        $fishgame = FishGame(p)
+        $fishgame.hard = 1.0
+        $fishgame.hasA1 = True
+        call screen screen_fishing(p, fishgame, 'lake')
+        if not persistent.clearscreenwhenplot:
+            $renpy.show_screen(_screen_name='screen_dashboard',player=p)
     "我用尽全力拉拽着鱼竿，不得不说他的钓鱼装备真是一等一的好，这根竿子基本上都要被我拽成一个圆了。"
     "纯白色的鱼线径直穿进水中，我几乎能看到水下一片泛白的区域。"
     "那条大鱼几乎是在用全力扭动着身体，当鱼身马上要冲出水面时，什么东西崩断的声响让我整个人完全冻住。"
@@ -1127,7 +1135,10 @@ label depline_route_6:
     s"“反过来看，和你做了这些事的我，我在你心里，是独一无二的吗？”"
     d"“…”"
     "他突然沉默了。"
-    s"“我的生活很平淡，永远是一样的公司，上不完的班，周末也只是在家里一个人消磨时间，出去散步也是自己一个人。”"
+    if p.experience == 'wor':
+        s"“我的生活很平淡，永远是一样的公司，上不完的班，周末也只是在家里一个人消磨时间，出去散步也是自己一个人。”"
+    else:
+        s"“在没有你的时候，我基本也就是一直待在家里而已，写作的委托压得我喘不过气，但我并没有朋友能让我散散心。”"
     s"“认识了你之后，即便我不知道你要带我去什么地方，但我知道一定是让我们一起玩的开心的地方。”"
     s"“无论我们经历了什么，最重要的是你，和你共度的时间让你在我的心里变得独特。”"
     s"“可能这就是我喜欢你的原因吧。”"
@@ -1164,8 +1175,9 @@ label depline_route_6:
 label depline_route_7:
     $start_plot()
     stop music fadeout 5
-    scene busstat with fade
-    "Depline和每周的这个时候一样，就站在宾馆前的公共汽车站边。"
+    scene destot_street2 with fade
+    "Depline和每周日的他一样，就站在宾馆前的公共汽车站边。"
+    "只不过现在是晚上，即便是夜晚，他的毛发也是亮亮的。"
     s"“嗨！…”"
     "我凑近，发出声音引起他的注意。"
     s"“生日快乐！”"
@@ -1499,6 +1511,8 @@ label depline_route_8:
         "头疼将我唤醒。"
     else:
         "我惊醒。"
+    if not persistent.clearscreenwhenplot:
+        $renpy.show_screen(_screen_name='screen_dashboard',player=p)
     "空荡荡的床上只有我一人。"
     play music audio.anxietyspreading
     "他……离开了吗？"
@@ -1520,6 +1534,8 @@ label depline_route_8:
         jump afterreplay
     if p.experience == 'wri':
         $WriterItem4.add(p, 10)
+    $p.onOutside = False
+    
     if p.today in (1,2,3,4,5) and p.experience != 'wri':
         $ p.times = 2
         jump before_go_office

@@ -506,7 +506,7 @@ init python early:
             abis = {
                 'wri' : ('writing', '写作技巧'),
                 'wor' : ('working', '工作能力'),
-                'phy' : ('physical', '写作技巧'),
+                'phy' : ('physical', '身体素质'),
                 'sev' : ('severity', '严重程度'),
             }
             revs = ('sev', )
@@ -646,6 +646,8 @@ init python early:
                 '16' : ['23', self.rm(50, 59)],
                 '666' : ['???', '???']
             }
+            if 16 < self.times < 50:
+                self.times = 16
             r = specTimeDict[str(self.times)]
             if self.spec_hour is not None:
                 r[0] = self.spec_hour
@@ -815,18 +817,19 @@ init python early:
 
 
         def updateAfterSleep(self):  # 夜晚进行的更新工作
-            
-            for i in range(len(self.effects[:]) - 1, -1, -1):
-                self.effects[i].afterSleepAction(self)
-            for i in range(len(self.effects[:]) - 1, -1, -1):
-                self.effects[i].timeUpdate(self)
-            for i in range(len(self.items[:]) - 1, -1, -1):
-                self.items[i].afterSleepAction(self)
-            for i in range(len(self.items[:]) - 1, -1, -1):
-                if self.items[i].kind == _('文稿'):
-                    self.items[i].comm.timeUpdate(self)
+            effects = self.effects.copy()
+            items = self.items.copy()
+            for i in effects:
+                i.afterSleepAction(self)
+            for i in effects:
+                i.timeUpdate(self)
+            for i in items:
+                i.afterSleepAction(self)
+            for i in items:
+                if i.kind == _('文稿'):
+                    i.comm.timeUpdate(self)
                 else:
-                    self.items[i].timeUpdate(self)
+                    i.timeUpdate(self)
 
             if self.week>=1:
                 if (GameDifficulty4.has(self) or GameDifficulty5.has(self)) and rra(self, 75):
@@ -882,23 +885,23 @@ init python early:
             
             if completedPercent > 120:
                 paid = r2(self.wages * 1.2 * 1.05)
-                wages = r2(self.working * 2000 * 1.05 ** self.week)
+                wages = r2(self.working * 2000 * 1.065 ** self.week)
 
             elif completedPercent >= 100:
                 paid = r2(self.wages)
-                wages = r2(self.working * 2000 * 1.035 ** self.week)
+                wages = r2(self.working * 2000 * 1.04 ** self.week)
 
             elif completedPercent >= 80:
                 paid = r2(self.wages * completedPercent * 0.01 * 0.8)
-                wages = r2(self.working * 2000 * 1.015 ** self.week)
+                wages = r2(self.working * 2000 * 1.02 ** self.week)
 
             elif completedPercent >= 50:
                 paid = r2(self.wages *completedPercent * 0.01 * 0.6)
-                wages = r2(self.working * 2000 * 0.9 ** self.week)
+                wages = r2(self.working * 2000 * 0.95 ** self.week)
 
             else:
                 paid = r2(self.wages *completedPercent * 0.01 * 0.55)
-                wages = r2(self.working * 2000 * 0.8 ** self.week)
+                wages = r2(self.working * 2000 * 0.85 ** self.week)
 
             if wages > self.price * 8 and self.wages<self.price * 8:
                 wages = r2(self.price * 8)

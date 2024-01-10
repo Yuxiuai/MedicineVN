@@ -61,11 +61,11 @@ screen screen_map(player, exploring=False):
         $info4 = _("{size=+8}医院{/size}\n购买药物，或者治疗疾病。")
         $ad4 = _('除了周五我一般都没有去医院的需求，除非是生病了……')
         $info44 = _("\n\n{size=-5}可能探索到的地点或功能：\n    购买药物\n    治疗生病\n    治疗受伤{/size}")
-        if p.sol_p == 0 and p.week >=4 and p.today == 5:
+        if player.sol_p == 0 and p.week >=4 and p.today == 5:
             $ info44 += red('{size=-5}\n    触发与Pathos的新剧情{/size}')
-        elif p.sol_p == 2 and p.week >=8 and p.today == 5:
+        elif player.sol_p == 2 and p.week >=8 and p.today == 5:
             $ info44 += red('{size=-5}\n    触发与Pathos的新剧情{/size}')
-        elif p.sol_p == 4 and p.week >=12 and p.today == 5:
+        elif player.sol_p == 4 and p.week >=12 and p.today == 5:
             $ info44 += red('{size=-5}\n    触发与Pathos的新剧情{/size}')
         if player.aco_p == 7 and p.today in (6, 7):
             $ info44 += red('{size=-5}\n    触发与Acolas的新剧情{/size}')
@@ -100,7 +100,11 @@ screen screen_map(player, exploring=False):
 
         $info6 = _("{size=+8}商店街{/size}\n随机选一家店进去玩玩！花钱也是一种放松的手段。")
         $ad6 = _('过度消费也是一种自残行为，但我留着那么多钱有什么用呢？')
-        $info66 = _("\n\n{size=-5}点击查看商店街部分地图。{/size}")
+        $info66 = _("\n{size=-5}点击查看商店街部分地图。{/size}")
+        if player.dep_p in (3, 4, 5, 6) and p.today == 7:
+            $ info66 += red('{size=-5}\n    触发与Depline的新剧情{/size}')
+        if player.dep_p == 7 and p.today == 6:
+            $ info66 += red('{size=-5}\n    触发与Depline的新剧情{/size}')
         imagebutton auto "imagemap/ShoppingStreet_%s.webp":
             focus_mask True
             action [Hide("info"), Show(screen="screen_shopstreet_map", player=player, exploring=exploring)]
@@ -168,6 +172,12 @@ screen screen_shopstreet_map(player, exploring):
         $info1 = "{size=+8}宾馆{/size}"
         $info11 = "\n{size=-5}短暂休息或过夜{/size}"
         $ad1 = '一想到这里面每天晚上都有很多人在同时做爱，就十分不可思议。'
+        if player.dep_p in (3, 4, 5, 6) and p.today == 7:
+            $ info11 += red('{size=-5}\n触发与Depline的新剧情{/size}')
+        if player.dep_p == 7 and p.today == 6:
+            $ info11 += red('{size=-5}\n触发与Depline的新剧情{/size}')
+
+
         imagebutton auto "imagemap/shopstreet/hotel_%s.webp":
             focus_mask True
             if not exploring:

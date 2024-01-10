@@ -64,7 +64,7 @@ init python early:
             reco = r2(5.5 * cls.getRecoScale(player))
             player.gain_mental(reco)
             g = ra(player, 0, 2) * 0.01
-            player.gain_abi(g, 'sev')
+            player.gain_abi(-g, 'sev')
             Soreness.add(player, 2)
             cls.setInjured(player, 20)
 

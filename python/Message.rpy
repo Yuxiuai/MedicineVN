@@ -162,8 +162,8 @@ init python early:
                     seen = None
                 elif to == 'Destot' and player.des_p == 99:
                     seen = None
-                elif to == 'Depline' and player.dep_0 == 8:
-                    senn = None
+                elif to == 'Depline' and player.dep_p == 8:
+                    seen = None
                 if m and h:
                     pos = ''
                 st = player.st()

@@ -132,7 +132,7 @@ screen screen_phone_header(player):
         
         $showHour=player.st()[0]
         $showMin=player.st()[1]
-        $battary = 100-int((int(showHour)*60+int(showMin)-420)*100/950)
+        $battary = max(1, 100-int((int(showHour)*60+int(showMin)-420)*100/950))
 
         text "[showHour]:[showMin]" size 25 style "phone" yalign 0.5
         

@@ -2518,7 +2518,7 @@ init python early:
                 return True
             elif player.aco_p == 7 and p.today in (6, 7):
                 return True
-            elif player.dep_p in (3, 4) and p.today == 7:
+            elif player.dep_p in (3, 4, 5, 6, 7) and p.today == 7:
                 return True
             return False
 

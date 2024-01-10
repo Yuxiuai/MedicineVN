@@ -124,6 +124,14 @@ screen screen_journal_inner(player):
             if not BadmintonRacket.has(player):
                 text '         - {color=#ff0000}需要购买新的羽毛球拍……（外出→商店街→文体商店）{/color}' style 'handwrite'
             $nothing6 = False
+
+        if player.dep_p==7:
+            if player.today ==7 and (player.today == 6 and player.times>=11):
+                text '    {u}晚上：{/u}\n     - {s}和Depline庆祝生日（外出→商店街→宾馆）' style 'handwrite'
+            else:
+                text '    {u}晚上：{/u}\n     - 和Depline庆祝生日（外出→商店街→宾馆）' style 'handwrite'
+            $nothing7 = False
+
         if nothing6:
             text '    暂无事项……' style 'handwrite'
 
@@ -138,17 +146,18 @@ screen screen_journal_inner(player):
             else:
                 text '    {u}上午：{/u}\n     - 去商场和赤松面基（和赤松面基）' style 'handwrite'
             $nothing7 = False
+        if player.dep_p in (3, 4, 5, 6):
+            if player.today ==7 and player.times>=5:
+                text '    {u}上午：{/u}\n     - {s}和Depline一起出门（外出→商店街→宾馆）' style 'handwrite'
+            else:
+                text '    {u}上午：{/u}\n     - 和Depline一起出门（外出→商店街→宾馆）' style 'handwrite'
+            $nothing7 = False
+        
         if player.hal_p in (7, 8, 9):
             if player.today ==7 and player.times>=9:
                 text '    {u}下午：{/u}\n     - {s}去体育馆陪Halluke打羽毛球（和Halluke打羽毛球）' style 'handwrite'
             else:
                 text '    {u}下午：{/u}\n     - 去体育馆陪Halluke打羽毛球（和Halluke打羽毛球）' style 'handwrite'
-            $nothing7 = False
-        if player.des_p==2:
-            if player.today ==7 and player.times>=11:
-                text '    {u}晚上：{/u}\n     - {s}和Destot一起出门（和Destot外出）' style 'handwrite'
-            else:
-                text '    {u}晚上：{/u}\n     - 和Destot一起出门（和Destot外出）' style 'handwrite'
             $nothing7 = False
         if player.des_p==4:
             if player.today ==7 and player.times>=9:
@@ -156,12 +165,26 @@ screen screen_journal_inner(player):
             else:
                 text '    {u}下午：{/u}\n     - 去Destot家里，地址是……XX小区XX单元……（去Destot家）' style 'handwrite'
             $nothing6 = False
+        if player.des_p==2:
+            if player.today ==7 and player.times>=11:
+                text '    {u}晚上：{/u}\n     - {s}和Destot一起出门（和Destot外出）' style 'handwrite'
+            else:
+                text '    {u}晚上：{/u}\n     - 和Destot一起出门（和Destot外出）' style 'handwrite'
+            $nothing7 = False
+        
+        
         if nothing7:
             text '    暂无事项……' style 'handwrite'
         
 
         
-        $others = [WriterItem1.has(player), any([x.has(player) for x in (AcolasItem2, AcolasItem3, AcolasItem4)]), player.hal_p in (12, 13)]
+        $others = [
+            WriterItem1.has(player), 
+            any([x.has(player) for x in (AcolasItem2, AcolasItem3, AcolasItem4)]), 
+            player.hal_p in (12, 13), 
+            player.dep_p == 9, 
+            player.dep_p == 10,
+        ]
         if any(others):
             text '\n其他：' style 'handwrite'
         if others[0]:
@@ -170,6 +193,10 @@ screen screen_journal_inner(player):
             text ' - 帮Acolas做他的游戏项目（完成Acolas的项目）' style 'handwrite'
         if others[2]:
             text ' - 保持Halluke情绪稳定……（小心地回复消息）' style 'handwrite'
+        if others[3]:
+            text ' - Depline去了哪里……' style 'handwrite'
+        if others[4]:
+            text ' - 阿斯卡隆书店要倒闭了……' style 'handwrite'
 
         text '\n治疗进度：' style 'handwrite'
         if player.sol_p == 0:

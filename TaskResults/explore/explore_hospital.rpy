@@ -1,5 +1,8 @@
 label explore_hospital:
+    if p.dep_p == 9 and persistent.te_weekday == p.today:
+        jump depline_route_9
     $beforemusic=renpy.music.get_playing()
+    
     stop music fadeout 3
     if p.times==12:
         scene nightrun with fade

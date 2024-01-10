@@ -280,8 +280,6 @@ label prepare_for_surgery_1_1:
     "我打开手机，接收了他发过来的图片。"
     if GameDifficulty5.has(p):
         $Achievement600.achieve()
-    if GameDifficulty5.has(p):
-        $Achievement601.achieve()
     if p.medinfo == {}:
         $Achievement603.achieve()
     if p.hal_achievement451_able and p.route == 'h':

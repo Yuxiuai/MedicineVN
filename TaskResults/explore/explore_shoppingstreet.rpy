@@ -475,7 +475,7 @@ screen screen_explore_store2(player):
                                 null height 10
                                 use screen_buylist(player, [FixKit, Bondage], p=0.8, d=20, n='工具组')
                                 null height 10
-                                use screen_buylist(player, [RecordingPen, FasciaGun], p=1, d=20, n='小电器')
+                                use screen_buylist(player, [RecordingPen, FasciaGun, Fridge], p=1, d=20, n='小电器')
                                 null height 10
                                 use screen_buylist(player, [Tarot, D6, D20, D1000], p=0.35, d=10, n='玩具')
                                 null height 10

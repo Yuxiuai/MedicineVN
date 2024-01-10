@@ -1,8 +1,10 @@
 label explore_hotel:
 
 
-    if p.dep_p == 3:
-        jump depline_route_3
+    if p.dep_p in (3, 4, 5, 6) and p.today == 7 and p.times == 4:
+        $renpy.jump('depline_route_'+str(p.dep_p))
+    if p.dep_p == 7 and p.today == 6 and p.times == 12:
+        jump depline_route_7
     
     scene hotelcheckin with fade
     lady"“欢迎来到A市宾馆。”"
