@@ -45,7 +45,7 @@ init python early:
             reco = r2(-0.25 * player.mental + 35)
             
             
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.updateAfterTask(cls)
             if player.p2:
                 player.p2.updateAfterTask(cls)

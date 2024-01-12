@@ -50,7 +50,7 @@ screen screen_report(player):
 
                 imagebutton auto "gui/exit_%s.png":
                     xalign 0.98
-                    action [Hide("screen_report",transition=dissolve),Hide("info"),Hide("info3"), Return()]
+                    action [Hide("screen_report",transition=dissolve),Hide("info"),Hide("info3"),Return()]
                     activate_sound audio.cursor
 
 
@@ -124,8 +124,6 @@ screen screen_report_list(player):
                 text '' style "white" size 18
                 text '+100%' style "white" xoffset 5 size 20 xalign 0.5
 
-
-
 screen screen_report_score(player):
     $score = int(Achievement.calScore(player))
     frame:
@@ -147,3 +145,4 @@ screen screen_report_score(player):
             null height 10
             text '%s' % int(score/max(1, player.week)) style "white" size 35 xalign 1.0
             null height 10
+

@@ -34,29 +34,27 @@ init 5 python early:
             pool = (0,0,1,1,1)
 
             drinkhp = rca(player, pool)
-            sev = 0.01
             if drinkhp > 0:
                 Notice.add("消耗了%s点酒量。" % drinkhp)
             else:
                 Notice.add("没有消耗酒量。")
-            player.gain_abi(-sev, 'sev')
+            player.gain_abi(-0.01, 'sev', stat=self.name)
     
     class Wine_LongIsland(Wine):
         id = 1002
         name = _('长岛冰茶')
-        info = _('饮用后消耗1点酒量，接下来饮用的2杯酒有一定概率降低1点饱腹。')
+        info = _('饮用后消耗1点酒量，接下来饮用的2杯酒有一定概率降低1点消耗的酒量。')
         ad = _('“给你调一杯冰凉的Long Island Ice Tea——看似甜蜜却藏着危险的后劲——”')
 
         def useItemAction(self, player):
             pool = (0,0,1,1,1)
 
             drinkhp = rca(player, pool)
-            sev = 0.01
             if drinkhp > 0:
                 Notice.add("消耗了%s点酒量。" % drinkhp)
             else:
                 Notice.add("没有消耗酒量。")
-            player.gain_abi(-sev, 'sev')
+            player.gain_abi(-0.01, 'sev', stat=self.name)
     
     class Wine_Martini(Wine):
         id = 1003

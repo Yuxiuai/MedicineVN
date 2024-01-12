@@ -12,13 +12,13 @@ label explore_college_1:
     else:
         scene gym_night with fade
     if p.experience != 'wri':
-        $p.gain_abi(0.03, 'wri')
+        $p.gain_abi(0.03, 'wor', stat='外出：A市大学')
         $Notice.show()
         "去A市大学旁听了一场工作培训机构办的讲座。"
         "虽然大多数都是关于应届大学生就业的问题，以及简历和面试的一些小东西，但我听一听也好。"
         "说不定我哪天想不开就换工作了呢？"
     else:
-        $p.gain_abi(0.03, 'wri')
+        $p.gain_abi(0.03, 'wri', stat='外出：A市大学')
         $Notice.show()
         "去A市大学旁听了一场由四个女生和一个男生组建的文学社办的讲座。"
         "现在的大学还会办校园祭吗？我上学的时候怎么就天天都是无聊的讲座……"
@@ -31,7 +31,7 @@ label explore_college_2:
         scene gym with fade
     else:
         scene gym_night with fade
-    $p.gain_abi(0.03, 'phy')
+    $p.gain_abi(0.03, 'phy', stat='外出：A市大学')
     $Notice.show()
     "去A市大学旁听了一节和身体锻炼有关的选修课。"
     "讲了很多关于运动前准备和运动后拉伸的问题，稍微听听也能防止我总受伤。"
@@ -46,7 +46,7 @@ label explore_college_3:
         scene gym with fade
     else:
         scene gym_night with fade
-    $p.gain_abi(0.03, 'wri')
+    $p.gain_abi(0.03, 'wri', stat='外出：A市大学')
     $Notice.show()
     "去A市大学旁听了一场由四个女生和一个男生组建的文学社办的讲座。"
     "现在的大学还会办校园祭吗？我上学的时候怎么就天天都是无聊的讲座……"
@@ -60,7 +60,7 @@ label explore_college_4:
         scene gym with fade
     else:
         scene gym_night with fade
-    $p.gain_abi(0.03, 'wri')
+    $p.gain_abi(0.03, 'wri', stat='外出：A市大学')
     $Notice.show()
     "去A市大学旁听了一场由四个女生和一个男生组建的文学社办的讲座。"
     "现在的大学还会办校园祭吗？我上学的时候怎么就天天都是无聊的讲座……"
@@ -86,7 +86,7 @@ label explore_college_6:
     "……稍微有点累，但是也赚了不少钱。"
     $temp=r2(1.8 * p.price * f())
     $p.money += temp
-    $p.gain_abi(-0.01, 'sev')
+    $p.gain_abi(-0.01, 'sev', stat='外出：A市大学')
     $Notice.add('获得%s元报酬' % temp)
     $Notice.show()
     jump GoOutside_result
@@ -104,8 +104,8 @@ label explore_college_7:
         "虽然都是些简单的知识和工作上完全用不到的知识，不过幸好我还没忘光。"
         $temp=r2(0.9 * p.price * f())
         $p.money += temp
-        $p.gain_abi(0.03, 'wor')
-        $p.gain_abi(0.01, 'sev')
+        $p.gain_abi(0.03, 'wor', stat='外出：A市大学')
+        $p.gain_abi(0.01, 'sev', stat='外出：A市大学')
         $Notice.add('获得%s元报酬' % temp)
         $Notice.show()
     else:
@@ -115,7 +115,7 @@ label explore_college_7:
         "……稍微有点累，但是也赚了不少钱。"
         $temp=r2(1.8 * p.price * f())
         $p.money += temp
-        $p.gain_abi(0.01, 'sev')
+        $p.gain_abi(0.01, 'sev', stat='外出：A市大学')
         $Notice.add('获得%s元报酬' % temp)
         $Notice.show()
     jump GoOutside_result

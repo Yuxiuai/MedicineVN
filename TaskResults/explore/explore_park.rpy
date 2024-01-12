@@ -13,7 +13,7 @@ label explore_park_1:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
-    $p.gain_abi(0.01, 'phy')
+    $p.gain_abi(0.01, 'phy', stat='外出：亚斯塔禄公园')
     $Notice.show()
     "在室外行走的感觉总比待在室内要好多了。"
     "今天的空气真清新啊……慢慢走在路上感觉什么疲劳都消失了。"
@@ -35,7 +35,7 @@ label explore_park_2:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
-    $p.gain_abi(0.02, 'phy')
+    $p.gain_abi(0.02, 'phy', stat='外出：亚斯塔禄公园')
     $Notice.show()
     "在室外行走的感觉总比待在室内要好多了。"
     "今天的空气真清新啊……慢慢走在路上感觉什么疲劳都消失了。"
@@ -63,7 +63,7 @@ label explore_park_3:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
-    $p.gain_abi(0.02, 'phy')
+    $p.gain_abi(0.02, 'phy', stat='外出：亚斯塔禄公园')
     $Notice.show()
     "在室外行走的感觉总比待在室内要好多了。"
     "今天的空气真清新啊……慢慢走在路上感觉什么疲劳都消失了。"
@@ -91,7 +91,7 @@ label explore_park_4:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
-    $p.gain_abi(0.02, 'phy')
+    $p.gain_abi(0.02, 'phy', stat='外出：亚斯塔禄公园')
     $Notice.show()
     $temp=r2(p.price * 1.5 * f())
     $p.money -= temp
@@ -110,7 +110,7 @@ label explore_park_4:
     if p.money==0:
         "身上的口袋都翻过了，什么也没找到，就连随身带着的扣耳勺都被偷了！"
         "早知道来这公园之前就该把钱都放在家里！"
-        $p.gain_abi(0.01, 'sev')
+        $p.gain_abi(0.01, 'sev', stat='外出：亚斯塔禄公园')
         $Notice.show()
     else:
         "幸好另一个口袋还有钱……不至于打车的钱都没了……"
@@ -125,7 +125,7 @@ label explore_park_5:
         scene afternoonrun with fade
     else:
         scene nightrun with fade
-    $p.gain_abi(-0.03, 'sev')
+    $p.gain_abi(-0.03, 'sev', stat='外出：亚斯塔禄公园')
     $PhysRezB.add(p)
     "去江边的大桥散步了。"
     "听江潮冲刷勾勒出花纹的水泥江岸发出澎湃的响声，感到很放松。"
@@ -141,8 +141,8 @@ label explore_park_6:
     else:
         scene nightrun with fade
     $rec = r2(20 * Task.getRecoScale(p))
-    $p.gain_abi(-0.02, 'sev')
-    $p.gain_mental(rec)
+    $p.gain_abi(-0.02, 'sev', stat='外出：亚斯塔禄公园')
+    $p.gain_mental(rec, stat='外出：亚斯塔禄公园')
     $PhysRezB.add(p)
     "在公园慢跑。"
     "稍微出了点汗，感觉还不错。"
@@ -158,8 +158,8 @@ label explore_park_7:
     else:
         scene nightrun with fade
     $rec = r2(15 * Task.getRecoScale(p))
-    $p.gain_abi(0.02, 'phy')
-    $p.gain_mental(rec)
+    $p.gain_abi(0.02, 'phy', stat='外出：亚斯塔禄公园')
+    $p.gain_mental(rec, stat='外出：亚斯塔禄公园')
     $PhysRezB.add(p)
     $Notice.show()
     "在公园快跑。"

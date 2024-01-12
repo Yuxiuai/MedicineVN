@@ -109,7 +109,7 @@ init -10 python early:
             r = rd(200000, 400000) * 0.01
             if player.mental < 0:
                 r += -player.mental
-            player.gain_mental(r)
+            player.gain_mental(r, stat=self.name)
             DrugED.add(player)
             for i in [DrugD, DrugW, DrugEA, DrugEB, DrugEC, Deterioration]:
                 if i.has(player):
@@ -294,7 +294,7 @@ init -10 python early:
         def useItemAction(self, player):
             if GameDifficulty1.has(player) or GameDifficulty2.has(player):
                 s = r2(player.severity * 0.02)
-                p.gain_abi(s, 'sev')
+                player.gain_abi(-s, 'sev', stat=self.name)
 
     
 
@@ -307,9 +307,9 @@ init -10 python early:
         maxDu = 28
         reuse = False
         isUnique = False
-        info = _('在硬核模式下，使用后使下一个日程消耗的精神状态减少75%。')
+        info = _('在硬核模式下，使用后使下一个日程精神状态消耗减少100%。')
         ad = _('“倘若周围一团漆黑，那就只能静等眼睛习惯黑暗。”')
-        p=0.25
+        p=0.33
 
         def useItemAction(self, player):
             if GameDifficulty4.has(player) or GameDifficulty5.has(player):
@@ -319,16 +319,17 @@ init -10 python early:
         id = 310
         name = _('右丙氧芬')
         kind = _('普通药物')
-        maxCd = 2
+        maxCd = 4
         maxDu = 28
         reuse = False
         isUnique = False
-        info = _('在硬核模式下，移除全部的药物依赖。')
+        info = _('在硬核模式下，使用后移除药物依赖，且一段时间内不会获得药物依赖。')
         ad = _('“我们的正常之处，就在于懂得自己的不正常。”')
-        p=0.75
+        p=0.25
 
         def useItemAction(self, player):
-            if DrugD.has(player):
+            if GameDifficulty4.has(player) or GameDifficulty5.has(player):
+                DrugdextropropoxypheneEffect.add(player)
                 DrugD.clearByType(player)
 
 
@@ -340,7 +341,7 @@ init -10 python early:
         maxDu = 28
         reuse = False
         isUnique = False
-        info = _('在硬核模式下，使用后使工作能力、身体素质和写作技巧提升15%，同时获得能力时额外获得1点，同时移除其他利他林带来的副作用。\n效果结束时，降低30%的专注度。')
+        info = _('在硬核模式下，使用后使工作能力、身体素质和写作技巧提升15%，同时获得能力时额外获得1点，同时移除利他林的副作用。\n效果结束时，降低30%的专注度。')
         ad = _('“不要同情自己，同情自己是卑劣懦夫干的勾当。”')
         p=0.5
 
@@ -777,12 +778,12 @@ init -10 python early:
         maxCd = 7
         maxDu = -1  # 数字
         isUnique = True
-        info = _('阅读本书籍后获得5层书籍效果，在完成日程前会显示日程的完成结果，你可以消耗1层该效果以优势重新投掷完成结果。\n\n{color=#fde827}（优势：进行两次判定取最高值。）{/color}')
+        info = _('阅读本书籍后持续时间内判定日程结果时会判定两次，并取其中最高的一次。\n当获得优结果时，降低1点严重度。')
         ad = _('“意志无法分割，或者百分之百继承，或者百分之百消失。”')
         bookEffect_ = BookRandConcEffect
 
         def useItemAction(self, player):
-            self.bookEffect_.add(player, 5)
+            self.bookEffect_.add(player)
 
     class Bookdont(BookBase):
         id = 449
@@ -836,7 +837,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             g = rca(player, (1,2,2, 3, 3, 4))
-            player.gain_abi(0.01 * g, 'wor')
+            player.gain_abi(0.01 * g, 'wor', stat=self.name)
             FocusAttention.add(player)
             player.workSpeed += 0.02
 
@@ -875,7 +876,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             g = rca(player, (1,2,2, 3, 3,4))
-            player.gain_abi(g * 0.01, 'wri')
+            player.gain_abi(g * 0.01, 'wri', stat=self.name)
             Inspiration.add(player, 4)
             player.workConcentration += 2
 
@@ -914,7 +915,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             g = rca(player, (1, 2, 2, 3, 3, 4, 5)) * 0.01
-            player.gain_abi(-g, 'sev')
+            player.gain_abi(-g, 'sev', stat=self.name)
             MentRezA.add(player, rca(player,(0, 1, 1, 2)))
             MentRezB.add(player, rca(player,(0, 1, 1, 2)))
             
@@ -994,7 +995,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(10 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse += 2
             Notice.add(_('降低了1%食物的恢复效果！'))
             if ConsInc.has(player):
@@ -1030,11 +1031,11 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(5 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             Malnutrition.clearByType(player)
             Malnutrition_.clearByType(player)
             if rra(player, 70):
-                player.gain_abi(0.01, 'phy')
+                player.gain_abi(0.01, 'phy', stat=self.name)
             if rra(player, 60):
                 Notice.add(_('提升了1%食物的恢复效果！'))
                 player.fooduse -= 2
@@ -1052,7 +1053,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(15 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse += 2
             Notice.add(_('降低了1%食物的恢复效果！'))
             if rra(player, 50):
@@ -1073,7 +1074,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(30 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse += 1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
             if rra(player, 60):
@@ -1092,12 +1093,12 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(10 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse += 1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
             Malnutrition.clearByType(player)
             Malnutrition_.clearByType(player)
-            player.gain_abi(-0.01, 'sev')
+            player.gain_abi(-0.01, 'sev', stat=self.name)
             if rra(player, 25):
                 Satiety.add(player)
 
@@ -1114,7 +1115,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(20 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse += 1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
             Malnutrition.clearByType(player)
@@ -1123,9 +1124,9 @@ init -10 python early:
                 Satiety.add(player)
             if rra(player, 70):
                 if rra(player, 70):
-                    player.gain_abi(0.01, 'phy')
+                    player.gain_abi(0.01, 'phy', stat=self.name)
                 else:
-                    player.gain_abi(0.02, 'phy')
+                    player.gain_abi(0.02, 'phy', stat=self.name)
                 
             else:
                 if PhysProb.has(player):
@@ -1144,7 +1145,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(20 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse += 1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
             Malnutrition.clearByType(player)
@@ -1153,9 +1154,9 @@ init -10 python early:
                 Satiety.add(player)
             if rra(player, 70):
                 if rra(player, 70):
-                    player.gain_abi(0.01, 'wri')
+                    player.gain_abi(0.01, 'wri', stat=self.name)
                 else:
-                    player.gain_abi(0.02, 'wri')
+                    player.gain_abi(0.02, 'wri', stat=self.name)
             else:
                 MentRezB.add(p)
 
@@ -1172,7 +1173,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(40 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse += 2
             Notice.add(_('降低了1%食物的恢复效果！'))
             Satiety.add(player, 4)
@@ -1193,7 +1194,7 @@ init -10 python early:
         def useItemAction(self, player):
             rec = r2(15 * player.useFoodScale())
             Satiety.add(p)
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse -= 2
             Notice.add(_('提升了1%食物的恢复效果！'))
 
@@ -1211,7 +1212,7 @@ init -10 python early:
         def useItemAction(self, player):
             rec = r2(20 * f())
             Satiety.add(p)
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             player.fooduse +=1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
 
@@ -1228,8 +1229,8 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(10 * player.useFoodScale())
-            player.gain_mental(rec)
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(rec, stat=self.name)
+            player.gain_abi(-0.02, 'sev', stat=self.name)
 
     class StreetFood4(Item):
         id = 215
@@ -1243,7 +1244,7 @@ init -10 python early:
         ad = _('新鲜的小菠萝，店家特地用盐水洗过一遍的削皮新鲜水果，酸中带甜，可是总会有汁水溅在衣服上。\n当然，最难过的是菠萝会塞牙，祝你好运。')
 
         def useItemAction(self, player):
-            player.gain_abi(0.01, 'sev')
+            player.gain_abi(0.01, 'sev', stat=self.name)
             player.fooduse -=1
             Notice.add(_('提升了0.5%食物的恢复效果！'))
 
@@ -1284,7 +1285,7 @@ init -10 python early:
                 CoffeeHQ2.add(player)
             else:
                 CoffeeHQ.add(player)
-            player.gain_abi(-0.02, 'sev')
+            player.gain_abi(-0.02, 'sev', stat=self.name)
             player.fooduse += 1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
 
@@ -1340,11 +1341,11 @@ init -10 python early:
             if player.experience == 'wri':
                 temp = ra(player, 2,3)
             if temp == 1:
-                player.gain_abi(0.02, 'wor')
+                player.gain_abi(0.02, 'wor', stat=self.name)
             elif temp == 2:
-                player.gain_abi(0.02, 'phy')
+                player.gain_abi(0.02, 'phy', stat=self.name)
             else:
-                player.gain_abi(0.02, 'wri')
+                player.gain_abi(0.02, 'wri', stat=self.name)
 
     
     class StreetFood10(Item):
@@ -1364,7 +1365,7 @@ init -10 python early:
                 rec = r2(r * player.useFoodScale())
             else:
                 rec = r2(20 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             Satiety.add(player)
             player.fooduse += 2
             if rra(player, 20):
@@ -1385,7 +1386,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(15 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
 
     class StreetFood12(Item):
         id = 223
@@ -1401,8 +1402,8 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(15 * player.useFoodScale())
-            player.gain_abi(-0.02, 'sev')
-            player.gain_mental(rec)
+            player.gain_abi(-0.02, 'sev', stat=self.name)
+            player.gain_mental(rec, stat=self.name)
 
     class StreetFood13(Item):
         id = 224
@@ -1418,10 +1419,10 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(15 * player.useFoodScale())
-            player.gain_mental(rec)
-            player.gain_abi(0.01, 'wor')
-            player.gain_abi(0.01, 'phy')
-            player.gain_abi(0.01, 'wri')
+            player.gain_mental(rec, stat=self.name)
+            player.gain_abi(0.01, 'wor', stat=self.name)
+            player.gain_abi(0.01, 'phy', stat=self.name)
+            player.gain_abi(0.01, 'wri', stat=self.name)
 
     class Alcohol(Item):
         id = 225
@@ -1436,7 +1437,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             if player.mental < 0:
-                player.gain_mental(-100 * f())
+                player.gain_mental(-100 * f(), stat=self.name)
             else:
                 player.mental = r2(0.5 * player.mental)
             player.severity += 0.02
@@ -1502,7 +1503,7 @@ init -10 python early:
  
         def useItemAction(self, player):
             rec = r2(20 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             for i in (MentProb, PhysProb):
                 if i.has(player):
                     i.subByType(player)
@@ -1525,8 +1526,8 @@ init -10 python early:
  
         def useItemAction(self, player):
             rec = r2(20 * player.useFoodScale() + player.mental * 0.15)
-            player.gain_mental(rec)
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(rec, stat=self.name)
+            player.gain_abi(-0.01, 'sev', stat=self.name)
             Satiety.add(p)
             player.fooduse += 1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
@@ -1545,7 +1546,7 @@ init -10 python early:
  
         def useItemAction(self, player):
             rec = r2(20 * player.useFoodScale())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             l = list(filter(lambda x: not x.has(player), (Restlessness, Contentment, Desire, Sadness, Agony, Dread)))
             if l:
                 rca(player, l).add(player)
@@ -1569,7 +1570,7 @@ init -10 python early:
  
         def useItemAction(self, player):
             rec = r2(20 * f())
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             for i in (MentProb, PhysProb):
                 if i.has(player):
                     i.subByType(player)
@@ -1658,7 +1659,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(200 * f())
-            player.gain_mental(-rec)
+            player.gain_mental(-rec, stat=self.name)
             Notice.add(_('为什么要吃生的啊！'))
             Achievement312.achieve()
             Achievement.show()
@@ -1707,11 +1708,11 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(20 * player.useFoodScale() * self.qty)
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             if Satiety.has(player):
                 return
             t = r2(max(self.qty - 1.5, 0) * 0.01)
-            player.gain_abi(-t, 'sev')
+            player.gain_abi(-t, 'sev', stat=self.name)
             fe = int(0.5 * self.qty)
             player.fishenergy += fe
             Notice.add(_('恢复了%s点钓鱼精力！' % fe))
@@ -1726,7 +1727,7 @@ init -10 python early:
                 abilitylist.pop(-1)
             abilitylist.sort(key=lambda x: x[1])
             t = int(2 * self.qty)
-            player.gain_abi(0.01 * t, abilitylist[0][0])
+            player.gain_abi(0.01 * t, abilitylist[0][0], stat=self.name)
             if rra(player, 50):
                 Satiety.add(player)
 
@@ -1765,7 +1766,7 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(400 * f())
-            player.gain_mental(-rec)
+            player.gain_mental(-rec, stat=self.name)
             Notice.add(_('为什么要吃又冰又生的鱼啊！'))
             Achievement312.achieve()
             Achievement.show()
@@ -1804,11 +1805,11 @@ init -10 python early:
 
         def useItemAction(self, player):
             rec = r2(5 * player.useFoodScale() * self.qty)
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat=self.name)
             if Satiety.has(player):
                 return
             t = r2(max(self.qty - 1.5, 0) * 0.01)
-            player.gain_abi(-t, 'sev')
+            player.gain_abi(-t, 'sev', stat=self.name)
             Malnutrition.clearByType(player)
             Malnutrition_.clearByType(player)
             abilitylist = [
@@ -1820,7 +1821,7 @@ init -10 python early:
                 abilitylist.pop(-1)
             abilitylist.sort(key=lambda x: x[1])
             t = int(2 * self.qty)
-            player.gain_abi(0.01 * t, abilitylist[0][0])
+            player.gain_abi(0.01 * t, abilitylist[0][0], stat=self.name)
             if rra(player, 50):
                 Satiety.add(player)
         
@@ -1862,7 +1863,7 @@ init -10 python early:
             return self.info + info
 
         def useItemAction(self, player):
-            player.gain_mental(1)
+            player.gain_mental(1, stat=self.name)
 
 
     class SolitusCookie(Item):
@@ -1877,7 +1878,7 @@ init -10 python early:
         ad = _('尝起来像你自己。')
 
         def useItemAction(self, player):
-            player.gain_mental(1)
+            player.gain_mental(1, stat=self.name)
             player.fooduse += 1
             Notice.add(_('降低了0.5%食物的恢复效果！'))
 
@@ -2083,8 +2084,8 @@ init -10 python early:
             Notice.add(_('完成了%s%s的进度。') % (r2(a), '%'))
             if 100 > self.progress:
                 Notice.add(_('还差%s%s。') % (r2(100-self.progress), '%'))
-            player.gain_mental(-cons)
-            player.gain_abi(0.05, 'sev')
+            player.gain_mental(-cons, stat=self.name)
+            player.gain_abi(0.05, 'sev', stat=self.name)
             PhysProb.add(player, 3)
             player.updateAfterTask(AcolasTask1)
             if self.progress >= 100:
@@ -2139,8 +2140,8 @@ init -10 python early:
             Notice.add(_('完成了%s%s的进度。') % (r2(a), '%'))
             if 100 > self.progress:
                 Notice.add(_('还差%s%s。') % (r2(100-self.progress), '%'))
-            player.gain_mental(-cons)
-            player.gain_abi(0.05, 'sev')
+            player.gain_mental(-cons, stat=self.name)
+            player.gain_abi(0.05, 'sev', stat=self.name)
             PhysProb.add(player, 3)
             player.updateAfterTask(AcolasTask1)
             if self.progress >= 100:
@@ -2198,8 +2199,8 @@ init -10 python early:
             Notice.add(_('完成了%s%s的进度。') % (r2(a), '%'))
             if 100 > self.progress:
                 Notice.add(_('还差%s%s。') % (r2(100-self.progress), '%'))
-            player.gain_mental(-cons)
-            player.gain_abi(0.05, 'sev')
+            player.gain_mental(-cons, stat=self.name)
+            player.gain_abi(0.05, 'sev', stat=self.name)
             PhysProb.add(player, 3)
             player.updateAfterTask(AcolasTask1)
             if self.progress >= 100:
@@ -2209,7 +2210,7 @@ init -10 python early:
             elif player.times == 12:
                 aa = 0.01 * int(a)
                 if aa > 0:
-                    player.gain_abi(aa, 'sev')
+                    player.gain_abi(aa, 'sev', stat=self.name)
                 p.color = (100 - self.progress)* 0.01
                 if p.color < 0:
                     p.color = 0.0
@@ -2270,7 +2271,7 @@ init -10 python early:
             self.progress += a
             Notice.add(_('完成了%s%s的进度。') % (a, '%'))
             
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=self.name)
             if 100 > self.progress:
                 Notice.add(_('还差%s%s。') % (r2(100-self.progress), '%'))
             else:
@@ -2588,7 +2589,7 @@ init -10 python early:
             if not self.broken:
                 r = ra(player, 7.5, 15)
                 Notice.add(_('由于钟塔摆件，恢复了%s点精神状态。') % r)
-                player.gain_mental(r, self.name)
+                player.gain_mental(r, self.name, stat=self.name)
 
 
 
@@ -2816,8 +2817,8 @@ init -10 python early:
             
             rec = r2(ra(player, 4000, 7000)*0.01)
             temp = r2(0.02 * player.severity)
-            player.gain_abi(-temp, 'sev')
-            player.gain_mental(rec)
+            player.gain_abi(-temp, 'sev', stat=self.name)
+            player.gain_mental(rec, stat=self.name)
 
     class FixKit(Item):
         id = 629

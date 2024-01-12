@@ -139,7 +139,7 @@ label solitus_route_5:
     "作者把他的细腻心思灌输进这些纸张之中，以白纸与油墨作为载体，组合成为一本美丽的书，来到我的眼前。"
     "我再通过阅读，将作者想要表达出来的苦痛吸收，感受。"
     if not replaying:
-        $p.gain_abi(-0.06, 'sev')
+        $p.gain_abi(-0.06, 'sev', stat='剧情')
         $Notice.show()
     play music audio.anxietyspreading
     "很多人总是希望看到美好的结局，可是创作本身就是一种情绪的喷发，快乐仅仅是其中的一种，同时也并不激烈。"

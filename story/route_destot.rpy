@@ -5,19 +5,25 @@ label destot_route_workgame:
     show screen workgame_sayr(rd(1000, 1100), rd(100, 400), '前辈……')
     show screen workgame_sayl(rd(500, 700), rd(75, 400), '我有一些问题……')
     call screen ui_workgame(workgame_object) with dissolve
-    $p.updateAfterTask(DestotWork)
-    $DestotWork.afterTaskResult(p)
     if workgame_object.step-workgame_object.chain < 2:
         $DestotWork.excePerf(p)
+        $p.updateAfterTask(DestotWork)
+        $DestotWork.afterTaskResult(p)
         jump DestotWork_result_exce
     elif workgame_object.step-workgame_object.chain in (3, 4):
         $DestotWork.goodPerf(p)
+        $p.updateAfterTask(DestotWork)
+        $DestotWork.afterTaskResult(p)
         jump DestotWork_result_good
     elif workgame_object.step-workgame_object.chain == 5:
         $DestotWork.normPerf(p)
+        $p.updateAfterTask(DestotWork)
+        $DestotWork.afterTaskResult(p)
         jump DestotWork_result_norm
     else:
         $DestotWork.badPerf(p)
+        $p.updateAfterTask(DestotWork)
+        $DestotWork.afterTaskResult(p)
         jump DestotWork_result_bad
 
 label destot_route_workgame_loop:

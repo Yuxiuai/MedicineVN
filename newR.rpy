@@ -128,36 +128,36 @@ label medicineTake:
         "尝试回忆美好的事情" if p.mental <= 0 and Novice.has(p):
             $step = r2((80 - p.mental) / 7)
             "这样做真的有用么？"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat='存在感')
             $Notice.show()
             $blackmask(p)
             $blackmask(p)
             "你深呼吸，试图压住随着痛苦飞速提升的心率。"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat='存在感')
             $Notice.show()
             $blackmask(p)
             "“你必须坚持，你还有很多事情没做完……”"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat='存在感')
             $Notice.show()
             $blackmask(p)
             "这就是你必须活下去的原因吗？"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat='存在感')
             $Notice.show()
             $blackmask(p)
             "……哈——呼——"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat='存在感')
             $Notice.show()
             $blackmask(p)
             "……这点痛苦……还没法打败我。"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat='存在感')
             $Notice.show()
             $blackmask(p)
             "不值一提……"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat='存在感')
             $Notice.show()
             $blackmask(p)
             "可是，我为什么要……如此坚持活下去……"
-            $p.gain_mental(80.0 - p.mental)
+            $p.gain_mental(80.0 - p.mental, stat='存在感')
             $Notice.show()
             $blackmask(p)
             "明明马上就要解脱了……"
@@ -168,31 +168,31 @@ label medicineTake:
         "努力回忆温蔼的过去" if p.mental <= 0 and AMaverickLionEffect.has(p):
             $step = r2((AMaverickLionEffect.get(p).m - p.mental) / 7)
             "好疼，只剩下疼。"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat=AMaverickLionEffect.name)
             $Notice.show()
             $blackmask(p)
             "你想吼叫出声，但在这空荡的房间中并没有谁能救你。"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat=AMaverickLionEffect.name)
             $Notice.show()
             $blackmask(p)
             "解脱么？要去解脱么？想要让痛苦消逝殆尽么？"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat=AMaverickLionEffect.name)
             $Notice.show()
             $blackmask(p)
             "想想美好的曾经，小时的你掉进了水库里，没有一个朋友敢去救你。"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat=AMaverickLionEffect.name)
             $Notice.show()
             $blackmask(p)
             "在你的肺灌满水之前，你从水库里挣扎着爬了出来。"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat=AMaverickLionEffect.name)
             $Notice.show()
             $blackmask(p)
             "那时的你会想到未来意图轻生的现在么？"
-            $p.gain_mental(step)
+            $p.gain_mental(step, stat=AMaverickLionEffect.name)
             $Notice.show()
             $blackmask(p)
             "你必须坚持……"
-            $p.gain_mental(AMaverickLionEffect.get(p).m - p.mental)
+            $p.gain_mental(AMaverickLionEffect.get(p).m - p.mental, stat=AMaverickLionEffect.name)
             $Notice.show()
             $blackmask(p)
             "不……现在还不是时候……我还有没做完的事……"
@@ -1008,7 +1008,7 @@ label before_sleep_task:
             p.stime(ra(p, 22, 23), ra(p, 30, 59))
             if before_sleep_extratask == 'phys':
                 reco = r2(ra(p, 5, 15) * Task().getRecoScale(p))
-                p.gain_mental(reco)
+                p.gain_mental(reco, stat='睡前：放松一下')
                 if rra(p, 50) and PhysProb.has(p):
                     PhysProb.clearByType(p)
                     Notice.add(_('移除了1层过劳！'))
@@ -1016,10 +1016,10 @@ label before_sleep_task:
                     Physique.add(p)
                     Notice.add(_('获得了1层体魄！'))
                 else:
-                    p.gain_abi(-0.01, 'sev')
+                    p.gain_abi(-0.01, 'sev', stat='睡前：放松一下')
             elif before_sleep_extratask == 'ment':
                 reco = r2(ra(p, 5, 10) * Task().getRecoScale(p))
-                p.gain_mental(reco)
+                p.gain_mental(reco, stat='睡前：整理思绪')
                 if rra(p, 50) and MentProb.has(p):
                     MentProb.clearByType(p)
                     Notice.add(_('移除了1层焦虑！'))
@@ -1027,11 +1027,11 @@ label before_sleep_task:
                     Inspiration.get(p).duration += 1
                     Notice.add(_('灵感的持续时间提升了1天！'))
                 else:
-                    p.gain_abi(-0.01, 'sev')
+                    p.gain_abi(-0.01, 'sev', stat='睡前：整理思绪')
             elif before_sleep_extratask == 'mast':
                 reco = r2(ra(p, 5, 10) * Task().getRecoScale(p))
-                p.gain_mental(reco)
-                p.gain_abi(-0.01, 'sev')
+                p.gain_mental(reco, stat='睡前：打手冲')
+                p.gain_abi(-0.01, 'sev', stat='睡前：打手冲')
                 Erection.clearByType(p)
                 
             else:

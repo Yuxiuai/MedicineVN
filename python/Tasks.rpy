@@ -1,6 +1,7 @@
 init python early:
     def doplan(p, pos):
         Stat.record(p,p.plan[pos])
+        p.lasttask = p.plan[pos].name
         p.plancheck[pos] = True
         labelname = p.plan[pos].__name__ + _('_beginning')
         renpy.jump(labelname)
@@ -80,9 +81,9 @@ init python early:
                 a = r2(a * 1.15)
             
             g = 0.02 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             
@@ -101,8 +102,8 @@ init python early:
                 cons = r2(cons * 0.8)
                 a = r2(a * 1.15)
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             if player.des_score < 100 and player.des_p == 2:
@@ -122,10 +123,10 @@ init python early:
             if MeetingReward3.has(player):
                 cons = r2(cons * 0.8)
                 a = r2(a * 1.15)
-            player.gain_mental(-cons)
-            player.gain_mental(reco)
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_mental(reco, stat=cls.name)
             player.achievedGoal += a
-            player.gain_abi(g, 'wor')
+            player.gain_abi(g, 'wor', stat=cls.name)
             Notice.add(_('完成了%s点工作进度。') % a)
             if player.des_score < 100 and player.des_p == 2:
                 prog = r2(ra(p, 450, 550) * player.wor() * 0.01 * 0.5)
@@ -140,8 +141,8 @@ init python early:
             if MeetingReward3.has(player):
                 cons = r2(cons * 0.8)
                 a = r2(a * 1.15)
-            player.gain_mental(-cons)
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             
@@ -171,9 +172,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             resultLabel = cls.getResultLabel(player, perf)
             cls.executeAnotherTask(player, player.retval, perf)
@@ -188,7 +187,7 @@ init python early:
             p = 1 if perf < 50 else 2
             if doWith == 'sleep':
                 rec = r2(15 * cls.getRecoScale(player) * player.sleepRecovery * p)
-                player.gain_mental(rec)
+                player.gain_mental(rec, stat=cls.name)
                 if ConcDec.has(player):
                     ConcDec.subByType(player, int(ConcDec.getstack(player)/2))
                     Notice.add(_('状态：%s的层数减少了一半！') % ConcDec.name)
@@ -198,16 +197,16 @@ init python early:
                 rec = r2(10 * cls.getRecoScale(player) * player.sleepRecovery * p)
                 Notice.add('在工作的间隙中尝试做些杂活……')
                 if p == 2:
-                    player.gain_abi(0.01, 'phy')
+                    player.gain_abi(0.01, 'phy', stat=cls.name)
                 else:
                     PhysRezB.add(player)
             elif doWith == 'wri' and player.canRead >= 0:
                 Notice.add('在工作的间隙中看了一会网络小说……')
                 rec = r2(10 * cls.getRecoScale(player) * player.sleepRecovery * p)
-                player.gain_mental(rec)
+                player.gain_mental(rec, stat=cls.name)
                 Inspiration.add(player)
                 if p == 2:
-                    player.gain_abi(0.01, 'wri')
+                    player.gain_abi(0.01, 'wri', stat=cls.name)
                 else:
                     MentRezA.add(player)
             else:
@@ -226,8 +225,8 @@ init python early:
             if MeetingReward6.has(player):
                 a = r2(a * 1.3)
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
 
@@ -242,9 +241,9 @@ init python early:
             g=0
             if rra(player, 50):
                 g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=cls.name)
             player.achievedGoal += a
-            player.gain_abi(g, 'wor')
+            player.gain_abi(g, 'wor', stat=cls.name)
             Notice.add(_('完成了%s点工作进度。') % a)
 
         @classmethod
@@ -255,7 +254,7 @@ init python early:
             a = r2(0.15 * player.workSpeed * player.wor() * f())
             if MeetingReward6.has(player):
                 a = r2(a * 1.3)
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
 
@@ -267,10 +266,10 @@ init python early:
             a = r2(0.1 * player.workSpeed * player.wor() * f())
             if MeetingReward6.has(player):
                 a = r2(a * 1.3)
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=cls.name)
             player.achievedGoal += a
-            player.gain_abi(0.01, 'sev')
-            player.gain_abi(-0.01, 'wor')
+            player.gain_abi(0.01, 'sev', stat=cls.name)
+            player.gain_abi(-0.01, 'wor', stat=cls.name)
             Notice.add(_('完成了%s点工作进度。') % a)
 
 
@@ -322,9 +321,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             
@@ -343,9 +340,9 @@ init python early:
                 a = r2(a*1.5)
             
             g = 0.02 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             
@@ -357,8 +354,8 @@ init python early:
             if CleanReward.has(player) and not HotelBuff.has(player) and not CafeBuff.has(player) and not BookstoreBuff.has(player):
                 a = r2(a*1.5)
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
 
@@ -370,9 +367,9 @@ init python early:
             if CleanReward.has(player) and not HotelBuff.has(player) and not CafeBuff.has(player) and not BookstoreBuff.has(player):
                 a = r2(a*1.5)
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_mental(-reco)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_mental(-reco, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
 
@@ -382,8 +379,8 @@ init python early:
             a = r2(0.6 * player.workSpeed * player.wor() * f())
             if CleanReward.has(player) and not HotelBuff.has(player) and not CafeBuff.has(player) and not BookstoreBuff.has(player):
                 a = r2(a*1.5)
-            player.gain_mental(-cons)
-            player.gain_abi(0.01, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(0.01, 'sev', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
 
@@ -430,7 +427,7 @@ init python early:
         def excePerf(cls, player):
             reco = r2(10 * cls.getRecoScale(player))
             a = r2(0.15 * player.workSpeed * player.wor() * f())
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             Stomachache.clearByType(player)
@@ -441,7 +438,7 @@ init python early:
             reco = r2(10 * cls.getRecoScale(player))
             a = r2(0.125 * player.workSpeed * player.wor() * f())
             PhysRezA.add(player)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             Stomachache.clearByType(player)
@@ -452,8 +449,8 @@ init python early:
             reco = r2(15 * cls.getRecoScale(player))
             a = r2(0.1 * player.workSpeed * player.wor() * f())
             PhysRezA.add(player)
-            player.gain_abi(-0.01, 'sev')
-            player.gain_mental(reco)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
+            player.gain_mental(reco, stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             
@@ -464,16 +461,14 @@ init python early:
         def badPerf(cls, player):
             cons = r2(35 * cls.getConsScale(player))
             a = r2(0.75 * player.workSpeed * player.wor() * f())
-            player.gain_mental(-cons)
-            player.gain_abi(0.02, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(0.02, 'sev', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -486,10 +481,10 @@ init python early:
             if ConcDec.has(player):
                 if MeetingReward4.has(player):
                     stacks = ConcDec.getstack(player) + 2
-                    player.gain_mental(5 * stacks)
+                    player.gain_mental(5 * stacks, stat=cls.name)
                 else:
                     stacks = ConcDec.getstack(player)
-                    player.gain_mental(2.5 * stacks)
+                    player.gain_mental(2.5 * stacks, stat=cls.name)
             
             player.updateAfterTask(cls)
 
@@ -537,9 +532,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -552,9 +545,9 @@ init python early:
             cons = r2(70 * cls.getConsScale(player))
             a = r2(1.7 * player.workSpeed * player.wor() * f())
             g = 0.03 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             
@@ -568,8 +561,8 @@ init python early:
             cons = r2(70 * cls.getConsScale(player))
             a = r2(1.5 * player.workSpeed * player.wor() * f())
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.achievedGoal += a
             Notice.add(_('完成了%s点工作进度。') % a)
             if player.des_score < 100 and player.des_p == 2:
@@ -581,9 +574,9 @@ init python early:
         def normPerf(cls, player):
             cons = r2(80 * cls.getConsScale(player))
             a = r2(1.3 * player.workSpeed * player.wor() * f())
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=cls.name)
             player.achievedGoal += a
-            player.gain_abi(0.02, 'sev')
+            player.gain_abi(0.02, 'sev', stat=cls.name)
             Notice.add(_('完成了%s点工作进度。') % a)
             if player.des_score < 100 and player.des_p == 2:
                 prog = r2(ra(p, 600, 700) * player.wor() * 0.01 * 0.5)
@@ -594,9 +587,9 @@ init python early:
         def badPerf(cls, player):
             cons = r2(80 * cls.getConsScale(player))
             a = r2(0.6 * player.workSpeed * player.wor() * f())
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=cls.name)
             player.achievedGoal += a
-            player.gain_abi(0.02, 'sev')
+            player.gain_abi(0.02, 'sev', stat=cls.name)
             Notice.add(_('完成了%s点工作进度。') % a)
             if player.des_score < 100 and player.des_p == 2:
                 prog = r2(ra(p, 400, 600) * player.wor() * 0.01 * 0.5)
@@ -644,8 +637,8 @@ init python early:
         def excePerf(cls, player):
             cons = r2(20 * cls.getConsScale(player))
             g = 0.03 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             if player.des_score < 100 and player.des_p == 2:
                 prog = r2(10 * player.wor())
                 player.des_score += prog
@@ -655,8 +648,8 @@ init python early:
         def goodPerf(cls, player):
             cons = r2(20 * cls.getConsScale(player))
             g = 0.02 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             if player.des_score < 100 and player.des_p == 2:
                 prog = r2(10 * player.wor())
                 player.des_score += prog
@@ -666,8 +659,8 @@ init python early:
         def normPerf(cls, player):
             cons = r2(25 * cls.getConsScale(player))
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             if player.des_score < 100 and player.des_p == 2:
                 prog = r2(10 * player.wor())
                 player.des_score += prog
@@ -677,8 +670,8 @@ init python early:
         def badPerf(cls, player):
             cons = r2(25 * cls.getConsScale(player))
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             if player.des_score < 100 and player.des_p == 2:
                 prog = r2(10 * player.wor())
                 player.des_score += prog
@@ -734,9 +727,9 @@ init python early:
                 a = r2(a * 1.15)
             
             g = 0.03 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             player.achievedGoal += a
             prog = r2(ra(p, 1700, 2000) * player.wor() * 0.01 * 0.5)
             player.des_score += prog
@@ -753,8 +746,8 @@ init python early:
                 cons = r2(cons * 0.8)
                 a = r2(a * 1.15)
             g = 0.02 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.achievedGoal += a
             prog = r2(ra(p, 1200, 1700) * player.wor() * 0.01 * 0.5)
             player.des_score += prog
@@ -772,10 +765,10 @@ init python early:
             if MeetingReward3.has(player):
                 cons = r2(cons * 0.8)
                 a = r2(a * 1.15)
-            player.gain_mental(-cons)
-            player.gain_mental(reco)
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_mental(reco, stat=cls.name)
             player.achievedGoal += a
-            player.gain_abi(g, 'wor')
+            player.gain_abi(g, 'wor', stat=cls.name)
             prog = r2(ra(p, 900, 1200) * player.wor() * 0.01 * 0.5)
             player.des_score += prog
             Notice.add(_('完成了%s点工作进度。') % a)
@@ -789,10 +782,10 @@ init python early:
                 cons = r2(cons * 0.8)
                 a = r2(a * 1.15)
             g = 0.03 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             player.achievedGoal += a
-            player.gain_abi(g, 'wor')
+            player.gain_abi(g, 'wor', stat=cls.name)
             prog = r2(ra(p, 550, 900) * player.wor() * 0.01 * 0.5)
             player.des_score += prog
             Notice.add(_('完成了%s点工作进度。') % a)
@@ -861,9 +854,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             
@@ -878,9 +869,9 @@ init python early:
             if not CafeBuff.has(player):
                 cons *= 2
             g = 0.03 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
-            player.gain_abi(0.01, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
+            player.gain_abi(0.01, 'sev', stat=cls.name)
             w = r2(player.wages*0.2*cls.valuefunc(player)*f())
             player.wages += w
             Notice.add(_('提升了%s点每周工资。') % w)
@@ -891,9 +882,9 @@ init python early:
             if not CafeBuff.has(player):
                 cons *= 2
             g = 0.02 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
-            player.gain_abi(0.02, 'sev')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
+            player.gain_abi(0.02, 'sev', stat=cls.name)
             w = r2(player.wages*0.1*cls.valuefunc(player)*f())
             player.wages += w
             Notice.add(_('提升了%s点每周工资。') % w)
@@ -904,8 +895,8 @@ init python early:
             if not CafeBuff.has(player):
                 cons *= 2
             g = 0.02 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.severity += 0.03
             w = r2(player.wages*0.05*cls.valuefunc(player)*f())
             player.wages += w
@@ -917,8 +908,8 @@ init python early:
             if not CafeBuff.has(player):
                 cons *= 2
             g = 0.01 + player.workingGain
-            player.gain_mental(-cons)
-            player.gain_abi(g, 'wor')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(g, 'wor', stat=cls.name)
             player.severity += 0.05
             Headache.add(player)
             w = r2(player.wages*0.025*player.week*f())
@@ -950,12 +941,10 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             while BookSportEffect.has(player) and perf <= 18:
-                perf = ra(player, 1, 100)
+                perf = cls.getperf(player)
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -977,9 +966,9 @@ init python early:
             reco = r2(20 * cls.getRecoScale(player))
             exReco = r2(12.5 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(g, 'phy')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
             return "DefaultSport_result_exce"
 
         @classmethod
@@ -987,10 +976,10 @@ init python early:
             reco = r2(20 * cls.getRecoScale(player))
             exReco = r2(10 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(-0.01, 'sev')
-            player.gain_abi(g, 'phy')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
             
             return "DefaultSport_result_good"
 
@@ -998,16 +987,16 @@ init python early:
         def normPerf(cls, player):
             reco = r2(20 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
             return "DefaultSport_result_norm"
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(20 * cls.getRecoScale(player))
             exReco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
             return "DefaultSport_result_bad"
 
         @classmethod
@@ -1045,12 +1034,10 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             while BookSportEffect.has(player) and perf <= 25:
-                perf = ra(player, 1, 100)
+                perf = cls.getperf(player)
             resultLabel = cls.getResultLabel(player, perf, c=25)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -1078,30 +1065,30 @@ init python early:
         def excePerf(cls, player):
             reco = r2(30 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             
 
         @classmethod
         def goodPerf(cls, player):
             reco = r2(30 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(30 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             
 
         @classmethod
         def badPerf(cls, player):
-            player.gain_abi(0.01, 'sev')
+            player.gain_abi(0.01, 'sev', stat=cls.name)
             Injured.add(player)
             Notice.add(_('你在运动中受伤了，没有恢复精神状态。'))
 
@@ -1162,13 +1149,11 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             while BookSportEffect.has(player) and perf <= 35:
-                perf = ra(player, 1, 100)
+                perf = cls.getperf(player)
             resultLabel = cls.getResultLabel(player, perf, c=35)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -1180,17 +1165,17 @@ init python early:
             g = 0.02 + player.physicalGain
             if rra(player, 50):
                 g+= 0.01
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
             PhysRezB.add(player)
 
         @classmethod
         def goodPerf(cls, player):
             reco = r2(25 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             
 
         @classmethod
@@ -1198,13 +1183,13 @@ init python early:
             reco = r2(25 * cls.getRecoScale(player))
             exReco = r2(10 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
-            player.gain_abi(g, 'phy')
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_abi(g, 'phy', stat=cls.name)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
 
         @classmethod
         def badPerf(cls, player):
-            player.gain_abi(0.01, 'sev')
+            player.gain_abi(0.01, 'sev', stat=cls.name)
             Injured.add(player)
             Notice.add(_('你在运动中受伤了，没有恢复精神状态。'))
 
@@ -1258,9 +1243,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             if Injured.has(player):
                 cls.badPerf(player)
@@ -1281,16 +1264,16 @@ init python early:
                 g = 0.02
             else:
                 g = 0.02 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
             Soreness.add(player)
             PhysRezB.add(player)
 
         @classmethod
         def goodPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             Soreness.add(player)
             
 
@@ -1298,13 +1281,13 @@ init python early:
         def normPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             exReco = r2(7.5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
             PhysRezB.add(player)
 
         @classmethod
         def badPerf(cls, player):
-            player.gain_abi(0.02, 'sev')
+            player.gain_abi(0.02, 'sev', stat=cls.name)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -1357,7 +1340,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf, 75, 50, 25)
             player.updateAfterTask(cls)
@@ -1368,9 +1351,9 @@ init python early:
         def excePerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             PhysRezB.add(player)
             
 
@@ -1378,18 +1361,18 @@ init python early:
         def goodPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'phy')
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             
 
         @classmethod
@@ -1397,9 +1380,9 @@ init python early:
             reco = r2(15 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             g = 0.02 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(g, 'phy')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -1432,9 +1415,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             Soreness.add(player)
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -1451,7 +1432,7 @@ init python early:
                 Physique.add(player)
             Soreness.clearByType(player)
             reco = r2(1 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def goodPerf(cls, player):
@@ -1462,7 +1443,7 @@ init python early:
                 Physique.add(player)
             Soreness.clearByType(player)
             reco = r2(0.8 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def normPerf(cls, player):
@@ -1473,7 +1454,7 @@ init python early:
                 Physique.add(player)
             Soreness.clearByType(player)
             reco = r2(0.7 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def badPerf(cls, player):
@@ -1484,7 +1465,7 @@ init python early:
                 Physique.add(player)
             Soreness.clearByType(player)
             reco = r2(0.6 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -1516,9 +1497,9 @@ init python early:
             reco = r2(12.5 * cls.getRecoScale(player))
             exReco = r2(12.5 * cls.getRecoScale(player))
             g = 0.03 + player.writingGain
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(g, 'wri')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(g, 'wri', stat=cls.name)
             ReadReward.add(player)
             Inspiration.add(player)
 
@@ -1526,9 +1507,9 @@ init python early:
         def goodPerf(cls, player):
             reco = r2(12.5 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(-0.02, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
             Inspiration.add(player)
             Notice.add(_('降低了2点严重度。'))
 
@@ -1537,17 +1518,17 @@ init python early:
             reco = r2(12.5 * cls.getRecoScale(player))
             exReco = r2(7.5 * cls.getRecoScale(player))
             g = 0.02 + player.writingGain
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(g, 'wri')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(g, 'wri', stat=cls.name)
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(10 * cls.getRecoScale(player))
             exReco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
         
         @classmethod
         def afterTaskResult(cls, player):
@@ -1585,8 +1566,8 @@ init python early:
         @classmethod
         def excePerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_abi(-0.02, 'wri')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(-0.02, 'wri', stat=cls.name)
             ReadReward.add(player)
             Inspiration.add(player, 3)
 
@@ -1594,9 +1575,9 @@ init python early:
         def goodPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             ReadReward.add(player)
             Inspiration.add(player, 1)
             Notice.add(_('降低了1点严重度。'))
@@ -1604,14 +1585,14 @@ init python early:
         @classmethod
         def normPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             Inspiration.add(player, 1)
 
         @classmethod
         def badPerf(cls, player):
             cons = r2(20 * cls.getConsScale(player))
-            player.gain_mental(-cons)
-            player.gain_abi(-0.01, 'wri')
+            player.gain_mental(-cons, stat=cls.name)
+            player.gain_abi(-0.01, 'wri', stat=cls.name)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -1650,9 +1631,9 @@ init python early:
         def excePerf(cls, player):
             reco = r2(10 * cls.getRecoScale(player))
             g = 0.05 + player.writingGain
-            player.gain_mental(reco)
-            player.gain_abi(g, 'wri')
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(g, 'wri', stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             ReadReward.add(player)
             Inspiration.add(player, 1)
 
@@ -1661,26 +1642,26 @@ init python early:
             reco = r2(10 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             g = 0.03 + player.writingGain
-            player.gain_mental(reco)
-            player.gain_mental(exReco)
-            player.gain_abi(g, 'wri')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, stat=cls.name)
+            player.gain_abi(g, 'wri', stat=cls.name)
             ReadReward.add(player)
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(10 * cls.getRecoScale(player))
             g = 0.02 + player.writingGain
-            player.gain_mental(reco)
-            player.gain_abi(-0.02, 'sev')
-            player.gain_abi(g, 'wri')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(-0.02, 'sev', stat=cls.name)
+            player.gain_abi(g, 'wri', stat=cls.name)
             Notice.add(_('降低了2点严重度。'))
 
         @classmethod
         def badPerf(cls, player):
             cons = r2(15 * cls.getConsScale(player))
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=cls.name)
             g = 0.01 + player.writingGain
-            player.gain_abi(0.01, 'sev')
+            player.gain_abi(0.01, 'sev', stat=cls.name)
             Notice.add(_('升高了1点严重度。'))
             Notice.add(_('升高了%s点写作技巧。') % int(g * 100))
         
@@ -1730,10 +1711,8 @@ init python early:
                     
             Inspiration.add(player, s)
 
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
 
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -1763,7 +1742,7 @@ init python early:
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
             reco = r2(25 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % int(s*100))
 
@@ -1773,7 +1752,7 @@ init python early:
             s = 0.01 * player.week if player.week <= 7 else 0.08
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % int(s*100))
 
@@ -1784,15 +1763,15 @@ init python early:
             s = 0.012 * player.week if player.week <= 7 else 0.096
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % int(s*100))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(25 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             s = 0.02
             if SleepReward_.has(player):
                 s *= 0.01
@@ -1827,9 +1806,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -1847,7 +1824,7 @@ init python early:
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
             reco = r2(20 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
@@ -1857,7 +1834,7 @@ init python early:
             s = 0.012 * player.week if player.week <= 7 else 0.1
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
@@ -1868,15 +1845,15 @@ init python early:
             s = 0.015 * player.week if player.week <= 7 else 0.12
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(25 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             s = 0.02
             if SleepReward_.has(player):
                 s *= 0.01
@@ -1920,9 +1897,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -1940,7 +1915,7 @@ init python early:
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
             reco = r2(20 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
@@ -1950,7 +1925,7 @@ init python early:
             s = 0.012 * player.week if player.week <= 7 else 0.1
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
@@ -1961,15 +1936,15 @@ init python early:
             s = 0.015 * player.week if player.week <= 7 else 0.12
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(25 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             s = 0.02
             if SleepReward_.has(player):
                 s *= 0.01
@@ -2012,9 +1987,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -2028,7 +2001,7 @@ init python early:
             cls.afterTaskResult(player)
             player.writingRegarded -= 0.25
             player.updateAfterTask(cls)
-            player.gain_abi(0.01, 'wri', extra=True)
+            player.gain_abi(0.01, 'wri', extra=True, stat=cls.name)
             renpy.jump(resultLabel)
 
         @classmethod
@@ -2038,7 +2011,7 @@ init python early:
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
             reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
@@ -2048,7 +2021,7 @@ init python early:
             s = 0.014 * player.week if player.week <= 7 else 0.112
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
@@ -2059,15 +2032,15 @@ init python early:
             s = 0.018 * player.week if player.week <= 7 else 0.146
             if SleepReward_.has(player):
                 s *= 0.15 * SleepReward_.getstack(player)
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
             player.severity += r2(s)
             Notice.add(_('提升了%s点严重度。') % r2(s))
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(25 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             s = 0.02
             if SleepReward_.has(player):
                 s *= 0.01
@@ -2100,7 +2073,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             resultLabel = cls.getResultLabel(player, rd(1,100))
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
@@ -2132,9 +2105,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             Inspiration.add(player)
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -2150,7 +2121,7 @@ init python early:
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
             reco = r2(1.8 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def goodPerf(cls, player):
@@ -2161,7 +2132,7 @@ init python early:
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
             reco = r2(1.7 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def normPerf(cls, player):
@@ -2172,7 +2143,7 @@ init python early:
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
             reco = r2(1.6 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def badPerf(cls, player):
@@ -2183,7 +2154,7 @@ init python early:
                 FixedInspiration.add(player)
             Inspiration.clearByType(player)
             reco = r2(1.3 * stacks)
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -2259,9 +2230,7 @@ init python early:
         def executeTask(cls, player):
             if Tired.has(player):
                 Tired.clearByType(player)
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)
             #Notice.add('Perf: %s' % perf)
             resultLabel = cls.getResultLabel(player, perf)
@@ -2274,7 +2243,7 @@ init python early:
 
             if ConcDec.has(player):
                 stacks = ConcDec.getstack(player)
-                player.gain_mental(2.5 * stacks)
+                player.gain_mental(2.5 * stacks, stat=cls.name)
                 ConcDec.clearByType(player)
 
             
@@ -2315,32 +2284,32 @@ init python early:
             reco = r2(30 * cls.getRecoScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
             g = 0.01 + player.physicalGain
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(g, 'phy')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(g, 'phy', stat=cls.name)
 
         @classmethod
         def goodPerf(cls, player):
             reco = r2(30 * cls.getRecoScale(player))
             exReco = r2(10 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(25 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_abi(-0.01, 'sev')
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_abi(-0.01, 'sev', stat=cls.name)
             
 
         @classmethod
         def badPerf(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
             exReco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
 
 
     class ComputerGaming(RestTask):
@@ -2363,30 +2332,30 @@ init python early:
         def excePerf(cls, player):
             reco = r2(10 * cls.getConsScale(player))
             exReco = r2(20 * cls.getRecoScale(player))
-            player.gain_mental(-reco)
-            player.gain_mental(exReco, extra=True)
+            player.gain_mental(-reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
 
         @classmethod
         def goodPerf(cls, player):
             reco = r2(10 * cls.getConsScale(player))
             exReco = r2(7.5 * cls.getRecoScale(player))
-            player.gain_mental(-reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(0.01, 'sev')
+            player.gain_mental(-reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(0.01, 'sev', stat=cls.name)
 
         @classmethod
         def normPerf(cls, player):
             reco = r2(10 * cls.getConsScale(player))
             exReco = r2(5 * cls.getRecoScale(player))
-            player.gain_mental(-reco)
-            player.gain_mental(exReco, extra=True)
-            player.gain_abi(0.02, 'sev')
+            player.gain_mental(-reco, stat=cls.name)
+            player.gain_mental(exReco, extra=True, stat=cls.name)
+            player.gain_abi(0.02, 'sev', stat=cls.name)
             
 
         @classmethod
         def badPerf(cls, player):
             cons = r2(10 * cls.getConsScale(player))
-            player.gain_mental(-cons)
+            player.gain_mental(-cons, stat=cls.name)
 
         @classmethod
         def afterTaskResult(cls, player):
@@ -2422,7 +2391,7 @@ init python early:
                 reco = r2(25 * cls.getRecoScale(player))
             else:
                 reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
             renpy.jump("CleanRoom_result")
@@ -2465,7 +2434,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.updateAfterTask(cls)
             cls.afterTaskResult(player)
             
@@ -2613,7 +2582,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(15 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             PhysRezB.add(player)
             MentRezB.add(player)
             player.updateAfterTask(cls)
@@ -2726,7 +2695,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(20 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.updateAfterTask(cls)
             renpy.jump("AcolasTask2_result")
     
@@ -2761,7 +2730,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(20 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.updateAfterTask(cls)
 
     class DestotTask1(Task):
@@ -2793,7 +2762,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(20 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.updateAfterTask(cls)
             renpy.jump("DestotTask1_result")
 
@@ -2826,6 +2795,6 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(10 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             player.updateAfterTask(cls)
             renpy.jump("DestotTask2_result")

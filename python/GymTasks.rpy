@@ -26,7 +26,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             WarmupEffect.add(player)
 
 
@@ -42,9 +42,9 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(5.5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             g = ra(player, 0, 1) * 0.01
-            player.gain_abi(g, 'phy')
+            player.gain_abi(g, 'phy', stat=cls.name)
             Soreness.add(player, 2)
             PhysRezB.add(player)
             cls.setInjured(player, 20)
@@ -62,9 +62,9 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(5.5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             g = ra(player, 0, 2) * 0.01
-            player.gain_abi(-g, 'sev')
+            player.gain_abi(-g, 'sev', stat=cls.name)
             Soreness.add(player, 2)
             cls.setInjured(player, 20)
 
@@ -93,13 +93,13 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             if GymLimited.has(player):
                 g = 0.01 * ra(player, 1, 2)
             else:
                 g = 0.01 * ra(player, 1, 2) + player.physicalGain
                 GymLimited.add(player)
-            player.gain_abi(g, 'phy')
+            player.gain_abi(g, 'phy', stat=cls.name)
             Soreness.add(player, 2)
             cls.setInjured(player, 50)
 
@@ -157,13 +157,13 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3.5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             if GymLimited.has(player):
                 g = 0.01 * ra(player, 2, 3)
             else:
                 g = 0.01 * ra(player, 2, 3) + player.physicalGain
                 GymLimited.add(player)
-            player.gain_abi(g, 'phy')
+            player.gain_abi(g, 'phy', stat=cls.name)
             Soreness.add(player, 3)
             PhysRezB.add(player)
             cls.setInjured(player, 80)
@@ -193,7 +193,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             Soreness.add(player, ra(player, 3, 5))
             PhysRezB.add(player)
             cls.setInjured(player, 80)
@@ -223,7 +223,7 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             reco = r2(3 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             Physique.add(player, rca(player, (1,1,1,2)))
             cls.setInjured(player, 120)
 
@@ -253,9 +253,9 @@ init python early:
         def executeTask(cls, player):
             
             reco = r2(5 * cls.getRecoScale(player))
-            player.gain_mental(reco)
+            player.gain_mental(reco, stat=cls.name)
             g = ra(player, 2, 4) * 0.01
-            player.gain_abi(-g, 'sev')
+            player.gain_abi(-g, 'sev', stat=cls.name)
             cls.setInjured(player, 120)
             
 

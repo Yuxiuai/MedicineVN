@@ -95,7 +95,7 @@ init -11 python early:
 
         def afterTaskAction(self, player, task):
             if task in (DefaultSport, JoggingSport, FastrunSport):
-                player.severity += 0.02
+                player.gain_abi(0.02, 'sev', stat='酷热')
 
 
     class WeatherWindy(Effect):
@@ -115,7 +115,7 @@ init -11 python early:
             rec = r2(player.mental * ra(player, 1050, 1150) * 0.0001)
             if rec > 20:
                 rec = 20
-            player.gain_mental(rec)
+            player.gain_mental(rec, stat='大风')
 
 
     class WeatherWet(Effect):
@@ -176,7 +176,7 @@ init -11 python early:
         def check(self, player):
             if not MaskEffect.has(player):
                 cons = r2(player.mental * 0.5)
-                player.gain_mental(-cons)
+                player.gain_mental(-cons, stat='雾霾')
                 if rra(player, 60):
                     PhysPun.add(player)
 
@@ -591,8 +591,8 @@ init -11 python early:
                     BookPhysPunEffect.clearByType(player)
                     s = r2(player.severity * 0.02)
                     player.gain_abi(-s, 'sev', due='学习成果：《呼吸训练》',extra=True)
-                player.gain_abi(0.01 * bonus, 'phy')
-                player.gain_abi(-0.01 * bonus, 'sev')
+                player.gain_abi(0.01 * bonus, 'phy', stat='治愈生病')
+                player.gain_abi(-0.01 * bonus, 'sev', stat='治愈生病')
 
                 self.clear(player)
             elif BookPhysPunEffect.has(player):
@@ -724,8 +724,8 @@ init -11 python early:
                     BookPhysPunEffect.clearByType(player)
                     s = r2(player.severity * 0.02)
                     player.gain_abi(-s, 'sev', due='学习成果：《呼吸训练》',extra=True)
-                player.gain_abi(0.01 * bonus, 'phy')
-                player.gain_abi(-0.01 * bonus, 'sev')
+                player.gain_abi(0.01 * bonus, 'phy', stat='治愈受伤')
+                player.gain_abi(-0.01 * bonus, 'sev', stat='治愈受伤')
 
                 self.clear(player)
             elif BookPhysPunEffect.has(player):
@@ -744,8 +744,8 @@ init -11 python early:
                     BookPhysPunEffect.clearByType(player)
                     s = r2(player.severity * 0.02)
                     player.gain_abi(-s, 'sev', due='学习成果：《呼吸训练》',extra=True)
-                player.gain_abi(0.01 * bonus, 'phy')
-                player.gain_abi(-0.01 * bonus, 'sev')
+                player.gain_abi(0.01 * bonus, 'phy', stat='治愈受伤')
+                player.gain_abi(-0.01 * bonus, 'sev', stat='治愈受伤')
 
                 self.clear(player)
 
@@ -1506,7 +1506,7 @@ init -11 python early:
                 if rra(player, 50):
                     self.duration = max(self.duration-1, 1)
             elif task in (FreewheelingWriting, NormalWriting, FocusWriting, WriteDownInspiration):
-                player.gain_abi(-0.02, 'sev')
+                player.gain_abi(-0.02, 'sev', stat=self.name)
                 if rra(player, 50):
                     self.duration = max(self.duration-1, 1)
             elif task == OvertimeWork:
@@ -2450,19 +2450,28 @@ init -11 python early:
         kind = _('药物反应')
         maxDuration = 1
         maxStacks = 1
-        info = _('在硬核模式下，使用后使下一个日程消耗的精神状态{color=#7CFC00}减少{/color}75%。') 
+        info = _('在硬核模式下，精神状态消耗{color=#7CFC00}减少{/color}100%，日程后效果结束。') 
 
         def enableAction(self, player):
-            player.basicConsumption -= 0.75
+            player.basicConsumption -= 1.0
 
         def disableAction(self, player):
-            player.basicConsumption += 0.75
+            player.basicConsumption += 1.0
 
         def afterTaskAction(self, player, task):
             self.sub(player)
 
+    class DrugdextropropoxypheneEffect(Effect):
+        id = 413
+        name = _('药物作用：右丙氧芬')
+        kind = _('药物反应')
+        maxDuration = 2
+        maxStacks = 1
+        info = _('在硬核模式下，一段时间内不会获得药物依赖。') 
+
+
     class DrugMethylphenidateEffect(Effect):
-        id = 414
+        id = 415
         name = _('药物作用：利他林')
         kind = _('药物反应')
         maxDuration = 1
@@ -2491,7 +2500,7 @@ init -11 python early:
             DrugMethylphenidateEffect_1.add(player)
     
     class DrugMethylphenidateEffect_1(Effect):
-        id = 415
+        id = 416
         name = _('副作用：利他林')
         kind = _('药物反应')
         maxDuration = 3
@@ -2663,19 +2672,21 @@ init -11 python early:
         kind = _('学识')
         maxDuration = 14
         maxStacks = 1
-        info = _('进行日程时{color=#7CFC00}提升{/color}1点随机属性，同时有5%的概率结束该效果。')
+        info = _('进行日程时{color=#7CFC00}提升{/color}1~2点随机属性，同时有10%的概率结束该效果。')
 
         def afterTaskAction(self, player, task):  # 日程后
-            temp = rra(1, 3)
+            
             if player.experience == 'wri':
-                temp = rra(1, 2)
+                temp = ra(player, 1, 2)
+            else:
+                temp = ra(player, 1, 3)
             if temp == 1:
-                player.gain_abi(phy * 0.01, 'phy', due='学识：《实用百科全书》', extra=True)
+                player.gain_abi(0.01 * rca(player, (1, 1, 1, 2)), 'phy', due='学识：《实用百科全书》')
             elif temp == 2:
-                player.gain_abi(wri * 0.01, 'wri', due='学识：《实用百科全书》', extra=True)
+                player.gain_abi(0.01 * rca(player, (1, 1, 1, 2)), 'wri', due='学识：《实用百科全书》')
             elif temp == 3:
-                player.gain_abi(wor * 0.01, 'wor', due='学识：《实用百科全书》', extra=True)
-            if rra(player, 10) and self.duration <=7:
+                player.gain_abi(0.01 * rca(player, (1, 1, 1, 2)), 'wor', due='学识：《实用百科全书》')
+            if rra(player, 20) and self.duration <=7:
                 self.clear(player)
                 Notice.add(self.name + _('的效果结束了。'))
 
@@ -2713,9 +2724,9 @@ init -11 python early:
         id = 513
         name = _('感悟：《寻羊历险记》')
         kind = _('学识')
-        maxDuration = 7
+        maxDuration = 2
         maxStacks = 99
-        info = _('在完成日程前会显示日程的完成结果，你可以消耗1层该效果以优势重新投掷完成结果。\n\n{color=#fde827}（优势：进行两次判定取最高值。）{/color}')
+        info = _('阅读本书籍后持续时间内判定日程结果时会判定两次，并取其中最高的一次。\n当获得优结果时，降低1点严重度。')
 
 
     class BookSevDownEffect(Effect):
@@ -2968,7 +2979,7 @@ init -11 python early:
             if player.mental > 150:
                 per = ra(player, 15, 20)
             t = abs(r2(player.mental * per * 0.01))
-            player.gain_mental(-t)
+            player.gain_mental(-t, stat=self.name)
             if not Headache_.has(player) and rra(player, 10):
                 Headache.add(player)
 

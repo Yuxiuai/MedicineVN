@@ -149,6 +149,8 @@ init python early:
             self.retval = None
             self.retval1 = None
 
+            self.gain_stats = {}
+
             self.hadAskedForMoney = False
             self.hadAskedForLeave = False
             self.hadAskedForSickLeave = False
@@ -187,6 +189,7 @@ init python early:
             self.buyrandom = False
             self.hasSchedule = False
             self.uihelp = False
+            self.lasttask = None
 
         def __eq__(self, other):
             return id(other) == id(self)
@@ -481,28 +484,49 @@ init python early:
                 consumption = self.mental * 0.5
             return r2(consumption)
 
-        def gain_mental(self, rec, due='', extra=False):
+        def gain_stat(self, kind, due, s):
+            if not due:
+                due = '未知'
+            if kind not in self.gain_stats:
+                self.gain_stats[kind] = {}
+            if due not in self.gain_stats[kind]:
+                self.gain_stats[kind][due] = 0
+            self.gain_stats[kind][due] += abs(r2(s))
+
+        def gain_stat_all(self, kind):
+            num = 0
+            for i in self.gain_stats[kind]:
+                num += self.gain_stats[kind][i]
+            return num
+
+        def gain_mental(self, rec, due='', extra=False, stat=None):
             rec = r2(rec)
             self.mental += rec
             info = ''
             if due:
                 info += '由于' + due + '，'
+            if stat:
+                due = stat
+            
             if extra:
                 info += '额外'
                 
             if rec > 0:
                 info += '{color=#7CFC00}恢复{/color}了%s点精神状态！' % rec
                 Stat.stato_record(self, 'rec', rec)
+                self.gain_stat('恢复的精神状态', due, rec)
             elif -0.01 < rec < 0.01:
                 info += '精神状态没有变化。'
             else:
                 info += '{color=#FF4500}消耗{/color}了%s点精神状态！' % -rec
                 Stat.stato_record(self, 'con', -rec)
+                self.gain_stat('消耗的精神状态', due, rec)
 
             Notice.add(info)
+            
 
 
-        def gain_abi(self, rec, kind, due='', extra=False):
+        def gain_abi(self, rec, kind, due='', extra=False, stat=None):
             abis = {
                 'wri' : ('writing', '写作技巧'),
                 'wor' : ('working', '工作能力'),
@@ -516,6 +540,9 @@ init python early:
             info = ''
             if due:
                 info += '由于' + due + '，'
+            if stat:
+                due = stat
+
             if extra:
                 info += '额外'
             
@@ -523,25 +550,29 @@ init python early:
                 if rec > 0:
                     info += '{color=#FF4500}提升{/color}了%s点%s！' % (int(rec * 100), attrname)
                     Stat.stato_record(self, kind+'up', rec)
+                    self.gain_stat('提升的'+attrname, due, rec)
                 elif -0.01 < rec < 0.01:
                     info += '%s没有变化。' % attrname
                 else:
                     info += '{color=#7CFC00}降低{/color}了%s点%s！' % (int(-rec * 100), attrname)
                     Stat.stato_record(self, kind+'down', -rec)
+                    self.gain_stat('降低的'+attrname, due, rec)
             else:
                 if rec > 0:
                     info += '{color=#7CFC00}提升{/color}了%s点%s！' % (int(rec * 100), attrname)
                     Stat.stato_record(self, kind+'up', rec)
+                    self.gain_stat('提升的'+attrname, due, rec)
                 elif -0.01 < rec < 0.01:
                     info += '%s没有变化。' % attrname
                 else:
                     info += '{color=#FF4500}降低{/color}了%s点%s！' % (int(-rec * 100), attrname)
                     Stat.stato_record(self, kind+'down', -rec)
+                    self.gain_stat('降低的'+attrname, due, rec)
 
             Notice.add(info)
 
         def aggravation(self):
-            consumption = self.aggravationConsumption() * f()
+            consumption = r2(self.aggravationConsumption() * f())
             s = 0
 
             if self.week < 3:
@@ -577,13 +608,8 @@ init python early:
             
 
             if not DrugIbuprofenBEffect.has(self) and consumption > 0:
-                Notice.add(_('睡眠消耗了')+r2s(consumption)+_('点精神状态！'))
-                self.mental -= r2(consumption)
-            else:
-                Notice.add(_('睡眠没有消耗精神状态！'))
+                self.gain_mental(-consumption, due='睡眠消耗')
 
-            if s > 0:
-                Notice.add(_('严重度上升了')+r2s(s)+_('点！'))
 
 
         def dateChange(self):
@@ -857,7 +883,7 @@ init python early:
         def updateMedicine(self):
             for i in self.medinfo:
                 self.medinfo[i].afterSleepAction(self)
-            if self.cured == -1 and rra(self, self.averDD()):
+            if not DrugdextropropoxypheneEffect.has(self) and self.cured == -1 and rra(self, self.averDD()):
                 DrugD.add(self)
             
         def updateAfterTask(self, task):

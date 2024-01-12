@@ -26,7 +26,7 @@ label explore_shop_1_catch:
                 
                 if not PathosDoll.has(p):
                     $PathosDoll.add(p)
-                    $p.gain_abi(-0.1, 'sev')
+                    $p.gain_abi(-0.1, 'sev', stat='外出：夹娃娃')
                 else:
                     $PathosDoll.add(p)
                 scene arcade with fade
@@ -39,7 +39,7 @@ label explore_shop_1_catch:
                 "夹子马上就要靠近出口了……！"
                 "马上要抓到了！……"
                 "啊…！娃娃掉在了出口边上，就差一点点！"
-                $p.gain_abi(0.02, 'sev')
+                $p.gain_abi(0.02, 'sev', stat='外出：夹娃娃')
                 $Notice.show()
                 pass
             elif temp==4 or temp==5:
@@ -48,7 +48,7 @@ label explore_shop_1_catch:
                 "夹子正在夹着娃娃，缓缓移动到出口上方……"
                 "夹子马上就要靠近出口了……！"
                 "啊…！娃娃离开了夹子，掉下去了，就差一点！"
-                $p.gain_abi(0.01, 'sev')
+                $p.gain_abi(0.01, 'sev', stat='外出：夹娃娃')
                 $Notice.show()
                 pass
             elif temp==6:

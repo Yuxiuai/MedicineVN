@@ -74,9 +74,18 @@ init python early:
             return scale
 
         @classmethod
+        def getperf(cls, player):
+            perf = ra(player, 1, 100)
+            if BookRandConcEffect.has(player):
+                perf = max(perf, ra(player, 1, 100))
+            return perf
+
+        @classmethod
         def getResultLabel(cls, player, perf, a=85, b=58, c=18):
             if perf > a:
                 cls.excePerf(player)
+                if BookRandConcEffect.has(player):
+                    player.gain_abi(-0.01, 'sev', due=BookRandConcEffect.name)
                 resultLabel = cls.__name__ + _('_result_exce')
             elif perf > b:
                 cls.goodPerf(player)
@@ -97,9 +106,7 @@ init python early:
 
         @classmethod
         def executeTask(cls, player):
-            if BookRandConcEffect.has(player):
-                renpy.call_screen(_screen_name="screen_BookRandConcEffect", player=player, adj=cls.getConcScale(player))
-            perf = ra(player, 1, 100)
+            perf = cls.getperf(player)
             perf += cls.getConcScale(player)            
             resultLabel = cls.getResultLabel(player, perf)
             player.updateAfterTask(cls)

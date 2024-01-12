@@ -23,7 +23,7 @@ label explore_center_1:
                 scene theater with fade
             $TicketRoot.add(p)
             $p.money -= 60
-            $p.gain_abi(-0.03, 'sev')
+            $p.gain_abi(-0.03, 'sev', stat='外出：文体中心')
             
             $MovieEffect.add(p)
             $Notice.show()
@@ -58,7 +58,7 @@ label explore_center_2:
                 else:
                     scene museum with fade
                 $rec = r2(20 * Task.getRecoScale(p))
-                $p.gain_mental(rec)
+                $p.gain_mental(rec, stat='外出：文体中心')
                 $MuseumEffect.add(p)
                 $Inspiration.add(p)
                 $Notice.show()
@@ -68,7 +68,7 @@ label explore_center_2:
                 "不差，但是也没很好，至少我可以稍微清净一会。"
             elif temp>=4 and temp<6:
                 scene exhibition with dissolve
-                $p.gain_abi(-0.02, 'sev')
+                $p.gain_abi(-0.02, 'sev', stat='外出：文体中心')
                 $MuseumEffect.add(p)
                 $Inspiration.add(p)
                 $Notice.show()
@@ -81,7 +81,7 @@ label explore_center_2:
                     scene museum_night with fade
                 else:
                     scene museum with fade
-                $p.gain_abi(-0.03, 'sev')
+                $p.gain_abi(-0.03, 'sev', stat='外出：文体中心')
                 $MuseumEffect.add(p)
                 $Inspiration.add(p)
                 $Notice.show()
@@ -94,7 +94,7 @@ label explore_center_2:
                     scene museum_night with fade
                 else:
                     scene museum with fade
-                $p.gain_abi(0.04, 'wor')
+                $p.gain_abi(0.04, 'wor', stat='外出：文体中心')
                 $MuseumEffect.add(p)
                 $Inspiration.add(p)
                 $Notice.show()
@@ -137,8 +137,8 @@ label explore_center_3:
             if temp!=6:
                 scene stadium with fade
                 $rec = r2(30 * Task.getRecoScale(p))
-                $p.gain_mental(rec)
-                $p.gain_abi(0.03, 'phy')
+                $p.gain_mental(rec, stat='外出：文体中心')
+                $p.gain_abi(0.03, 'phy', stat='外出：文体中心')
                 $SwimEffect.add(p)
                 $Notice.show()
                 "从游泳馆的一边一直游到另一边……"
@@ -165,8 +165,8 @@ label explore_center_3_hide:
     scene swimshower with fade
     if not replaying:
         $rec = r2(30 * Task.getRecoScale(p))
-        $p.gain_mental(rec)
-        $p.gain_abi(-0.04, 'sev')
+        $p.gain_mental(rec, stat='外出：文体中心')
+        $p.gain_abi(-0.04, 'sev', stat='外出：文体中心')
         $SwimEffect.add(p)
         $Notice.show()
     show pathos naked no_sco no_glasses with dissolve

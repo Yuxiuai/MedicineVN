@@ -337,7 +337,7 @@ label writer_day2:
             "…"
             scene court with fade
             play sound audio.finishclass
-            $p.gain_abi(0.02, 'phy')
+            $p.gain_abi(0.02, 'phy', stat='剧情')
             $Notice.show()
             "下课铃响了…"
             "脑袋乱糟糟的，现在一想，刚才点名的时候居然没关注一下那只小白熊叫什么。"

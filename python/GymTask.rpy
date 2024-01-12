@@ -58,7 +58,7 @@ init python early:
 
         @classmethod
         def setInjured(cls, player, per=20):
-            perf = ra(player, 1, 100) + cls.getConcScale(player)
+            perf = cls.getperf(player) + cls.getConcScale(player)
             if perf < per:
                 Injured.add(player)
                 Notice.add(_('你在运动中受伤了。'))

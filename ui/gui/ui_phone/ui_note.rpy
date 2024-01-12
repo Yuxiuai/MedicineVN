@@ -102,8 +102,7 @@ screen screen_phone_note(player):
                             spacing 15
                             
                             if page == 1:
-                                use screen_stato(player.LocalStatisticso)
-
+                                use screen_stat_gain(player)
                                 use screen_stat(player.LocalStatistics)
                             if page == 2:
                                 use screen_stato(persistent.GlobalStatisticso)
@@ -189,8 +188,50 @@ screen screen_stato(stat):
             use screen_stato_block(stat, '+严重程度', 'sevup')
             use screen_stato_block(stat, '-严重程度', 'sevdown')
             
-
+screen screen_stat_gain(player):
                   
+    default kinds = ['恢复的精神状态', '消耗的精神状态', '提升的严重程度', '降低的严重程度', '提升的工作能力', '降低的工作能力', '提升的身体素质', '降低的身体素质', '提升的写作技巧', '降低的写作技巧']
+    vbox:        
+        
+        for kind in kinds:
+            if kind in player.gain_stats:
+                text '共计%s为 %s 点。' % (kind, r2(player.gain_stat_all(kind))) style "phonew" size 20
+                use screen_stat_gain_(player.gain_stats[kind])
+
+
+screen screen_stat_gain_(stat):
+    python:
+        def get_max_names(stat):
+            due_names = stat.keys()
+            due_names.sort(key=lambda x: stat[x], reverse=True)
+            return due_names
+
+    default names = get_max_names(stat)
+    vbox:
+        #spacing 5
+        for due in names:
+            $maxlen = stat[names[0]]
+            frame:
+                background None
+                ysize 50
+                textbutton '':
+                    xsize stat[due] / maxlen
+                    background Frame('#bebebe')
+                    text_size 40
+                    ysize 45
+                    yalign 0.5
+
+                text r2s(stat[due]) style "white":
+                    xalign 0.975
+                    yalign 0.5
+
+                text due style "white":
+                    xalign 0.02
+                    yalign 0.5
+
+    null height 5
+
+
 
 screen screen_stato_block(stat, name, key):
     if key in stat:

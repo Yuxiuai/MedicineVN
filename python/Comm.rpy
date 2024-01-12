@@ -194,7 +194,7 @@ init python early:
             g = int(ins / 5 + player.writingGain)
 
             if g >= 1: 
-                player.gain_abi(g * 0.01, 'wri', extra=True)
+                player.gain_abi(g * 0.01, 'wri', extra=True, stat='委托写作')
 
 
             pwri = player.wri()

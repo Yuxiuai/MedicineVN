@@ -446,7 +446,7 @@ init python early:
                             rationaluse = False
             if not prev and rationaluse and not GameDifficulty4.has(player) and not GameDifficulty5.has(player):
                 if rra(player, cls.getMedicineRationalUsePercent(player)):
-                    player.gain_abi(-0.01, 'sev')
+                    player.gain_abi(-0.01, 'sev', stat="药物治疗")
             return scales
 
         @classmethod
@@ -544,7 +544,7 @@ init python early:
 
             player.medinfo[type(self)].updateTime(player) # 更新药物使用时间
 
-            player.gain_mental(r2(rec), '使用了%s'%self.name)
+            player.gain_mental(r2(rec), '使用了%s'%self.name, stat=self.name)
 
             if self.res(player) > 50:
                 player.gain_abi(0.02, 'sev', due='使用的药物抗药性过高')
