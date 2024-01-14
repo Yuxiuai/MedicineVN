@@ -241,21 +241,8 @@ init python early:
             PhysProb.add(self)
             WeatherSunny.add(self)
 
-
-            if persistent.lastend == 'ne':
-                Sticker59.add(self)
-            if persistent.lastend == 'te':
-                OldPic.add(self)
-            if persistent.lastend == 'ce':
-                ExaminationReport.add(self)
-            if persistent.lastend == 'fe':
-                TransparentBottle.add(self)
-            if persistent.lastend == 'se':
-                TrainTicket.add(self)
-            if persistent.lastend == 'we':
-                TheBook.add(self)
-
-            persistent.lastend = None
+            if persistent.lastend:
+                persistent.lastend.add(self)
 
             
             Freshness.clearByType(self)

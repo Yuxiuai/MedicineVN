@@ -639,7 +639,28 @@ label before_operate_screen_label:  ## 回到这里
                     if p.aco_p >= 98:
                         Achievement301.achieve()
                     
-                    
+        if CafeBuff.has(p):
+            scene location_cafe with fade
+            "该离开这里了。"
+            $CafeBuff.clearByType(p)
+            scene black with dissolve
+            "……"
+            play sound unlocking
+            $pause(0.5)
+            play sound audio.button
+            scene livingroom
+            $p.onOutside = False 
+        if BookstoreBuff.has(p):
+            scene location_bookstore with fade 
+            "该离开这里了。"
+            $BookstoreBuff.clearByType(p) 
+            scene black with dissolve
+            "……"
+            play sound unlocking
+            $pause(0.5)
+            play sound audio.button
+            scene livingroom
+            $p.onOutside = False   
                 
 
         if p.mental < 40:

@@ -125,12 +125,18 @@ init python early:
 
             return r2(reward), word
 
-        def predictpopularity(self, player, ins):
+        def predictpopularity(self, player, wri, ins):
             di = ins
             np = player.popularity/1000
-            r = 0.5 * (di - 7)
+            if player.recentCommWri:
+                recentWri = sum(player.recentCommWri)*1.0/len(player.recentCommWri)
+            else:
+                recentWri = 1.0
+            minIns = r2(6 + 3 * min(4, recentWri) + min(player.week, 10))
+            r = 1.0 * (di - minIns)
             up = int(r * (np-np*np/100) * 60)
             up *= 1.0 - player.week * 0.025
+            up *= 1 + (wri - 1) * 0.2
 
             return int(up)
 
@@ -184,20 +190,19 @@ init python early:
 
             reward, word = self.predictvalue(player, ins, exact)
 
-
+            pwri = player.wri()
             MentRezA.add(player, int(ins * 0.15))
             if self.freewheeling:
-                Notice.add(_('已进行一次随笔写作，已写字数%s，共消耗灵感%s层，预计可以涨粉%s个。') % (word, ins, self.predictpopularity(player, ins)))
+                Notice.add(_('已进行一次随笔写作，已写字数%s，共消耗灵感%s层，预计可以涨粉%s个。') % (word, ins, self.predictpopularity(player, pwri, ins)))
             else:
                 Notice.add(_('已进行一次委托写作，已写字数%s，共消耗灵感%s层，预计价值%s元。') % (word, ins, reward))
 
-            g = int(ins / 5 + player.writingGain)
+            
 
-            if g >= 1: 
-                player.gain_abi(g * 0.01, 'wri', extra=True, stat='委托写作')
+            
 
 
-            pwri = player.wri()
+            
             if SpecialInspiration.has(player):
                 gs = SpecialInspiration.getstack(player)
                 pwri *= (1 + gs * 0.05)
@@ -208,6 +213,8 @@ init python early:
                 self.content.append([int(word), r2(reward), ins, pwri])
             else:
                 self.content.append([int(word), 0, ins, pwri])
+
+            player.gain_abi(int(ins / 5 + player.writingGain) * 0.01, 'wri', extra=True, stat='委托写作')
 
             self.writeCounts += 1
 

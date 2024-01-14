@@ -211,7 +211,7 @@ label ne:
     
     if replaying:
         jump afterreplay
-    $persistent.lastend = 'ne'
+    $persistent.lastend = Sticker59
     $end_plot()
     jump credits
 
@@ -350,7 +350,7 @@ label te:
     "{color=#9500ff}True Ending.\n——在列车中，我牵着你的手，一同走到车厢尽头。{/color}" 
     if replaying:
         jump afterreplay
-    $persistent.lastend = 'te'
+    $persistent.lastend = OldPic
     $end_plot()
     jump credits
 
@@ -420,7 +420,7 @@ label se_h:
     "{color=#9500ff}Solitary Ending.\n——为我带来终点之人又身在何处？{/color}" 
     if replaying:
         jump afterreplay
-    $persistent.lastend = 'se'
+    $persistent.lastend = TrainTicket
     $end_plot()
     jump credits
 
@@ -492,7 +492,7 @@ label se_a:
     "{color=#9500ff}Solitary Ending.\n——为我带来终点之人又身在何处？{/color}" 
     if replaying:
         jump afterreplay
-    $persistent.lastend = 'se'
+    $persistent.lastend = TrainTicket
     $end_plot()
     jump credits
 
@@ -556,7 +556,7 @@ label fe_h:
     "{color=#ff0000}Fake Ending.\n——所以我躺在这里，躺在我们完美的天堂之中。{/color}" 
     if replaying:
         jump afterreplay
-    $persistent.lastend = 'fe'
+    $persistent.lastend = TransparentBottle
     $end_plot()
     jump credits
 
@@ -622,7 +622,7 @@ label fe_a:
     "{color=#ff0000}Fake Ending.\n——所以我躺在这里，躺在我们完美的天堂之中。{/color}" 
     if replaying:
         jump afterreplay
-    $persistent.lastend = 'fe'
+    $persistent.lastend = TransparentBottle
     $end_plot()
     jump credits
 
@@ -874,7 +874,7 @@ label ce:
     $end_plot()
     if replaying:
         jump afterreplay
-    $persistent.lastend = 'ce'
+    $persistent.lastend = ExaminationReport
     jump credits
 
 label earthquakeBE:
@@ -1249,4 +1249,5 @@ label we:
     $end_plot()
     if replaying:
         jump afterreplay
-    return
+    $persistent.lastend = TheBook
+    jump credits

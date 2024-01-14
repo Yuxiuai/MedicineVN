@@ -203,11 +203,20 @@ init -10 python early:
         ad = _('我应该放弃这东西，但每当夜晚因痛苦无法入眠时，它便会出现在我的回忆中。')
         p=0.8
 
-        def getPrincipalInfo(self):
-            if not p:
-                return self.info
-            info = '\n\n使用后提升严重倍率：{color=#f00}%s%s{/color}' % (2**DrugIbuprofenBEffect_.getstack(p), '%')
-            return self.info + info
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            if p:
+                info += '\n\n使用后提升严重倍率：{color=#f00}%s%s{/color}' % (2**DrugIbuprofenBEffect_.getstack(p), '%')
+            
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
 
         def useItemAction(self, player):
             Notice.add('由于镇痛药，提升了%s%s的严重倍率！' % (2**DrugIbuprofenBEffect_.getstack(player), '%'))
@@ -449,16 +458,19 @@ init -10 python early:
             if not self.reuse:
                 reuse_info = _('\n使用后消耗  ')
             else:
-                reuse_info = ''
+                reuse_info = '  '
+
+            if self.maxCd not in (0, -1) and type(self) not in player.itemcd:
+                reuse_info += '\n冷却时间：%s 天' % self.maxCd
 
             if type(self) not in player.itemcd and self.progress == 0:
-                cd_info = _('未阅读  ')
+                read_info = _('未阅读  ')
             elif type(self) not in player.itemcd and self.progress == 1:
-                cd_info = _('已阅读：50%  ')
+                read_info = _('已阅读：50%  ')
             else:
-                cd_info = _('下次可阅读时间：')+str(player.itemcd[type(self)])+_('天后  ')
+                read_info = _('下次可阅读时间：')+str(player.itemcd[type(self)])+_('天后  ')
 
-            return _('数量：')+str(self.amounts) +reuse_info+'\n'+ cd_info+ '\n'
+            return _('数量：')+str(self.amounts) +reuse_info+'\n'+ read_info+ '\n'
 
         def readBook(self, player, e=1):
             if rra(player, 50):
@@ -573,7 +585,7 @@ init -10 python early:
         maxCd = 14
         maxDu = -1  # 数字
         isUnique = True
-        info = _('阅读本书籍后效果持续时间内获得灵感时额外获得2层。')
+        info = _('阅读本书籍后效果持续时间内获得灵感层数翻倍，进行阅读类日程时还会额外获得2层。')
         ad = _('“迟早要失去的东西并没有太多意义. 必失之物的荣光并非真正的荣光。”')
         bookEffect_ = BookInsEffect
 
@@ -726,18 +738,28 @@ init -10 python early:
         maxDu = -1  # 数字
         isUnique = True
         info = _('阅读本书籍后获得等同于灵感层数的书籍效果，每层使严重倍率降低2%，但每次使用都会降低20%的效果。\n总计使用次数超过5次后，存档则会损坏。')
-        ad = _('“起来吧，我的仆从，欢唱着迎接我的到来。')
+        ad = _('“起来吧，我的仆从，欢唱着迎接我的到来。”')
         bookEffect_ = BookSevDownEffect
 
-        def getPrincipalInfo(self):
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
             if p:
                 s = BookSevDownEffect_.getstack(p)
                 if s < 5:
-                    info = '\n\n{color=#8433cc}已接受布道：%s次{/color}' % s
-                    return self.info + info
+                    info += '\n\n{color=#8433cc}已接受布道：%s次{/color}' % s
                 else:
-                    return '\n\n{color=#fedb74}接受我吧。{/color}\n\n'
-            return self.info
+                    info += '\n\n{color=#fedb74}接受我吧。{/color}\n\n'
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
+
 
         @classmethod
         def icon(cls):
@@ -1595,7 +1617,7 @@ init -10 python early:
 
         def getPrefixInfo(self, player):
 
-            cd_info = _('可重复使用  ')
+            cd_info = _('可重复使用  \n冷却时间：%s 天' % self.maxCd)
 
             if self.broken:
                 du_info = _('已变质  ')
@@ -1653,9 +1675,20 @@ init -10 python early:
             super(type(self), self).__init__(player)
             self.qty = 0.1
 
-        def getPrincipalInfo(self):
-            info = '\n\n鱼肉品质：%s' % self.qty
-            return self.info + info
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            info += '\n\n鱼肉品质：%s' % self.qty
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
+
 
         def useItemAction(self, player):
             rec = r2(200 * f())
@@ -1702,9 +1735,19 @@ init -10 python early:
             super(type(self), self).__init__(player)
             self.qty = 0.1
 
-        def getPrincipalInfo(self):
-            info = '\n\n鱼肉品质：%s' % self.qty
-            return self.info + info
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            info += '\n\n鱼肉品质：%s' % self.qty
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
 
         def useItemAction(self, player):
             rec = r2(20 * player.useFoodScale() * self.qty)
@@ -1724,7 +1767,7 @@ init -10 python early:
                 ['wri', player.writing],
             ]
             if player.experience == 'wri':
-                abilitylist.pop(-1)
+                abilitylist.pop(0)
             abilitylist.sort(key=lambda x: x[1])
             t = int(2 * self.qty)
             player.gain_abi(0.01 * t, abilitylist[0][0], stat=self.name)
@@ -1760,9 +1803,19 @@ init -10 python early:
             super(type(self), self).__init__(player)
             self.qty = 0.1
 
-        def getPrincipalInfo(self):
-            info = '\n\n鱼肉品质：%s' % self.qty
-            return self.info + info
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            info += '\n\n鱼肉品质：%s' % self.qty
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
 
         def useItemAction(self, player):
             rec = r2(400 * f())
@@ -1799,9 +1852,19 @@ init -10 python early:
             super(type(self), self).__init__(player)
             self.qty = 0.1
 
-        def getPrincipalInfo(self):
-            info = '\n\n鱼肉品质：%s' % self.qty
-            return self.info + info
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            info += '\n\n鱼肉品质：%s' % self.qty
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
 
         def useItemAction(self, player):
             rec = r2(5 * player.useFoodScale() * self.qty)
@@ -1818,7 +1881,7 @@ init -10 python early:
                 ['wri', player.writing],
             ]
             if player.experience == 'wri':
-                abilitylist.pop(-1)
+                abilitylist.pop(0)
             abilitylist.sort(key=lambda x: x[1])
             t = int(2 * self.qty)
             player.gain_abi(0.01 * t, abilitylist[0][0], stat=self.name)
@@ -1858,9 +1921,20 @@ init -10 python early:
         def __eq__(self, other):
             return False
 
-        def getPrincipalInfo(self):
-            info = '\n\n鱼肉品质：{color=#FFD700}999999{/color}'
-            return self.info + info
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            info += '\n\n鱼肉品质：{color=#FFD700}999999{/color}'
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
+
 
         def useItemAction(self, player):
             player.gain_mental(1, stat=self.name)
@@ -3301,12 +3375,21 @@ init -10 python early:
             self.goldfishday = None
 
         def getPrincipalInfo(self):
-            if not p:
-                return self.info
-            showinfo = '\n\n已使用此鱼竿钓上 %s 条鱼，共计品质 %s。\n钓上垃圾 %s 次，钓到宝藏 %s 次，钓到黄金鱼 %s 次。' % (self.fishes, self.qtys, self.trash, self.treasure, self.goldfishes)
-            if self.goldfishday:
-                showinfo += '\n\n%s月%s日那天对你来说一定很特别，你在这天用这根钓竿第一次钓上了一条黄金鱼。' % (self.goldfishmon, self.goldfishday)
-            return self.info + showinfo
+            info = self.info
+            info += '\n\n已使用此鱼竿钓上 %s 条鱼，共计品质 %s。\n钓上垃圾 %s 次，钓到宝藏 %s 次，钓到黄金鱼 %s 次。' % (self.fishes, self.qtys, self.trash, self.treasure, self.goldfishes)
+            if self.get(p).goldfishday:
+                info += '\n\n%s月%s日那天对你来说一定很特别，你在这天用这根钓竿第一次钓上了一条黄金鱼。' % (self.goldfishmon, self.goldfishday)
+                
+
+            type_info = _('\n\n') + self.kind
+
+            if self.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
+
 
         def use(self, player):
             Stat.record(player, type(self))
@@ -3569,11 +3652,21 @@ init -10 python early:
             Notice.add('卖出金戒指后，你获得了%s元。'%money)
             self.sub(player)
 
-        def getPrincipalInfo(self):
-            if not p:
-                return self.info
-            showinfo = '\n\n预计获得金钱：%s ~ %s' % (int(p.price * 7.2), int(p.price * 13.2))
-            return self.info + showinfo
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            if p:
+                info += '\n\n预计获得金钱：%s ~ %s' % (int(p.price * 7.2), int(p.price * 13.2))
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
+
 
     class Tarot(Item):
         id = 663
@@ -3590,13 +3683,24 @@ init -10 python early:
             super(Tarot, self).__init__(player)
             self.card = '正位：愚者'
 
-        def getPrincipalInfo(self):
-            if not p:
-                return self.info
+        @classmethod
+        def getPrincipalInfo(cls):
+            info = cls.info
+            if p and p.getcd(cls) == 1 and cls.has(p):
+                info += '\n\n今日卡牌：%s' % cls.get(p).card
+            else:
+                info += '\n\n{color=#f00}今日还未抽卡{/color}'
                 
-            if p.getcd(type(self)) == 1:
-                return self.info + '\n\n今日卡牌：%s' % self.card
-            return self.info + '\n\n{color=#f00}今日还未抽卡{/color}'
+
+            type_info = _('\n\n') + cls.kind
+
+            if cls.isUnique:
+                uni_info = _('\n唯一')
+            else:
+                uni_info = ''
+
+            return info + type_info + uni_info
+
 
 
         def useItemAction(self, player):
@@ -3722,8 +3826,10 @@ init -10 python early:
             cInfo = self.comm.contentInfo()
             info1 = self.comm.commInfo()
             info2 = '\n\n平均写作技巧：'+str(cInfo[3])+'\n已完成字数：'+str(cInfo[0])+'\n文稿总价值：'+str(cInfo[1])+'\n共消耗灵感：'+str(cInfo[2])
+            type_info = _('\n\n') + self.kind
 
-            return info1 + info2
+            return info1 + info2 + type_info 
+
 
         def write(self, player, exact=False):
             cms = self.comm.write(player, exact)
@@ -3751,8 +3857,9 @@ init -10 python early:
             cInfo = self.comm.contentInfo()
             info1 = self.comm.commInfo()
             info2 = '\n\n平均写作技巧：'+str(cInfo[3])+'\n已完成字数：'+str(cInfo[0])+'\n文稿总价值：'+str(cInfo[1])+'\n共消耗灵感：'+str(cInfo[2])
+            type_info = _('\n\n') + self.kind
 
-            return info1 + info2
+            return info1 + info2 + type_info 
 
         def getReward(self, player):
             player.doneComm += 1
@@ -3795,7 +3902,7 @@ init -10 python early:
                         di = self.comm.contentInfo()[2] * 0.5 * (commwri/self.comm.require)**2
 
                         maxpopularity = player.maxpopularity
-                        up = self.comm.predictpopularity(player, di)
+                        up = self.comm.predictpopularity(player, commwri, di)
                         if self.comm.remarks:
                             up *= (1 + self.comm.remarks[0] * 0.05)
                             up = int(up)
@@ -3835,14 +3942,21 @@ init -10 python early:
 
         def uploadToSocial(self, player):
             di = self.comm.contentInfo()[2]
+            commwri = self.comm.contentInfo()[3]
             player.doneFree += 1
             maxpopularity = player.maxpopularity
-            up = self.comm.predictpopularity(player, di)
+            up = self.comm.predictpopularity(player, commwri, di)
             if self.comm.remarks:
-                up *= (1 + self.comm.remarks[0] * 0.05)
+                up *= 1 + self.comm.remarks[0] * 0.05
                 up = int(up)
 
-            ins = int(0.5 * (di-10*player.writing_grade()))
+            if player.recentCommWri:
+                recentWri = sum(player.recentCommWri)*1.0/len(player.recentCommWri)
+            else:
+                recentWri = 1.0
+            minIns = r2(6 + 3 * min(4, recentWri) + min(player.week, 10))
+
+            ins = int(0.5 * (di-minIns))
             if player.popularity + up <= 1000 or player.popularity >= maxpopularity:
                 Notice.add(_('已将文稿发布到写作平台！\n平台没有新增粉丝。'))
             elif up < 0:

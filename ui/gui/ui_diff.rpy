@@ -28,6 +28,9 @@ screen screen_diff_select(player, mode=1):
             lambda p: GameDifficulty5.add(p),
         ]
 
+        def can_ending_items():
+            ending_items = [Achievement400.has(), Achievement401.has(), Achievement402.has(), Achievement403.has(), Achievement404.has(), Achievement405.has()]
+            return any(ending_items)
 
     if GameDifficulty1.has(player):
         default selected = 1
@@ -147,7 +150,10 @@ screen screen_diff_select(player, mode=1):
             if hasok:
                 imagebutton auto "images/gui/opening/ok_%s.png":
                     if mode != 1:
-                        action Function(function_dict[selected], player), ShowMenu("screen_name_select", player)
+                        if any([Achievement400.has(), Achievement401.has(), Achievement402.has(), Achievement403.has(), Achievement404.has(), Achievement405.has()]):
+                            action Function(function_dict[selected], player), ShowMenu("screen_collection_select", player)
+                        else:
+                            action Function(function_dict[selected], player), ShowMenu("screen_name_select", player)
                     elif selected != 0:
                         action Function(function_dict[selected], player), Return()
                     else:

@@ -191,6 +191,7 @@ screen screen_gamemenu_history(player):
         add persistent.main_menu_theme.bg
 
     default page = 0
+    default textsize = 30
 
     frame:
         bottom_padding 45
@@ -208,10 +209,27 @@ screen screen_gamemenu_history(player):
                 #xfill True
                 xsize 1800
                 #side_yfill True
-                if page == 0:
-                    use screen_gamemenu_history_inner(_history_list)
-                elif page == 1:
-                    use screen_gamemenu_history_inner(_history_notice_list)
+                use screen_gamemenu_history_inner(_history_list, page, textsize)
+
+    imagebutton auto "gui/add_%s.png":
+        xalign 0.8
+        yalign 0.05
+        if textsize > 60:
+            action NullAction()
+            activate_sound audio.error
+        else:
+            action SetLocalVariable('textsize', textsize + 2)
+            activate_sound audio.cursor
+        
+    imagebutton auto "gui/minus_%s.png":
+        xalign 0.85
+        yalign 0.05
+        if textsize < 10:
+            action NullAction()
+            activate_sound audio.error
+        else:
+            action SetLocalVariable('textsize', textsize - 2)
+            activate_sound audio.cursor
 
     imagebutton auto "gui/sort_%s.png":
         xalign 0.9
@@ -220,6 +238,7 @@ screen screen_gamemenu_history(player):
             action SetLocalVariable('page', 1)
         elif page == 1:
             action SetLocalVariable('page', 0)
+        activate_sound audio.cursor
 
     imagebutton auto "gui/exit_%s.png":
         xalign 0.95
@@ -230,17 +249,27 @@ screen screen_gamemenu_history(player):
         
 
 
-screen screen_gamemenu_history_inner(hlist):
+screen screen_gamemenu_history_inner(hlist, page, textsize):
+    if page == 1:
+        $hlist = list(filter(lambda x: x.who == chara_notice, hlist))
+
     frame:
         style_prefix "history"
         xfill True
         background None
         vbox:
-            spacing 30
+            spacing textsize / 2
             for h in hlist:
 
                 hbox:
-                    if h.who:
+                    if h.who == chara_notice:
+                        text '{i}' + h.what + '{/i}':
+                            yalign 0.5
+                            substitute False
+                            size textsize
+                            color '#b8b8b8b4'
+                            xfill True
+                    elif h.who:
                         label h.who:
                             style "history_name"
                             substitute False
@@ -250,13 +279,13 @@ screen screen_gamemenu_history_inner(hlist):
                             xpos 0.04
                             yalign 0.5
                             substitute False
-                            size 29
+                            size textsize
                             xfill True
                     else:
                         text h.what:
                             yalign 0.5
                             substitute False
-                            size 29
+                            size textsize
                             xfill True
 
             if not hlist:

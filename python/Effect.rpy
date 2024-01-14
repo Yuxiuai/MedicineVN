@@ -97,7 +97,7 @@ init python early:
                 cls.get(player).clear(player)
 
         def sub(self, player, times=1):  # 减少层数
-            if times == 0:
+            if times == 0 and not self.stacks == 0:
                 return
             for i in range(min(times, self.stacks)):
                 self.subStackAction(player)

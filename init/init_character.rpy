@@ -13,7 +13,7 @@ init python:
 
 
 define config.character_callback = say_voice
-
+define chara_notice = Character("Notice")
 
 #Solitus
 define s = Character("[p.name]", color="#9500ff")

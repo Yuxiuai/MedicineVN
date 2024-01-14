@@ -512,7 +512,7 @@ init -11 python early:
         kind = _('状态')
         maxDuration = 7
         maxStacks = 2
-        info = _('获得该状态时{color=#FF4500}降低{/color}2点身体素质和2点工作能力。\n专注度{color=#FF4500}降低{/color}10%，精神状态消耗{color=#FF4500}提升{/color}10%，精神状态恢复{color=#FF4500}降低{/color}10%；在床上休息恢复的精神状态{color=#7CFC00}提升{/color}40%。\n进行非在床上休息的日程时会{color=#FF4500}降低{/color}10%的当前精神状态，精神状态为负时{color=#FF4500}降低{/color}10点精神状态并提升1点严重程度。\n持续时间结束或层数超过1层时{color=#FF4500}转化{/color}为体弱。')
+        info = _('获得该状态时{color=#FF4500}降低{/color}2点身体素质和2点工作能力。\n专注度{color=#FF4500}降低{/color}10%，精神状态消耗{color=#FF4500}提升{/color}10%，精神状态恢复{color=#FF4500}降低{/color}10%；在床上休息恢复的精神状态{color=#7CFC00}提升{/color}40%。\n进行非在床上休息的日程时会{color=#FF4500}消耗{/color}10%的当前精神状态，精神状态为负时则{color=#FF4500}消耗{/color}10点精神状态并提升1点严重程度。\n持续时间结束或层数超过1层时{color=#FF4500}转化{/color}为体弱。')
         ad = _('病痛折磨着我，与脑中毫无频率的头疼一同。')
 
         @classmethod
@@ -1058,7 +1058,7 @@ init -11 python early:
                     player.gain_mental(-rec, due=cls.name)
 
             if BookInsEffect.has(player):
-                Inspiration.get(player).stacks += 2
+                Inspiration.get(player).stacks += 1
 
         def afterTaskAction(self, player, task):  # 日程后
             if task.name == _('记录想法'):
@@ -2590,7 +2590,11 @@ init -11 python early:
         kind = _('学识')
         maxDuration = 1
         maxStacks = 1
-        info = _('阅读本书籍后效果持续时间内获得灵感时{color=#7CFC00}翻倍{/color}。')
+        info = _('阅读本书籍后效果持续时间内获得灵感层数{color=#7CFC00}翻倍{/color}，进行阅读类日程时还会额外{color=#7CFC00}获得{/color}2层。')
+
+        def afterTaskAction(self, player, task):
+            if task in (DefaultRead, SentimentalRead, TraditionalRead, ReadingBook):
+                Inspiration.add(p)
 
 
     class BookSportEffect(Effect):

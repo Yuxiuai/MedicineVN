@@ -1,20 +1,14 @@
 init python early:
 
-    _history_notice_list = []
-    _history_notice_list_maxsize = 100
-
 
     def insertToHis(message):
         global _history_list
-        global _history_notice_list
         h=renpy.character.HistoryEntry()
         h.kind = 'adv'
-        h.who = None
+        h.who = chara_notice
+        h.who_args = {'color': '#b8b8b8b4', 'style':'say_label','substitute':False}
         h.what = message
         _history_list.append(h)
-        _history_notice_list.append(h)
-        if len(_history_notice_list) > _history_notice_list_maxsize:
-            _history_notice_list.pop(0)
 
     def showNotice(messages):
         for i in messages:

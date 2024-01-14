@@ -284,11 +284,11 @@ screen screen_phone_write(player):
                             $recentIns = 10
                             if player.recentCommIns:
                                 $recentIns = sum(player.recentCommIns)*1.0/len(player.recentCommIns)
-                            
-                            if recentIns < 10*recentWri:
+                            $minIns = r2(6 + 3 * min(4, recentWri) + min(player.week, 10))
+                            if recentIns < minIns:
                                 $insbonus = recentIns - 50*recentWri
                             else:
-                                $insbonus = recentIns - 10*recentWri
+                                $insbonus = recentIns - minIns
                             vbox:
                                 null height 10
                                 if len(player.recentCommWri) < 3:
@@ -301,7 +301,7 @@ screen screen_phone_write(player):
                                     text '写作水平评价：' + str(player.writing_grade()) style 'phonew' size 40 color "#e27919"
                                     null height 10
                                     text ' · 平均消耗灵感：' + r2s(recentIns) style 'phonew' size 30 color "#383838"
-                                    text ' · 最低灵感阈值：' + r2s(10*recentWri) style 'phonew' size 30 color "#383838"
+                                    text ' · 最低灵感阈值：' + str(minIns) style 'phonew' size 30 color "#383838"
                                     if insbonus <= 0:
                                         $insbonus = '{color=#f00}0%{/color}'
                                     else:

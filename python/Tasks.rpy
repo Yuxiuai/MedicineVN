@@ -2191,8 +2191,9 @@ init python early:
         @classmethod
         def executeTask(cls, player):
             WriterItem1.get(player).work(player)
-            cls.afterTaskResult(player)
             player.updateAfterTask(cls)
+            cls.afterTaskResult(player)
+            
             WriterBuff.add(player)
             renpy.jump("SpecialWriting_result")
 

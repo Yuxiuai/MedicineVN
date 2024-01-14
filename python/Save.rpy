@@ -78,15 +78,19 @@ init -10 python early:
             slot = None
             if not code:
                 showNotice(['剪贴板为空或无法访问剪贴板！'])
+                renpy.sound.play(audio.error)
                 return
             if code[:9] != 'ccopy_reg':
                 showNotice(['格式错误！'])
+                renpy.sound.play(audio.error)
                 return
             slot = cls.loads(code)
             if not slot:
                 showNotice(['读取失败，请检查是否复制完整！'])
+                renpy.sound.play(audio.error)
             else:
                 showNotice(['成功导入存档！！'])
+                renpy.sound.play(audio.getmedicine)
             cls.save(slot)
 
 
@@ -159,7 +163,7 @@ init -10 python early:
 
         @classmethod
         def uncompatible_reason(cls, slot):
-            lostinfo = _("缺少或多余以下属性或方法：\n")
+            lostinfo = ''
             for i in cls.errorattrs(slot):
                 lostinfo += '(Player)%s\n' % (i)
             for i in slot.items:
@@ -168,8 +172,9 @@ init -10 python early:
             for i in slot.effects:
                 for j in cls.errorattrs(i):
                     lostinfo += '(%s)%s\n' % (type(i).__name__, j)
-
-            return lostinfo.strip()
+            if not lostinfo:
+                return '存档未见异常。'
+            return "缺少或多余以下属性或方法：\n" + lostinfo.strip() + '\n请点击下方的手动更新存档。'
         
         @classmethod
         def compatible(cls, object, *arg):

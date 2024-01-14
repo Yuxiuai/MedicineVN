@@ -25,6 +25,13 @@ init python early:
             return cls.unlocked
 
         @classmethod
+        def getperf(cls, player):
+            perf = ra(player, 1, 100)
+            if BookRandConcEffect.has(player):
+                perf = max(perf, ra(player, 1, 100))
+            return perf
+            
+        @classmethod
         def unlockCond(cls, player):
             return True
 

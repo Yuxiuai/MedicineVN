@@ -42,7 +42,7 @@ label hotel_event:
     "办完了退房手续……"
     if p.today in (1,2,3,4,5) and p.experience != 'wri':
         "直接去公司吧……"
-        $ p.times = 2
+        $ p.times = 1
         jump before_go_office
     else:
         "虽然很念念不舍，但还是得回家去了……"

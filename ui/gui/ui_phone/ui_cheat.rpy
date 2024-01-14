@@ -150,8 +150,8 @@ screen screen_phone_inner(player):
 
                     vbox:   
                         
-                        use screen_phone_cheat_slot(player, _('过一天'), [Function(player.newDay), Function(player.cheat_times), Function(Notice.show)])
-                        use screen_phone_cheat_slot(player, _('刷新道具cd'), [Function(cdclear, player), Function(player.cheat_times), Function(Notice.show)])
+                        use screen_phone_cheat_slot(player, _('过一天'), [Function(player.newDay), Function(player.cheat_times),Function(player.beforeSchedule),Function(Notice.show)])
+                        use screen_phone_cheat_slot(player, _('刷新道具cd'), [Function(cdclear, player), Function(Notice.show)])
                         use screen_phone_cheat_slot(player, _('解锁全音乐'), Function(unlockallmusic))
                         use screen_phone_cheat_slot(player, _('解锁全商业街'), Function(unlockallshop, player))
 

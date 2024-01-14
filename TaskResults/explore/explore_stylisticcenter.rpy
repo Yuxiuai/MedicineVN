@@ -1,6 +1,8 @@
 label explore_center:
     
     $temp = ra(p, 1, 3)
+    if p.experience == 'wri':
+        $temp = ra(p, 1, 2)
     $jumplabel = 'explore_center_' + str(temp)
     $renpy.jump(jumplabel)
         
@@ -37,7 +39,7 @@ label explore_center_1:
                 "下次再说吧。"
     jump GoOutside_result
 
-label explore_center_2:
+label explore_center_3:
     if p.times==12:
         scene museum_night with fade
     else:
@@ -120,7 +122,7 @@ label explore_center_2:
                 "下次再说吧。"
     jump GoOutside_result
 
-label explore_center_3:
+label explore_center_2:
     scene stadium with fade
     "突然好想去游个泳哦。"
     "去游泳馆玩一会吧。"

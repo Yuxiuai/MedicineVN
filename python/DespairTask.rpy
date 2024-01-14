@@ -22,6 +22,7 @@ init python early:
         def isUnlocked(cls, player):
             return True
 
+
         @staticmethod
         def gt():
             import random

@@ -282,7 +282,6 @@ screen screen_gamemenu_save(player=p):
         xalign 0.9
         yalign 0.05
         action Function(Saver.inport)
-        activate_sound audio.getmedicine
 
     imagebutton auto "gui/exit_%s.png":
         xalign 0.95

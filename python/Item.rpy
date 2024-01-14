@@ -41,9 +41,11 @@ init python early:
                 cd_info = _('不可使用  ')
             elif type(self) not in player.itemcd:
                 if self.reuse:
-                    cd_info = _('可重复使用  ')
+                    cd_info = _('可重复使用 ')
                 else:
-                    cd_info = _('使用后消耗  ')
+                    cd_info = _('使用后消耗 ')
+                if self.maxCd not in (0, -1) and type(self) not in player.itemcd:
+                    cd_info += '\n冷却时间：%s 天' % self.maxCd
             else:
                 cd_info = _('可使用时间：')+str(player.itemcd[type(self)])+_('天后  ')
 
@@ -60,7 +62,7 @@ init python early:
                 if self.broken:
                     du_info = _('已损坏  ')
                 else:
-                    du_info = _('耐久度：')+str(self.du)+_('  ')
+                    du_info = _('可使用次数：')+str(self.du)+_('次  ')
                 
             else:
                 if self.broken:

@@ -93,6 +93,7 @@ init python:
             "acolas":"“……”\n“当然——{w}不行！”",
             "德斯托特":"“是前辈也不行！”",
             "Destot":"“是前辈也不行！”",
+            "destot":"“是前辈也不行！”",
         }
 
 screen screen_name_select(player):
